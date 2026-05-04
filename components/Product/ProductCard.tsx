@@ -22,16 +22,16 @@ export default function ProductCard({ product }: ProductProps) {
 
   if (!product) return null;
 
-  const handleAddToCart = () => {
-    addToCart(product);
+const handleAddToCart = () => {
+    addToCart({
+      ...product,
+      id: product._id, // Map MongoDB's _id to the expected 'id'
+      size: "M"        // Provide a default size for the quick-add button
+    });
+    }
 
     // ✅ Show feedback
     setAdded(true);
-
-    setTimeout(() => {
-      setAdded(false);
-    }, 1500);
-  };
 
   return (
     <div className="product-card">
