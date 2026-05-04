@@ -1,0 +1,154 @@
+.contact {
+  min-height: 100vh;
+  padding: 140px 8% 100px;
+  position: relative;
+
+  /* ✅ FIXED (IMPORTANT) */
+  overflow: visible;
+
+  isolation: isolate; /* 🔥 prevents GSAP + footer conflicts */
+  transition: background 0.6s ease;
+}
+
+/* HERO */
+
+.hero {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.hero h1 {
+  font-size: 70px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.hero p {
+  margin-top: 10px;
+  opacity: 0.6;
+  font-size: 18px;
+}
+
+/* GRID */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* LEFT */
+
+.info h3 {
+  font-size: 14px;
+  letter-spacing: 0.3em;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.info p {
+  font-size: 18px;
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* FORM */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* INPUT */
+
+.inputGroup {
+  position: relative;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  background: transparent;
+  padding: 10px 0;
+  font-size: 16px;
+  outline: none;
+  color: inherit;
+}
+
+.inputGroup textarea {
+  height: 120px;
+  resize: none;
+}
+
+/* LABEL */
+
+.inputGroup label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  font-size: 14px;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+/* FLOAT EFFECT */
+
+.inputGroup input:focus + label,
+.inputGroup textarea:focus + label,
+.inputGroup input:valid + label,
+.inputGroup textarea:valid + label {
+  top: -12px;
+  font-size: 12px;
+  opacity: 1;
+}
+
+/* BUTTON */
+
+.btn {
+  margin-top: 10px;
+  padding: 14px;
+  border: none;
+  background: black;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  opacity: 0.9;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+  }
+
+  .bgText {
+    font-size: 28vw;
+  }
+}

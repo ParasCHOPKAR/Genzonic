@@ -1,0 +1,29 @@
+.container {
+  padding: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+}
+
+.form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.form button {
+  background: black;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.preview {
+  width: 100px;
+  border-radius: 8px;
+}
