@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 // Adjust this path if your admin.module.css is located somewhere else!
-import styles from "../../../../admin.module.css"; 
+import styles from "@/app/admin/admin.module.css";
 
 export default function EditProductForm() {
   const router = useRouter();
