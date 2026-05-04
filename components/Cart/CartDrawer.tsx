@@ -20,9 +20,9 @@ export default function CartDrawer({ open }: any) {
               <div key={item._id} className="item">
                 <p>{item.name}</p>
                 <span>₹{item.price}</span>
-                <button onClick={() => removeFromCart(item._id)}>
-                  Remove
-                </button>
+<button onClick={() => removeFromCart(item._id, item.size)}>
+  Remove
+</button>
               </div>
             ))}
 
