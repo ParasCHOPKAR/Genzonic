@@ -305,26 +305,29 @@ export default function Hero() {
         /* --- CHARACTER & INTERACTION --- */
         .character-container {
           position: absolute;
+          top: 12%;      /* ⚡ FIXED: Forces the box to start completely below the top navbar */
+          bottom: 15%;   /* ⚡ FIXED: Ends the box right above the "Discover More" text */
           left: 50%;
-          bottom: 0;
           transform: translateX(-50%);
           display: flex;
           justify-content: center;
-          align-items: flex-end;
+          align-items: center;
+          width: 38vw;   /* ⚡ FIXED: Ensures it never bumps into the left/right text */
           z-index: 10;
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
         }
 
         .hero-image {
-          height: 92vh;
-          width: auto;
+          width: 100%;
+          height: 100%;
           object-fit: contain;
+          object-position: center; /* ⚡ FIXED: Perfectly centers the subject inside the new safe zone */
           z-index: 5;
           transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .click-pulse { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 1px solid ${darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}; border-radius: 50%; pointer-events: none; }
+        .click-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 1px solid ${darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}; border-radius: 50%; pointer-events: none; }
 
         .tap-indicator { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 15; pointer-events: none; opacity: 0.5; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .arrow-wrapper { animation: arrowBounce 2s infinite ease-in-out; }
@@ -371,9 +374,12 @@ export default function Hero() {
           .character-container { 
             order: 2; 
             position: relative !important; 
-            left: auto !important; 
+            top: auto !important; 
             bottom: auto !important; 
+            left: auto !important; 
             transform: none !important;
+            width: 100% !important; 
+            height: 45vh !important; /* Explicit height for the container on mobile */
             margin: 20px 0;
           }
           .right-side { order: 3; }
@@ -383,7 +389,12 @@ export default function Hero() {
           .desktop-br { display: none; }
           
           /* Scale elements down to fit the phone screen */
-          .hero-image { height: 45vh !important; }
+          .hero-image { 
+            height: 100% !important; 
+            width: 100% !important; 
+            max-width: 100% !important; 
+            object-position: center !important; /* Resets the anchor for mobile */
+          }
           .bg-watermark { top: 40% !important; font-size: 28vw !important; }
           .scroll-hint-modern { display: none !important; } /* Hide to save space */
           
@@ -397,7 +408,7 @@ export default function Hero() {
 
         /* Smaller phone tweaks */
         @media (max-width: 600px) {
-          .hero-image { height: 40vh !important; }
+          .character-container { height: 40vh !important; }
           .editorial-title { font-size: clamp(28px, 8vw, 36px) !important; margin-bottom: 10px; }
           .editorial-desc { font-size: 13px !important; }
           .promo-pill { margin-bottom: 25px !important; }
