@@ -305,14 +305,14 @@ export default function Hero() {
         /* --- CHARACTER & INTERACTION --- */
         .character-container {
           position: absolute;
-          top: 12%;      /* ⚡ FIXED: Forces the box to start completely below the top navbar */
-          bottom: 15%;   /* ⚡ FIXED: Ends the box right above the "Discover More" text */
+          top: 18%;      /* ⚡ REDUCED: More space from the top */
+          bottom: 20%;   /* ⚡ REDUCED: More space from the bottom */
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           justify-content: center;
           align-items: center;
-          width: 38vw;   /* ⚡ FIXED: Ensures it never bumps into the left/right text */
+          width: 30vw;   /* ⚡ REDUCED: Tighter width forces the image to scale down */
           z-index: 10;
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
@@ -322,7 +322,7 @@ export default function Hero() {
           width: 100%;
           height: 100%;
           object-fit: contain;
-          object-position: center; /* ⚡ FIXED: Perfectly centers the subject inside the new safe zone */
+          object-position: center; 
           z-index: 5;
           transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
