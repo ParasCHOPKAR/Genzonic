@@ -1,12 +1,18 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/app/context/ThemeContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import { WishlistProvider } from "./context/WishlistContext";
+import { SessionProvider } from "next-auth/react"; // 1. Import SessionProvider
 
-export default function Providers({ children }: any) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
+    // 2. Wrap everything inside the SessionProvider
     <SessionProvider>
-      <ThemeProvider>{children}</ThemeProvider>
+      <ThemeProvider>
+        <WishlistProvider>
+          {children}
+        </WishlistProvider>
+      </ThemeProvider>
     </SessionProvider>
   );
 }

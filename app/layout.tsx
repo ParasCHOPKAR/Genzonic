@@ -5,7 +5,7 @@ import Footer from "@/components/Footer/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
 import FloatingButtons from "@/components/FloatingButtons/FloatingButtons";
 import Script from "next/script";
-import Providers from "./providers";
+import { Providers } from "./providers";
 
 
 export const metadata = {
