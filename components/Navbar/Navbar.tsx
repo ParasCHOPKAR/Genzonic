@@ -12,6 +12,7 @@ import { useWishlist } from "@/app/context/WishlistContext";
 
 import {
   ShoppingCart,
+  Heart,
   Menu,
   X,
   ChevronDown,
@@ -191,10 +192,10 @@ export default function Navbar() {
             </button>
 
             {/* 🔥 WISHLIST BUTTON (Visible everywhere) 🔥 */}
-            <Link href="/wishlist" className="wishlist-btn" style={{ position: "relative", display: "flex", alignItems: "center", textDecoration: "none", fontSize: "22px", marginRight: "10px", transition: "transform 0.2s" }}>
-              ❤️
+            <Link href="/wishlist" className="wishlist-btn" style={{ position: "relative", display: "flex", alignItems: "center", textDecoration: "none", color: "inherit", marginRight: "10px", transition: "transform 0.2s" }}>
+              <Heart size={26} strokeWidth={1.5} />
               {mounted && wishlist.length > 0 && (
-                <span style={{ position: "absolute", top: "-5px", right: "-8px", backgroundColor: "#ef4444", color: "white", fontSize: "10px", fontWeight: "bold", borderRadius: "50%", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0px 2px 5px rgba(0,0,0,0.2)" }}>
+                <span style={{ position: "absolute", top: "-5px", right: "-8px", backgroundColor: "#ef4444", color: "white", fontSize: "10px", fontWeight: "bold", borderRadius: "50%", width: "18px", height: "18px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0px 2px 5px rgba(0,0,0,0.2)" }}>
                   {wishlist.length}
                 </span>
               )}

@@ -2,50 +2,57 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-export interface Product {
+// 1. Define the shape of a Wishlist Item
+export interface WishlistItem {
   id: string | number;
   name: string;
   price: number;
   image: string;
-  slug?: string;
 }
 
+// 2. Define what functions the Context provides
 interface WishlistContextType {
-  wishlist: Product[];
-  toggleWishlist: (product: Product) => void;
+  wishlist: WishlistItem[];
+  addToWishlist: (item: WishlistItem) => void;
+  removeFromWishlist: (id: string | number) => void;
   isInWishlist: (id: string | number) => boolean;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
-export const WishlistProvider = ({ children }: { children: React.ReactNode }) => {
-  const [wishlist, setWishlist] = useState<Product[]>([]);
+export function WishlistProvider({ children }: { children: React.ReactNode }) {
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
 
+  // 3. Load from local storage when the app starts
   useEffect(() => {
+    setIsMounted(true);
     const savedWishlist = localStorage.getItem("genzonic_wishlist");
     if (savedWishlist) {
       try {
         setWishlist(JSON.parse(savedWishlist));
       } catch (error) {
-        console.error("Failed to parse wishlist from local storage", error);
+        console.error("Failed to parse wishlist", error);
       }
     }
   }, []);
 
-  const toggleWishlist = (product: Product) => {
-    setWishlist((prev) => {
-      const isAlreadyLiked = prev.some((item) => item.id === product.id);
-      
-      let updatedWishlist;
-      if (isAlreadyLiked) {
-        updatedWishlist = prev.filter((item) => item.id !== product.id);
-      } else {
-        updatedWishlist = [...prev, product];
-      }
+  // 4. Save to local storage whenever an item is added or removed
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("genzonic_wishlist", JSON.stringify(wishlist));
+    }
+  }, [wishlist, isMounted]);
 
-      localStorage.setItem("genzonic_wishlist", JSON.stringify(updatedWishlist));
-      return updatedWishlist;
+  const addToWishlist = (item: WishlistItem) => {
+    setWishlist((prev) => {
+      if (prev.some((w) => w.id === item.id)) return prev; // Prevent duplicates
+      return [...prev, item];
     });
+  };
+
+  const removeFromWishlist = (id: string | number) => {
+    setWishlist((prev) => prev.filter((item) => item.id !== id));
   };
 
   const isInWishlist = (id: string | number) => {
@@ -53,12 +60,13 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   return (
-    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist }}>
+    <WishlistContext.Provider value={{ wishlist, addToWishlist, removeFromWishlist, isInWishlist }}>
       {children}
     </WishlistContext.Provider>
   );
-};
+}
 
+// 5. Export the hook so other files can use it
 export const useWishlist = () => {
   const context = useContext(WishlistContext);
   if (context === undefined) {
