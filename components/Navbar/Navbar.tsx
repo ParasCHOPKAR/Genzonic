@@ -2,6 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+
+import { useTheme } from "@/app/context/ThemeContext";
+import { useCartStore } from "@/store/cartStore";
+import { useWishlist } from "@/app/context/WishlistContext";
+
 import {
   ShoppingCart,
   Menu,
@@ -17,12 +25,7 @@ import {
   Box,
   Check
 } from "lucide-react";
-import { useTheme } from "@/app/context/ThemeContext";
-import { useEffect, useState } from "react";
 import "./Navbar.css";
-import { useCartStore } from "@/store/cartStore";
-import { useSession, signOut } from "next-auth/react";
-import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   /* =========================
@@ -30,6 +33,7 @@ export default function Navbar() {
   ========================= */
   const { theme } = useTheme();
   const { cart } = useCartStore();
+  const { wishlist } = useWishlist();
 
   /* =========================
      AUTH
@@ -58,7 +62,7 @@ export default function Navbar() {
   /* =========================
      EFFECTS
   ========================= */
-  // Hydration fix for Zustand persist
+  // Hydration fix for Zustand persist & LocalStorage Context
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -186,8 +190,18 @@ export default function Navbar() {
               PREMIUM COLLECTION <ChevronDown size={16} />
             </button>
 
+            {/* 🔥 WISHLIST BUTTON (Visible everywhere) 🔥 */}
+            <Link href="/wishlist" className="wishlist-btn" style={{ position: "relative", display: "flex", alignItems: "center", textDecoration: "none", fontSize: "22px", marginRight: "10px", transition: "transform 0.2s" }}>
+              ❤️
+              {mounted && wishlist.length > 0 && (
+                <span style={{ position: "absolute", top: "-5px", right: "-8px", backgroundColor: "#ef4444", color: "white", fontSize: "10px", fontWeight: "bold", borderRadius: "50%", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0px 2px 5px rgba(0,0,0,0.2)" }}>
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
+
             {/* 🔥 UPDATED CART BUTTON (Visible everywhere) 🔥 */}
-            <Link href="/cart" className="cart-btn" style={{ position: "relative" }}>
+            <Link href="/cart" className="cart-btn" style={{ position: "relative", display: "flex", alignItems: "center" }}>
               <ShoppingCart size={26} />
               {mounted && cartCount > 0 && (
                 <span className="cart-count">{cartCount}</span>
@@ -437,6 +451,10 @@ export default function Navbar() {
 
       {/* ================= RESPONSIVE MOBILE OVERRIDES ================= */}
       <style jsx>{`
+        .wishlist-btn:hover {
+          transform: scale(1.1);
+        }
+        
         /* Hide Mobile Sidebar by default on Desktop */
         .mobile-backdrop, .mobile-sidebar, .mobile-menu-btn {
           display: none;
