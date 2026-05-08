@@ -112,10 +112,10 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* 🔥 NEW HIGHLIGHTED PAY NOW BUTTON 🔥 */}
+              {/* 🔥 BOLD YELLOW PAY NOW BUTTON 🔥 */}
               <Link href="/checkout" className="pay-now-btn">
                 <span>PAY NOW</span>
-                <ArrowRight size={22} strokeWidth={2.5} />
+                <ArrowRight size={22} strokeWidth={3} />
               </Link>
 
               <div className="trust-badges">
@@ -141,7 +141,7 @@ export default function CartPage() {
 
         .cart-grid { display: grid; grid-template-columns: 1fr 420px; gap: 50px; }
 
-        /* Item Cards (Adaptive for Dark/Light Mode) */
+        /* Item Cards */
         .item-card { display: flex; gap: 20px; padding: 20px; background: transparent; border: 1px solid rgba(128,128,128,0.2); margin-bottom: 15px; border-radius: 8px; transition: 0.3s; }
         .item-card:hover { border-color: var(--text); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         :global(.dark) .item-card:hover { box-shadow: 0 10px 30px rgba(255,255,255,0.02); }
@@ -164,8 +164,6 @@ export default function CartPage() {
 
         /* Sidebar & Summary */
         .summary-box { position: sticky; top: 120px; background: var(--bg); border: 2px solid var(--text); padding: 35px; border-radius: 12px; box-shadow: 8px 8px 0px var(--text); transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
-        
-        /* Softer shadow in dark mode to prevent it from looking muddy */
         :global(.dark) .summary-box { box-shadow: 6px 6px 0px rgba(255,255,255,0.2); }
 
         .summary-title { font-size: 14px; font-weight: 900; letter-spacing: 2px; margin-bottom: 25px; }
@@ -181,15 +179,15 @@ export default function CartPage() {
         .coupon-input-wrapper input { flex: 1; padding: 14px; background: none; border: none; outline: none; font-weight: 800; font-size: 12px; color: var(--text); }
         .apply-btn { background: none; border: none; color: #ff3e00; font-weight: 900; cursor: pointer; padding-left: 10px; }
 
-        /* 🔥 PREMIUM PAY NOW BUTTON 🔥 */
+        /* 🔥 PREMIUM YELLOW PAY NOW BUTTON 🔥 */
         .pay-now-btn { 
           display: flex; 
           align-items: center; 
-          justify-content: space-between; /* Pushes text to left, arrow to right */
+          justify-content: space-between; 
           width: 100%; 
           padding: 22px 24px; 
-          background: #ff3e00; 
-          color: #fff; 
+          background: #ffc107; /* Vivid Cyber Yellow */
+          color: #000; /* Solid black text for ultimate contrast */
           text-decoration: none; 
           font-weight: 900; 
           font-size: 18px; 
@@ -197,17 +195,17 @@ export default function CartPage() {
           text-transform: uppercase; 
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
           border-radius: 8px;
-          box-shadow: 0 8px 24px rgba(255, 62, 0, 0.3); /* Glowing shadow effect */
+          box-shadow: 0 8px 24px rgba(255, 193, 7, 0.35); /* Yellow glowing shadow */
           margin-bottom: 30px;
         }
         .pay-now-btn:hover { 
           transform: translateY(-4px); 
-          background: #ff4d14;
-          box-shadow: 0 14px 32px rgba(255, 62, 0, 0.5); /* Stronger glow on hover */
+          background: #ffb300; /* Slightly deeper yellow on hover */
+          box-shadow: 0 14px 32px rgba(255, 193, 7, 0.5); /* Stronger glow */
         }
         .pay-now-btn:active {
           transform: translateY(2px);
-          box-shadow: 0 4px 12px rgba(255, 62, 0, 0.4);
+          box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
         }
 
         .trust-badges { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid rgba(128,128,128,0.2); padding-top: 20px; }
