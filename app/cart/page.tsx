@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation"; // 🔥 1. Imported useRouter
 import { X, ArrowLeft, ShieldCheck, Truck, RefreshCw, Ticket, Check, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 
 export default function CartPage() {
+  const router = useRouter(); // 🔥 2. Initialized router for bulletproof navigation
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCartStore();
 
   const [couponInput, setCouponInput] = useState("");
@@ -112,11 +114,11 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* 🔥 BOLD YELLOW PAY NOW BUTTON 🔥 */}
-              <Link href="/checkout" className="pay-now-btn">
+              {/* 🔥 3. GUARANTEED YELLOW PAY NOW BUTTON (Native Button bypasses Next.js Link CSS bugs) 🔥 */}
+              <button onClick={() => router.push("/checkout")} className="pay-now-btn">
                 <span>PAY NOW</span>
                 <ArrowRight size={22} strokeWidth={3} />
-              </Link>
+              </button>
 
               <div className="trust-badges">
                 <div className="badge-item"><ShieldCheck size={14}/> <span>SECURE CHECKOUT</span></div>
@@ -181,31 +183,32 @@ export default function CartPage() {
 
         /* 🔥 PREMIUM YELLOW PAY NOW BUTTON 🔥 */
         .pay-now-btn { 
-          display: flex; 
-          align-items: center; 
-          justify-content: space-between; 
-          width: 100%; 
-          padding: 22px 24px; 
-          background: #ffc107; /* Vivid Cyber Yellow */
-          color: #000; /* Solid black text for ultimate contrast */
-          text-decoration: none; 
-          font-weight: 900; 
-          font-size: 18px; 
-          letter-spacing: 3px;
-          text-transform: uppercase; 
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          border-radius: 8px;
-          box-shadow: 0 8px 24px rgba(255, 193, 7, 0.35); /* Yellow glowing shadow */
-          margin-bottom: 30px;
+          display: flex !important; 
+          align-items: center !important; 
+          justify-content: space-between !important; 
+          width: 100% !important; 
+          padding: 22px 24px !important; 
+          background: #ffc107 !important; /* Forced Vivid Cyber Yellow */
+          color: #000 !important; /* Forced Solid black text */
+          border: none !important;
+          font-weight: 900 !important; 
+          font-size: 18px !important; 
+          letter-spacing: 3px !important;
+          text-transform: uppercase !important; 
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          border-radius: 8px !important;
+          cursor: pointer !important;
+          box-shadow: 0 8px 24px rgba(255, 193, 7, 0.35) !important;
+          margin-bottom: 30px !important;
         }
         .pay-now-btn:hover { 
-          transform: translateY(-4px); 
-          background: #ffb300; /* Slightly deeper yellow on hover */
-          box-shadow: 0 14px 32px rgba(255, 193, 7, 0.5); /* Stronger glow */
+          transform: translateY(-4px) !important; 
+          background: #ffb300 !important; 
+          box-shadow: 0 14px 32px rgba(255, 193, 7, 0.5) !important; 
         }
         .pay-now-btn:active {
-          transform: translateY(2px);
-          box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+          transform: translateY(2px) !important;
+          box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4) !important;
         }
 
         .trust-badges { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid rgba(128,128,128,0.2); padding-top: 20px; }
