@@ -112,9 +112,10 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* 🔥 NEW PROCEED BUTTON 🔥 */}
-              <Link href="/checkout" className="proceed-action-btn">
-                PROCEED TO CHECKOUT <ArrowRight size={20} />
+              {/* 🔥 NEW HIGHLIGHTED PAY NOW BUTTON 🔥 */}
+              <Link href="/checkout" className="pay-now-btn">
+                <span>PAY NOW</span>
+                <ArrowRight size={22} strokeWidth={2.5} />
               </Link>
 
               <div className="trust-badges">
@@ -180,34 +181,33 @@ export default function CartPage() {
         .coupon-input-wrapper input { flex: 1; padding: 14px; background: none; border: none; outline: none; font-weight: 800; font-size: 12px; color: var(--text); }
         .apply-btn { background: none; border: none; color: #ff3e00; font-weight: 900; cursor: pointer; padding-left: 10px; }
 
-        /* 🔥 PROCEED BUTTON 🔥 */
-        .proceed-action-btn { 
+        /* 🔥 PREMIUM PAY NOW BUTTON 🔥 */
+        .pay-now-btn { 
           display: flex; 
           align-items: center; 
-          justify-content: center;
-          gap: 12px;
+          justify-content: space-between; /* Pushes text to left, arrow to right */
           width: 100%; 
-          padding: 22px; 
+          padding: 22px 24px; 
           background: #ff3e00; 
           color: #fff; 
-          text-align: center; 
           text-decoration: none; 
           font-weight: 900; 
-          font-size: 16px; 
-          letter-spacing: 2px; 
-          transition: 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+          font-size: 18px; 
+          letter-spacing: 3px;
+          text-transform: uppercase; 
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
           border-radius: 8px;
-          box-shadow: 0 6px 0px #b32b00; 
+          box-shadow: 0 8px 24px rgba(255, 62, 0, 0.3); /* Glowing shadow effect */
           margin-bottom: 30px;
         }
-        .proceed-action-btn:hover { 
-          transform: translateY(2px); 
-          box-shadow: 0 4px 0px #b32b00;
+        .pay-now-btn:hover { 
+          transform: translateY(-4px); 
           background: #ff4d14;
+          box-shadow: 0 14px 32px rgba(255, 62, 0, 0.5); /* Stronger glow on hover */
         }
-        .proceed-action-btn:active {
-          transform: translateY(6px);
-          box-shadow: 0 0px 0px #b32b00;
+        .pay-now-btn:active {
+          transform: translateY(2px);
+          box-shadow: 0 4px 12px rgba(255, 62, 0, 0.4);
         }
 
         .trust-badges { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid rgba(128,128,128,0.2); padding-top: 20px; }
