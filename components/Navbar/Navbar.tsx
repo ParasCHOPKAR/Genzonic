@@ -63,29 +63,24 @@ export default function Navbar() {
   /* =========================
      EFFECTS
   ========================= */
-  // Hydration fix for Zustand persist & LocalStorage Context
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Body Lock Effect
   useEffect(() => {
     if (categoryOpen || mobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
-
     return () => {
       document.body.style.overflow = "";
     };
@@ -94,30 +89,20 @@ export default function Navbar() {
   /* =========================
      MATH & PARSERS
   ========================= */
-  // Calculates true total (e.g., 2 Mediums + 1 Large = 3 total items)
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  // Smart Name Parser
   const getDisplayName = () => {
     if (!user) return "";
-    
-    // If the user has a real name that isn't the default "GenZonic"
     if (user.name && !user.name.toLowerCase().includes("genzonic")) {
       return user.name.split(" ")[0];
     }
-    
-    // Fallback: Extract name from email (e.g. paraschopkar0@gmail.com -> paraschopkar0 -> Paras)
     if (user.email) {
-      const emailName = user.email.split("@")[0].replace(/[0-9]/g, ""); // Removes numbers
-      return emailName.charAt(0).toUpperCase() + emailName.slice(1); // Capitalizes first letter
+      const emailName = user.email.split("@")[0].replace(/[0-9]/g, ""); 
+      return emailName.charAt(0).toUpperCase() + emailName.slice(1); 
     }
-    
     return "VIP";
   };
 
-  /* =========================
-     MARQUEE TEXT
-  ========================= */
   const marqueeText =
     "EVERY ORDER INCLUDES • CUSTOM GENZONIC KEYCHAIN • BRAND STORY CARD • EXCLUSIVE DISCOUNT CARD • CUSTOM PATCH & STICKERS • PREMIUM UTILITY BOX • MORE THAN JUST APPAREL — IT’S AN EXPERIENCE • ";
 
@@ -158,84 +143,89 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* ===== NAV LINKS (Hidden on Mobile via <style jsx>) ===== */}
+          {/* ===== NAV LINKS ===== */}
           <nav className="nav-links desktop-only">
             <Link href="/shop/men" className="nav-item">Men</Link>
             <Link href="/shop/women" className="nav-item">Women</Link>
             <Link href="/shop/kids" className="nav-item">Kids</Link>
           </nav>
 
-          {/* ===== RIGHT SIDE ===== */}
-          <div className="nav-actions">
+          {/* ===== RIGHT SIDE ACTIONS - CSS GRID LAYOUT ===== */}
+          <div className="nav-actions grid-layout">
 
-            {/* SEARCH (Hidden on Mobile via <style jsx>) */}
-            <div className={`search-wrapper desktop-only ${searchOpen ? "active" : ""}`}>
+            {/* SEARCH */}
+            <div className={`search-wrapper desktop-only ${searchOpen ? "active" : ""}`} style={{ display: 'flex', alignItems: 'center' }}>
               <input
                 type="text"
                 placeholder="SEARCH"
                 className="search-input"
               />
               <button
-                className="icon-btn"
+                className="icon-grid-btn"
                 onClick={() => setSearchOpen(!searchOpen)}
               >
                 {searchOpen ? <X size={22} /> : <Search size={22} />}
               </button>
             </div>
 
-            {/* COLLECTION BUTTON (Hidden on Mobile via <style jsx>) */}
+            {/* COLLECTION BUTTON */}
             <button
               className="collections-btn premium-pop-btn desktop-only"
               onClick={() => setCategoryOpen(true)}
+              style={{ display: "flex", alignItems: "center", height: "40px", boxSizing: "border-box" }}
             >
-              PREMIUM COLLECTION <ChevronDown size={16} />
+              PREMIUM COLLECTION <ChevronDown size={16} style={{ marginLeft: '6px' }} />
             </button>
 
-            {/* 🔥 WISHLIST BUTTON (Visible everywhere) 🔥 */}
-            <Link href="/wishlist" className="wishlist-btn" style={{ position: "relative", display: "flex", alignItems: "center", textDecoration: "none", color: "inherit", marginRight: "10px", transition: "transform 0.2s" }}>
-              <Heart size={26} strokeWidth={1.5} />
+            {/* 🔥 WISHLIST BUTTON 🔥 */}
+            <Link href="/wishlist" className="icon-grid-btn hover-scale" style={{ position: "relative" }}>
+              <Heart size={24} strokeWidth={1.5} />
               {mounted && wishlist.length > 0 && (
-                <span style={{ position: "absolute", top: "-5px", right: "-8px", backgroundColor: "#ef4444", color: "white", fontSize: "10px", fontWeight: "bold", borderRadius: "50%", width: "18px", height: "18px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0px 2px 5px rgba(0,0,0,0.2)" }}>
+                <span className="badge-pop">
                   {wishlist.length}
                 </span>
               )}
             </Link>
 
-            {/* 🔥 UPDATED CART BUTTON (Visible everywhere) 🔥 */}
-            <Link href="/cart" className="cart-btn" style={{ position: "relative", display: "flex", alignItems: "center" }}>
-              <ShoppingCart size={26} />
+            {/* 🔥 CART BUTTON 🔥 */}
+            <Link href="/cart" className="icon-grid-btn hover-scale" style={{ position: "relative" }}>
+              <ShoppingCart size={24} strokeWidth={1.5} />
               {mounted && cartCount > 0 && (
-                <span className="cart-count">{cartCount}</span>
+                <span className="badge-pop">
+                  {cartCount}
+                </span>
               )}
             </Link>
 
-            {/* ================= AUTH (Hidden on Mobile via <style jsx>) ================= */}
-            <div className="auth-group desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            {/* ================= AUTH ================= */}
+            <div className="auth-group desktop-only grid-layout" style={{ gap: '10px' }}>
               {!isAuthenticated ? (
                 <>
                   <Link
                     href="/login"
                     className={`auth-btn ${isLogin ? "active-auth" : ""}`}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "40px", boxSizing: "border-box" }}
                   >
                     Sign In
                   </Link>
                 </>
               ) : (
                 <>
-                  <span className="user-name">
+                  <span className="user-name" style={{ display: 'flex', alignItems: 'center', height: '40px' }}>
                     Hi, {getDisplayName()}
                   </span>
-                  <Link href="/profile" className="profile-btn">
+                  <Link href="/profile" className="icon-grid-btn hover-scale">
                     <User size={22} />
                   </Link>
                   {user?.role === "admin" && (
-                    <Link href="/admin" className="admin-btn">
+                    <Link href="/admin" className="admin-btn" style={{ display: "flex", alignItems: "center", height: "40px", boxSizing: "border-box" }}>
                       Admin
                     </Link>
                   )}
                   <button
-                    className="logout-btn"
+                    className="icon-grid-btn hover-scale"
                     onClick={() => signOut({ callbackUrl: "/" })}
+                    style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer' }}
                   >
                     <LogOut size={22} />
                   </button>
@@ -243,9 +233,9 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* MOBILE MENU BUTTON (Visible only on Mobile via <style jsx>) */}
+            {/* 🔥 MOBILE MENU BUTTON 🔥 */}
             <button
-              className="mobile-menu-btn"
+              className="mobile-menu-btn icon-grid-btn"
               onClick={() => setMobileMenuOpen(true)}
             >
               <Menu size={28} />
@@ -256,15 +246,12 @@ export default function Navbar() {
       </header>
 
       {/* ================= TRUE MOBILE SIDEBAR (DRAWER) ================= */}
-      {/* 1. Blurred Backdrop */}
       <div 
         className={`mobile-backdrop ${mobileMenuOpen ? "open" : ""}`} 
         onClick={() => setMobileMenuOpen(false)}
       />
 
-      {/* 2. Slide-out Sidebar */}
       <div className={`mobile-sidebar ${mobileMenuOpen ? "open" : ""}`}>
-        
         <div className="sidebar-header">
           <span className="sidebar-title">NAVIGATION</span>
           <button className="sidebar-close-btn" onClick={() => setMobileMenuOpen(false)}>
@@ -276,7 +263,6 @@ export default function Navbar() {
           <Link href="/shop/men" onClick={() => setMobileMenuOpen(false)}>MEN'S <span className="arrow">→</span></Link>
           <Link href="/shop/women" onClick={() => setMobileMenuOpen(false)}>WOMEN'S <span className="arrow">→</span></Link>
           <Link href="/shop/kids" onClick={() => setMobileMenuOpen(false)}>KID'S <span className="arrow">→</span></Link>
-          
           <button 
             className="mobile-premium-trigger"
             onClick={() => {
@@ -300,22 +286,18 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              {/* 🔥 Profile centered directly 🔥 */}
               <div className="mobile-user-tag">
                 <User size={18} />
                 <span>{user?.email}</span>
               </div>
-
               <Link href="/profile" className="mobile-action-btn outline" onClick={() => setMobileMenuOpen(false)}>
                 MY PROFILE
               </Link>
-
               {user?.role === "admin" && (
                 <Link href="/admin" className="mobile-action-btn admin" onClick={() => setMobileMenuOpen(false)}>
                   COMMAND CENTER
                 </Link>
               )}
-              
               <button className="mobile-action-btn danger" onClick={() => signOut({ callbackUrl: "/" })}>
                 <LogOut size={18} /> LOGOUT
               </button>
@@ -326,8 +308,6 @@ export default function Navbar() {
 
       {/* ================= CATEGORY OVERLAY ================= */}
       <div className={`category-overlay ${categoryOpen ? "show" : ""}`}>
-        
-        {/* OVERLAY HEADER */}
         <div className="overlay-header-split">
           <div className="overlay-brand-line">
             <Image
@@ -344,7 +324,6 @@ export default function Navbar() {
             <div className="overlay-divider-line"></div>
             <span className="overlay-inline-title">PREMIUM COLLECTION</span>
           </div>
-          
           <button
             className="close-btn"
             onClick={() => setCategoryOpen(false)}
@@ -354,10 +333,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* OVERLAY SPLIT BODY */}
         <div className="overlay-split-body">
-          
-          {/* LEFT COLUMN: NAVIGATION */}
           <div className="overlay-left-col">
             <div className="nav-vertical-list">
               <Link href="/shop/men" style={{ '--i': 1 } as React.CSSProperties} onClick={() => setCategoryOpen(false)}>
@@ -372,16 +348,11 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: PREMIUM SHOWCASE */}
           <div className="overlay-right-col">
-            
-            {/* Intro Text */}
             <div className="showcase-intro reveal-item" style={{ '--i': 1 } as React.CSSProperties}>
               <h3>THE ULTIMATE EXPERIENCE</h3>
               <p>GenZonic Premium bridges the gap between high-fashion presentation and core streetwear. It is not just clothing; it is a meticulously curated physical artifact.</p>
             </div>
-
-            {/* Comparison Table */}
             <div className="showcase-comparison reveal-item" style={{ '--i': 2 } as React.CSSProperties}>
               <div className="comp-side regular-side">
                 <h4>REGULAR</h4>
@@ -400,10 +371,7 @@ export default function Navbar() {
                 </ul>
               </div>
             </div>
-
-            {/* Visual Items Grid */}
             <div className="showcase-items-grid">
-              
               <div className="perk-card reveal-item" style={{ '--i': 3 } as React.CSSProperties}>
                 <div className="perk-icon-wrapper"><Key size={28} strokeWidth={1.5} /></div>
                 <div className="perk-info">
@@ -411,7 +379,6 @@ export default function Navbar() {
                   <p>Heavyweight matte metal with engraved branding.</p>
                 </div>
               </div>
-
               <div className="perk-card reveal-item" style={{ '--i': 4 } as React.CSSProperties}>
                 <div className="perk-icon-wrapper"><BookOpen size={28} strokeWidth={1.5} /></div>
                 <div className="perk-info">
@@ -419,7 +386,6 @@ export default function Navbar() {
                   <p>High-GSM pressed paper detailing the lore.</p>
                 </div>
               </div>
-
               <div className="perk-card reveal-item" style={{ '--i': 5 } as React.CSSProperties}>
                 <div className="perk-icon-wrapper"><Ticket size={28} strokeWidth={1.5} /></div>
                 <div className="perk-info">
@@ -427,7 +393,6 @@ export default function Navbar() {
                   <p>A physical NFC-enabled card for future drops.</p>
                 </div>
               </div>
-
               <div className="perk-card reveal-item" style={{ '--i': 6 } as React.CSSProperties}>
                 <div className="perk-icon-wrapper"><Shield size={28} strokeWidth={1.5} /></div>
                 <div className="perk-info">
@@ -435,7 +400,6 @@ export default function Navbar() {
                   <p>Woven brand insignias with adhesive backing.</p>
                 </div>
               </div>
-
               <div className="perk-card reveal-item box-card" style={{ '--i': 7 } as React.CSSProperties}>
                 <div className="perk-icon-wrapper"><Box size={32} strokeWidth={1.5} /></div>
                 <div className="perk-info">
@@ -443,22 +407,70 @@ export default function Navbar() {
                   <p>A matte-black rigid structure designed to be kept and reused.</p>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
       </div>
 
       {/* ================= RESPONSIVE MOBILE OVERRIDES ================= */}
       <style jsx>{`
-        .wishlist-btn:hover {
+        /* 🔥 CSS GRID LAYOUT - FORCES PERFECT ALIGNMENT 🔥 */
+        .grid-layout {
+          display: grid !important;
+          grid-auto-flow: column;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .icon-grid-btn {
+          display: grid !important;
+          place-items: center !important;
+          width: 40px !important;
+          height: 40px !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          text-decoration: none !important;
+          color: inherit !important;
+          background: transparent;
+          border: none;
+        }
+
+        .icon-grid-btn svg {
+          display: block !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        /* CLEAN HOVER SCALE */
+        .hover-scale {
+          transition: transform 0.2s ease;
+        }
+        .hover-scale:hover {
           transform: scale(1.1);
         }
-        
-        /* Hide Mobile Sidebar by default on Desktop */
+
+        /* NOTIFICATION BADGES */
+        .badge-pop {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          background-color: #ef4444;
+          color: white;
+          font-size: 10px;
+          font-weight: bold;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          display: grid;
+          place-items: center;
+          box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+          pointer-events: none;
+          transform: translate(25%, -25%);
+        }
+
+        /* Hide Mobile Sidebar & Menu Button by default on Desktop */
         .mobile-backdrop, .mobile-sidebar, .mobile-menu-btn {
-          display: none;
+          display: none !important;
         }
 
         @media (max-width: 1024px) {
@@ -473,28 +485,19 @@ export default function Navbar() {
 
           /* 2. FORCE NAVBAR ACTIONS TO ALIGN RIGHT */
           :global(.nav-actions) {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: flex-end !important;
-            gap: 15px !important;
             width: auto !important;
+            justify-content: end;
           }
 
           /* 3. SHOW HAMBURGER MENU */
           .mobile-menu-btn {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            color: var(--text, inherit);
+            display: grid !important;
             cursor: pointer;
-            padding: 0;
           }
 
           /* 4. MOBILE SIDEBAR BACKDROP */
           .mobile-backdrop {
-            display: block;
+            display: block !important;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.6);
@@ -511,7 +514,7 @@ export default function Navbar() {
 
           /* 5. MOBILE SIDEBAR DRAWER */
           .mobile-sidebar {
-            display: flex;
+            display: flex !important;
             position: fixed;
             top: 0;
             right: 0;
@@ -532,14 +535,14 @@ export default function Navbar() {
             transform: translateX(0);
           }
 
-          /* SIDEBAR HEADER - Z-INDEX FIX SO IT ALWAYS CLICKS */
+          /* SIDEBAR HEADER */
           .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(128,128,128,0.2); }
           .sidebar-title { font-size: 10px; font-weight: 900; letter-spacing: 3px; opacity: 0.5; }
           .sidebar-close-btn { 
             background: transparent; border: none; color: inherit; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
             padding: 10px; margin-right: -10px; 
-            position: relative; z-index: 100000 !important; /* Force top layer */
+            position: relative; z-index: 100000 !important;
             pointer-events: auto;
           }
 
@@ -559,11 +562,11 @@ export default function Navbar() {
           .mobile-search-box { display: flex; align-items: center; gap: 10px; background: rgba(128,128,128,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
           .mobile-search-box input { border: none; background: transparent; width: 100%; outline: none; font-size: 14px; color: inherit; font-weight: 600; }
           
-          /* 🔥 PROFILE CENTERED 🔥 */
+          /* PROFILE CENTERED */
           .mobile-user-tag { 
             display: flex; 
             align-items: center; 
-            justify-content: center; /* Centers horizontally */
+            justify-content: center;
             gap: 8px; 
             font-size: 13px; 
             font-weight: 800; 
@@ -573,7 +576,7 @@ export default function Navbar() {
             text-align: center;
           }
           
-          /* 🔥 IMPROVED BUTTON STYLING 🔥 */
+          /* MOBILE BUTTONS */
           .mobile-action-btn { 
             display: flex; align-items: center; justify-content: center; gap: 10px; 
             width: 100%; padding: 16px; font-size: 12px; font-weight: 900; 
@@ -581,14 +584,7 @@ export default function Navbar() {
             border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; 
           }
           .mobile-action-btn.primary { background: var(--text, #fff); color: var(--bg, #000); }
-          
-          /* Fixed the weird box around MY PROFILE */
-          .mobile-action-btn.outline { 
-            background: transparent; 
-            color: var(--text); 
-            border: 2px solid var(--text); /* Solid bold border instead of gray wireframe */
-          }
-          
+          .mobile-action-btn.outline { background: transparent; color: var(--text); border: 2px solid var(--text); }
           .mobile-action-btn.admin { background: #3b82f6; color: white; }
           .mobile-action-btn.danger { background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
 
@@ -598,16 +594,11 @@ export default function Navbar() {
         }
 
         @media (max-width: 600px) {
-          /* 🔥 LOGO ADJUSTED TO BE CLEARLY VISIBLE 🔥 */
           :global(.brand-logo) { 
-            height: 36px !important; /* Increased height to make logo bigger */
+            height: 36px !important;
             width: auto !important; 
             object-fit: contain !important;
           }
-          
-          :global(.cart-btn) svg { width: 24px; height: 24px; }
-          .mobile-menu-btn svg { width: 28px; height: 28px; } /* Slightly larger hamburger */
-          .mobile-sidebar { width: 90%; }
         }
       `}</style>
     </>

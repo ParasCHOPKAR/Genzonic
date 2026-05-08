@@ -4,14 +4,30 @@ import { useEffect, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Loader2, Heart, ShoppingBag } from "lucide-react";
+import { useWishlist } from "@/app/context/WishlistContext"; // 🔥 Imported the global memory
 
 // Simplified & Compact Product Card
 function InteractiveProductCard({ product }: { product: any }) {
-  const [isLiked, setIsLiked] = useState(false);
+  // 🔥 Connected to your global WishlistContext
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  
+  const productId = product._id || product.id;
+  const isLiked = isInWishlist(productId);
 
   // Fake a 35% markup for the UI discount badge
   const originalPrice = product.originalPrice || Math.round(product.price * 1.35);
   const discountPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+
+  // 🔥 Function to handle adding/removing from wishlist
+  const handleHeartClick = (e: React.MouseEvent) => {
+    e.preventDefault(); 
+    toggleWishlist({
+      id: productId,
+      name: product.name,
+      price: product.price,
+      image: product.image || "/fallback.png"
+    });
+  };
 
   return (
     <div className="product-card">
@@ -19,9 +35,13 @@ function InteractiveProductCard({ product }: { product: any }) {
         {/* Like Button */}
         <button 
           className="like-btn" 
-          onClick={(e) => { e.preventDefault(); setIsLiked(!isLiked); }}
+          onClick={handleHeartClick}
         >
-          <Heart size={16} fill={isLiked ? "#ff3e00" : "transparent"} color={isLiked ? "#ff3e00" : "var(--text)"} />
+          <Heart 
+            size={16} 
+            fill={isLiked ? "#ff3e00" : "transparent"} 
+            color={isLiked ? "#ff3e00" : "var(--text)"} 
+          />
         </button>
 
         <Image src={product.image || "/fallback.png"} alt={product.name} fill style={{ objectFit: 'cover' }} />
