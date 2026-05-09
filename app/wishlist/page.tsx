@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useWishlist } from "@/app/context/WishlistContext";
-import { X, ShoppingCart, ArrowRight, Heart } from "lucide-react";
+import { X, ShoppingCart, ArrowRight, Heart, CheckCircle2 } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useTheme } from "@/app/context/ThemeContext";
 import gsap from "gsap";
@@ -16,6 +16,9 @@ export default function WishlistPage() {
   
   const containerRef = useRef(null);
   const [isMounted, setIsMounted] = useState(false);
+  
+  // 🔥 State to track which item was just added for the success animation
+  const [addedItemId, setAddedItemId] = useState<string | number | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -37,6 +40,28 @@ export default function WishlistPage() {
 
     return () => ctx.revert();
   }, [isMounted, wishlist.length]);
+
+  // 🔥 Bulletproof Add To Cart Function
+  const handleAddToCart = (item: any) => {
+    // 1. Send the exact formatted data to Zustand Cart Store
+    addToCart({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      quantity: 1,
+      size: "M", // Default size for quick-add
+      color: "Black" // Default color for quick-add
+    });
+
+    // 2. Trigger the success UI animation
+    setAddedItemId(item.id);
+
+    // 3. Reset the button after 2 seconds
+    setTimeout(() => {
+      setAddedItemId(null);
+    }, 2000);
+  };
 
   if (!isMounted) return null; // Prevent hydration mismatch
 
@@ -84,43 +109,56 @@ export default function WishlistPage() {
           
           /* ================= POPULATED GRID ================= */
           <div className="wishlist-grid">
-            {wishlist.map((item) => (
-              <div key={item.id} className="artifact-card anim-fade-up">
-                
-                {/* Image Container */}
-                <div className="image-vault">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="artifact-img"
-                  />
-                  
-                  {/* Glassmorphic Remove Button */}
-                  <button 
-                    onClick={() => removeFromWishlist(item.id)}
-                    className="remove-btn"
-                    aria-label="Remove from vault"
-                  >
-                    <X size={16} strokeWidth={3} />
-                  </button>
-                </div>
+            {wishlist.map((item) => {
+              const isJustAdded = addedItemId === item.id;
 
-                {/* Artifact Info */}
-                <div className="artifact-info">
-                  <h3>{item.name}</h3>
-                  <span className="price">₹{item.price}</span>
+              return (
+                <div key={item.id} className="artifact-card anim-fade-up">
                   
-                  {/* Action Button */}
-                  <button 
-                    onClick={() => addToCart({ ...item, quantity: 1, size: "M", color: "Black" } as any)}
-                    className="cart-btn"
-                  >
-                    <ShoppingCart size={14} /> ACQUIRE ARTIFACT
-                  </button>
+                  {/* Image Container */}
+                  <div className="image-vault">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="artifact-img"
+                    />
+                    
+                    {/* Glassmorphic Remove Button */}
+                    <button 
+                      onClick={() => removeFromWishlist(item.id)}
+                      className="remove-btn"
+                      aria-label="Remove from vault"
+                    >
+                      <X size={16} strokeWidth={3} />
+                    </button>
+                  </div>
+
+                  {/* Artifact Info */}
+                  <div className="artifact-info">
+                    <h3>{item.name}</h3>
+                    <span className="price">₹{item.price}</span>
+                    
+                    {/* 🔥 UPGRADED ACTION BUTTON 🔥 */}
+                    <button 
+                      onClick={() => handleAddToCart(item)}
+                      disabled={isJustAdded}
+                      className={`cart-btn ${isJustAdded ? "success-state" : ""}`}
+                    >
+                      {isJustAdded ? (
+                        <>
+                          <CheckCircle2 size={16} /> ARTIFACT ACQUIRED
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart size={14} /> ACQUIRE ARTIFACT
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -229,7 +267,6 @@ export default function WishlistPage() {
           line-height: 1.6;
         }
 
-        /* 🔥 FIXED EXPLORE BUTTON 🔥 */
         .explore-btn {
           display: flex;
           align-items: center;
@@ -331,7 +368,7 @@ export default function WishlistPage() {
           margin-bottom: 20px;
         }
 
-        /* ACQUIRE BUTTON */
+        /* 🔥 UPGRADED ACQUIRE BUTTON 🔥 */
         .cart-btn {
           display: flex;
           align-items: center;
@@ -351,9 +388,18 @@ export default function WishlistPage() {
           transition: all 0.3s ease;
           margin-top: auto;
         }
-        .cart-btn:hover {
+        
+        .cart-btn:hover:not(.success-state) {
           background: var(--text);
           color: var(--bg);
+        }
+
+        /* SUCCESS STATE STYLING */
+        .cart-btn.success-state {
+          background: #22c55e !important;
+          color: white !important;
+          border-color: #22c55e !important;
+          cursor: default;
         }
 
         @media (max-width: 600px) {
