@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useSession } from "next-auth/react"; // 🔥 Imported NextAuth to track the user
+import { useSession } from "next-auth/react";
 
 export interface WishlistItem {
   id: string | number;
@@ -22,31 +22,33 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const { data: session, status } = useSession(); // 🔥 Get current login status
+  const [loadedKey, setLoadedKey] = useState<string | null>(null); // 🔥 NEW: The safety lock
+  const { data: session, status } = useSession();
 
-  // 🔥 Dynamically create a storage key based on the user's email
   const userKey = status === "authenticated" && session?.user?.email 
     ? `genzonic_wishlist_${session.user.email}` 
     : "genzonic_wishlist_guest";
 
-  // LOAD DATA: When the user logs in or out, fetch THEIR specific wishlist
+  // 1. LOAD DATA
   useEffect(() => {
-    if (status === "loading") return; // Wait for authentication to finish
+    if (status === "loading") return;
 
     const saved = localStorage.getItem(userKey);
     if (saved) {
       setWishlist(JSON.parse(saved));
     } else {
-      setWishlist([]); // Start fresh if this user has no history
+      setWishlist([]); 
     }
+    setLoadedKey(userKey); // 🔥 Unlocks saving ONLY after data is safely on screen
   }, [userKey, status]);
 
-  // SAVE DATA: Whenever they like an item, save it to THEIR specific key
+  // 2. SAVE DATA
   useEffect(() => {
-    if (status !== "loading") {
+    // 🔥 Only save if the data on the screen actually belongs to the current user!
+    if (loadedKey === userKey) {
       localStorage.setItem(userKey, JSON.stringify(wishlist));
     }
-  }, [wishlist, userKey, status]);
+  }, [wishlist, loadedKey, userKey]);
 
   const addToWishlist = (item: WishlistItem) => {
     setWishlist((prev) => (prev.some((i) => i.id === item.id) ? prev : [...prev, item]));
