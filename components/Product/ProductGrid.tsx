@@ -8,6 +8,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { Loader2, Heart } from "lucide-react";
 
+// 🔥 Import the global wishlist context so the button actually saves data!
+import { useWishlist } from "@/app/context/WishlistContext";
+
 // Register GSAP plugin
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -18,17 +21,23 @@ if (typeof window !== "undefined") {
 ========================= */
 const CategoryCard = ({ product }: { product: any }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  
+  // 🔥 Connect to global memory instead of local fake state
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   // Safely map MongoDB data
   const frontImage = product.images?.[0] || "/fallback.png";
   const backImage = product.images?.[1] || frontImage; 
+  const productId = product._id || product.id;
+  
+  // Check if this specific item is in the global vault
+  const isWishlisted = isInWishlist(productId);
   
   const originalPrice = product.originalPrice || Math.round(product.price * 1.3);
   const discountPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
 
   // URL for the Product Details Page
-  const productUrl = `/product/${product.slug || product._id || product.id}`;
+  const productUrl = `/product/${product.slug || productId}`;
 
   return (
     <div className="cat-card">
@@ -54,15 +63,25 @@ const CategoryCard = ({ product }: { product: any }) => {
           />
         </Link>
 
-        {/* Wishlist Button */}
+        {/* 🔥 REAL Wishlist Button connected to Context 🔥 */}
         <button 
           className="wishlist-btn"
           onClick={(e) => {
             e.preventDefault(); 
-            setIsWishlisted(!isWishlisted);
+            toggleWishlist({
+              id: productId,
+              name: product.name,
+              price: product.price,
+              image: frontImage
+            });
           }}
         >
-          <Heart size={16} fill={isWishlisted ? "#000" : "none"} strokeWidth={2} />
+          <Heart 
+            size={16} 
+            fill={isWishlisted ? "#ff3e00" : "none"} 
+            color={isWishlisted ? "#ff3e00" : "#000"} 
+            strokeWidth={2} 
+          />
         </button>
       </div>
 
@@ -129,7 +148,7 @@ export default function CategoryPage() {
     fetchProducts();
   }, [categoryRaw]);
 
-  // GSAP Animations (Untouched)
+  // GSAP Animations
   useEffect(() => {
     if (isLoading || products.length === 0) return;
 
@@ -197,7 +216,7 @@ export default function CategoryPage() {
         :global(.dark) .image-box { background-color: #111; }
         .img-link { display: block; width: 100%; height: 100%; }
 
-        .wishlist-btn { position: absolute; top: 15px; right: 15px; background: #fff; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10; color: #000; transition: transform 0.2s ease; }
+        .wishlist-btn { position: absolute; top: 15px; right: 15px; background: #fff; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10; transition: transform 0.2s ease; }
         .wishlist-btn:hover { transform: scale(1.1); }
 
         /* Info Section */
@@ -214,7 +233,6 @@ export default function CategoryPage() {
         .buy-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; background: transparent; border: 1px solid var(--text); color: var(--text); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-decoration: none; transition: all 0.3s ease; border-radius: 4px; margin-top: 5px; }
         .buy-btn:hover { background: var(--text); color: var(--bg); }
 
-        /* 🔥 MOBILE OVERRIDES FOR CARD 🔥 */
         @media (max-width: 600px) {
           .cat-card { gap: 10px; }
           .wishlist-btn { width: 28px; height: 28px; top: 10px; right: 10px; }
@@ -230,9 +248,9 @@ export default function CategoryPage() {
       `}</style>
 
       <style jsx>{`
-        /* PAGE BASE */
-        /* overflow-x: hidden prevents the horizontal scroll bug from the screenshot */
-        .category-page { padding: 140px 6% 100px; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        /* 🔥 FIXED: padding-top bumped to 220px to clear the massive navbar 🔥 */
+        .category-page { padding: 220px 6% 100px; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        
         .cat-container { max-width: 1400px; margin: 0 auto; }
         .header-block { margin-bottom: 50px; }
         
@@ -247,10 +265,8 @@ export default function CategoryPage() {
         
         .divider { border: none; border-top: 1px solid rgba(128,128,128,0.2); }
 
-        /* GRID - Desktop Default */
         .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 50px 30px; }
 
-        /* STATES */
         .loading-state, .empty-state { min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; opacity: 0.5; }
         .loading-state p { font-size: 12px; font-weight: 800; letter-spacing: 3px; }
         .spinner { animation: spin 1s linear infinite; }
@@ -258,25 +274,22 @@ export default function CategoryPage() {
         .empty-state h3 { font-size: 24px; font-weight: 900; margin: 0; }
         .empty-state p { font-size: 14px; margin: 0; }
 
-        /* 🔥 MOBILE OVERRIDES FOR PAGE 🔥 */
         @media (max-width: 1200px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 850px) { .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 40px 20px; } }
         
-        /* Strict Mobile View Fix */
         @media (max-width: 600px) { 
-          .category-page { padding: 110px 5% 80px; }
+          /* 🔥 FIXED Mobile Padding 🔥 */
+          .category-page { padding: 180px 5% 80px; }
           .header-block { margin-bottom: 30px; }
           
-          /* This fixes the massive text breaking the screen width */
           .cat-title { 
-            font-size: clamp(2.5rem, 12vw, 3.5rem); /* Dynamically shrinks to fit screen */
+            font-size: clamp(2.5rem, 12vw, 3.5rem); 
             letter-spacing: -1px; 
             margin-bottom: 20px;
             line-height: 1.1;
-            word-wrap: break-word; /* Forces long words to wrap if needed */
+            word-wrap: break-word; 
           }
           
-          /* Premium 2-Column Grid */
           .cat-grid { 
             grid-template-columns: repeat(2, 1fr); 
             gap: 20px 10px; 
