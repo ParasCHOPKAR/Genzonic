@@ -277,7 +277,7 @@ export default function Navbar() {
         <div className="mobile-auth-actions">
           <div className="mobile-search-box">
             <Search size={20} />
-            <input type="text" placeholder="Search artifacts..." />
+            <input type="text" placeholder="SEARCH ARTIFACTS..." />
           </div>
 
           {!isAuthenticated ? (
@@ -287,10 +287,10 @@ export default function Navbar() {
           ) : (
             <>
               <div className="mobile-user-tag">
-                <User size={18} />
+                <User size={16} />
                 <span>{user?.email}</span>
               </div>
-              <Link href="/profile" className="mobile-action-btn outline" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/profile" className="mobile-action-btn solid" onClick={() => setMobileMenuOpen(false)}>
                 MY PROFILE
               </Link>
               {user?.role === "admin" && (
@@ -299,7 +299,7 @@ export default function Navbar() {
                 </Link>
               )}
               <button className="mobile-action-btn danger" onClick={() => signOut({ callbackUrl: "/" })}>
-                <LogOut size={18} /> LOGOUT
+                <LogOut size={16} /> LOGOUT
               </button>
             </>
           )}
@@ -474,25 +474,27 @@ export default function Navbar() {
         }
 
         @media (max-width: 1024px) {
-          /* 1. HIDE ALL DESKTOP NAVBAR ELEMENTS */
-          :global(.desktop-only),
-          :global(.nav-links),
-          :global(.search-wrapper),
-          :global(.collections-btn),
-          :global(.auth-group) {
+          /* 🔥 1. FIXED: Removed :global() so these actually hide on mobile 🔥 */
+          .desktop-only,
+          .nav-links,
+          .search-wrapper,
+          .collections-btn,
+          .auth-group {
             display: none !important;
           }
 
           /* 2. FORCE NAVBAR ACTIONS TO ALIGN RIGHT */
-          :global(.nav-actions) {
+          .nav-actions {
             width: auto !important;
-            justify-content: end;
+            justify-content: flex-end;
+            gap: 10px;
           }
 
           /* 3. SHOW HAMBURGER MENU */
           .mobile-menu-btn {
             display: grid !important;
             cursor: pointer;
+            margin-left: 5px;
           }
 
           /* 4. MOBILE SIDEBAR BACKDROP */
@@ -519,7 +521,7 @@ export default function Navbar() {
             top: 0;
             right: 0;
             width: 85%;
-            max-width: 400px;
+            max-width: 380px;
             height: 100vh;
             background: var(--bg, #050505) !important; 
             color: var(--text, #ffffff);
@@ -528,7 +530,7 @@ export default function Navbar() {
             padding: 30px 25px;
             transform: translateX(100%);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.1); /* Softer shadow */
             overflow-y: auto;
           }
           .mobile-sidebar.open {
@@ -536,8 +538,8 @@ export default function Navbar() {
           }
 
           /* SIDEBAR HEADER */
-          .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(128,128,128,0.2); }
-          .sidebar-title { font-size: 10px; font-weight: 900; letter-spacing: 3px; opacity: 0.5; }
+          .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(128,128,128,0.2); }
+          .sidebar-title { font-size: 11px; font-weight: 900; letter-spacing: 3px; opacity: 0.5; }
           .sidebar-close-btn { 
             background: transparent; border: none; color: inherit; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
@@ -548,35 +550,40 @@ export default function Navbar() {
 
           /* SIDEBAR LINKS */
           .mobile-nav-links { display: flex; flex-direction: column; gap: 0; margin-bottom: 20px; }
-          .mobile-nav-links a, .mobile-premium-trigger { font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: inherit; text-decoration: none; padding: 20px 0; border-bottom: 1px solid rgba(128,128,128,0.1); display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; width: 100%; cursor: pointer; text-align: left; outline: none; }
+          .mobile-nav-links a, .mobile-premium-trigger { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: inherit; text-decoration: none; padding: 20px 0; border-bottom: 1px solid rgba(128,128,128,0.1); display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; width: 100%; cursor: pointer; text-align: left; outline: none; }
           .mobile-premium-trigger { color: #ffc107; }
-          .arrow { opacity: 0.3; font-size: 20px; }
+          .arrow { opacity: 0.3; font-size: 18px; }
 
           /* SIDEBAR AUTH & SEARCH */
           .mobile-auth-actions { 
             display: flex; flex-direction: column; gap: 12px; 
-            margin-top: 20px;
+            margin-top: auto;
             padding-bottom: 40px; 
           }
           
-          .mobile-search-box { display: flex; align-items: center; gap: 10px; background: rgba(128,128,128,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+          .mobile-search-box { display: flex; align-items: center; gap: 10px; background: rgba(128,128,128,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(128,128,128,0.1); }
           .mobile-search-box input { border: none; background: transparent; width: 100%; outline: none; font-size: 14px; color: inherit; font-weight: 600; }
           
-          /* PROFILE CENTERED */
+          /* 🔥 FIXED: PREMIUM USER TAG 🔥 */
           .mobile-user-tag { 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            gap: 8px; 
-            font-size: 13px; 
-            font-weight: 800; 
-            opacity: 0.7; 
-            padding: 10px 0 15px 0; 
+            gap: 10px; 
+            font-size: 12px; 
+            font-family: monospace; /* Gives a nice tech/streetwear vibe */
+            font-weight: 600; 
+            padding: 15px; 
+            background: rgba(128,128,128,0.05); 
+            border-radius: 8px;
             width: 100%; 
             text-align: center;
+            margin-bottom: 10px;
+            word-break: break-all;
+            border: 1px solid rgba(128,128,128,0.1);
           }
           
-          /* MOBILE BUTTONS */
+          /* 🔥 FIXED: PREMIUM MOBILE BUTTONS 🔥 */
           .mobile-action-btn { 
             display: flex; align-items: center; justify-content: center; gap: 10px; 
             width: 100%; padding: 16px; font-size: 12px; font-weight: 900; 
@@ -584,9 +591,9 @@ export default function Navbar() {
             border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; 
           }
           .mobile-action-btn.primary { background: var(--text, #fff); color: var(--bg, #000); }
-          .mobile-action-btn.outline { background: transparent; color: var(--text); border: 2px solid var(--text); }
+          .mobile-action-btn.solid { background: var(--text); color: var(--bg); border: none; } /* Replaced outline with solid high contrast */
           .mobile-action-btn.admin { background: #3b82f6; color: white; }
-          .mobile-action-btn.danger { background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+          .mobile-action-btn.danger { background: rgba(239, 68, 68, 0.05); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 
           /* PREMIUM OVERLAY MOBILE FIXES */
           :global(.overlay-split-body) { grid-template-columns: 1fr !important; gap: 40px !important; }

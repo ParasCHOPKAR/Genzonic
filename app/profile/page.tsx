@@ -60,8 +60,9 @@ export default function ProfilePage() {
               className={`nav-btn ${activeTab === "orders" ? "active" : ""}`}
               onClick={() => setActiveTab("orders")}
             >
-              <Package size={18} /> ORDER ARCHIVE
+              <Package size={18} /> ORDER DETAILS
             </button>
+            
             <button 
               className={`nav-btn ${activeTab === "saved" ? "active" : ""}`}
               onClick={() => setActiveTab("saved")}
