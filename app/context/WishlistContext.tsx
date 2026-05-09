@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useSession } from "next-auth/react"; // 🔥 Imported NextAuth to track the user
 
 export interface WishlistItem {
   id: string | number;
@@ -14,24 +15,38 @@ interface WishlistContextType {
   addToWishlist: (item: WishlistItem) => void;
   removeFromWishlist: (id: string | number) => void;
   isInWishlist: (id: string | number) => boolean;
-  toggleWishlist: (item: WishlistItem) => void; // 🔥 Added this back
+  toggleWishlist: (item: WishlistItem) => void;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const [isMounted, setIsMounted] = useState(false);
+  const { data: session, status } = useSession(); // 🔥 Get current login status
 
-  useEffect(() => {
-    setIsMounted(true);
-    const saved = localStorage.getItem("genzonic_wishlist");
-    if (saved) setWishlist(JSON.parse(saved));
-  }, []);
+  // 🔥 Dynamically create a storage key based on the user's email
+  const userKey = status === "authenticated" && session?.user?.email 
+    ? `genzonic_wishlist_${session.user.email}` 
+    : "genzonic_wishlist_guest";
 
+  // LOAD DATA: When the user logs in or out, fetch THEIR specific wishlist
   useEffect(() => {
-    if (isMounted) localStorage.setItem("genzonic_wishlist", JSON.stringify(wishlist));
-  }, [wishlist, isMounted]);
+    if (status === "loading") return; // Wait for authentication to finish
+
+    const saved = localStorage.getItem(userKey);
+    if (saved) {
+      setWishlist(JSON.parse(saved));
+    } else {
+      setWishlist([]); // Start fresh if this user has no history
+    }
+  }, [userKey, status]);
+
+  // SAVE DATA: Whenever they like an item, save it to THEIR specific key
+  useEffect(() => {
+    if (status !== "loading") {
+      localStorage.setItem(userKey, JSON.stringify(wishlist));
+    }
+  }, [wishlist, userKey, status]);
 
   const addToWishlist = (item: WishlistItem) => {
     setWishlist((prev) => (prev.some((i) => i.id === item.id) ? prev : [...prev, item]));
@@ -43,7 +58,6 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const isInWishlist = (id: string | number) => wishlist.some((i) => i.id === id);
 
-  // 🔥 Helper function for the ProductCard
   const toggleWishlist = (item: WishlistItem) => {
     if (isInWishlist(item.id)) {
       removeFromWishlist(item.id);

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export interface CartItem {
   id: string | number;
@@ -13,6 +12,7 @@ export interface CartItem {
 
 interface CartState {
   cart: CartItem[];
+  setCart: (newCart: CartItem[]) => void; // 🔥 Added setCart to the TypeScript interface
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (id: string | number, size: string) => void;
   increaseQty: (id: string | number, size: string) => void;
@@ -20,50 +20,47 @@ interface CartState {
   clearCart: () => void; 
 }
 
-export const useCartStore = create<CartState>()(
-  persist(
-    (set) => ({
-      cart: [],
+// 🔥 Removed the 'persist' wrapper entirely
+export const useCartStore = create<CartState>()((set) => ({
+  cart: [],
 
-      addToCart: (item) => set((state) => {
-        const existingItem = state.cart.find((i) => i.id === item.id && i.size === item.size);
-        
-        if (existingItem) {
-          return {
-            cart: state.cart.map((i) =>
-              i.id === item.id && i.size === item.size
-                ? { ...i, quantity: i.quantity + 1 }
-                : i
-            ),
-          };
-        }
-        return { cart: [...state.cart, { ...item, quantity: 1 }] };
-      }),
+  // 🔥 Added the setCart function to inject the user's history
+  setCart: (newCart) => set({ cart: newCart }),
 
-      removeFromCart: (id, size) => set((state) => ({
-        cart: state.cart.filter((i) => !(i.id === id && i.size === size)),
-      })),
-
-      increaseQty: (id, size) => set((state) => ({
+  addToCart: (item) => set((state) => {
+    const existingItem = state.cart.find((i) => i.id === item.id && i.size === item.size);
+    
+    if (existingItem) {
+      return {
         cart: state.cart.map((i) =>
-          i.id === id && i.size === size
+          i.id === item.id && i.size === item.size
             ? { ...i, quantity: i.quantity + 1 }
             : i
         ),
-      })),
-
-      decreaseQty: (id, size) => set((state) => ({
-        cart: state.cart.map((i) =>
-          i.id === id && i.size === size && i.quantity > 1
-            ? { ...i, quantity: i.quantity - 1 }
-            : i
-        ),
-      })),
-
-      clearCart: () => set({ cart: [] }),
-    }),
-    {
-      name: 'genzonic-cart', 
+      };
     }
-  )
-);
+    return { cart: [...state.cart, { ...item, quantity: 1 }] };
+  }),
+
+  removeFromCart: (id, size) => set((state) => ({
+    cart: state.cart.filter((i) => !(i.id === id && i.size === size)),
+  })),
+
+  increaseQty: (id, size) => set((state) => ({
+    cart: state.cart.map((i) =>
+      i.id === id && i.size === size
+        ? { ...i, quantity: i.quantity + 1 }
+        : i
+    ),
+  })),
+
+  decreaseQty: (id, size) => set((state) => ({
+    cart: state.cart.map((i) =>
+      i.id === id && i.size === size && i.quantity > 1
+        ? { ...i, quantity: i.quantity - 1 }
+        : i
+    ),
+  })),
+
+  clearCart: () => set({ cart: [] }),
+}));

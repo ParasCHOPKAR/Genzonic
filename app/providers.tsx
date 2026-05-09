@@ -3,6 +3,7 @@
 import { ThemeProvider } from "./context/ThemeContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { SessionProvider } from "next-auth/react"; // 1. Import SessionProvider
+import SessionDataSync from "@/components/SessionDataSync";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -10,9 +11,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <ThemeProvider>
         <WishlistProvider>
+          <SessionDataSync /> {/* 🔥 Add this here! */}
           {children}
         </WishlistProvider>
       </ThemeProvider>
     </SessionProvider>
+
   );
 }
