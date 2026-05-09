@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation"; // 🔥 Imported useRouter for redirection
 import { useWishlist } from "@/app/context/WishlistContext";
 import { X, ShoppingCart, ArrowRight, Heart, CheckCircle2 } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
@@ -13,11 +14,11 @@ export default function WishlistPage() {
   const { wishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCartStore();
   const { theme } = useTheme(); 
+  const router = useRouter(); // 🔥 Initialized router
   
   const containerRef = useRef(null);
   const [isMounted, setIsMounted] = useState(false);
   
-  // 🔥 State to track which item was just added for the success animation
   const [addedItemId, setAddedItemId] = useState<string | number | null>(null);
 
   useEffect(() => {
@@ -41,26 +42,26 @@ export default function WishlistPage() {
     return () => ctx.revert();
   }, [isMounted, wishlist.length]);
 
-  // 🔥 FIXED: Bulletproof Add To Cart Function
   const handleAddToCart = (item: any) => {
-    // 1. Send the exact formatted data to Zustand Cart Store with 'as any' to bypass TS errors
+    // 1. Send data to Zustand Cart Store
     addToCart({
-      ...item, // Spreads all original item properties to ensure nothing is missed
+      ...item,
       quantity: 1,
-      size: "M", // Default size for quick-add
-      color: "Black" // Default color for quick-add
+      size: "M", 
+      color: "Black" 
     } as any);
 
     // 2. Trigger the success UI animation
     setAddedItemId(item.id);
 
-    // 3. Reset the button after 2 seconds
+    // 3. Redirect to the cart page after a brief 500ms visual confirmation
     setTimeout(() => {
       setAddedItemId(null);
-    }, 2000);
+      router.push("/cart"); // 🔥 Automatic redirection
+    }, 500);
   };
 
-  if (!isMounted) return null; // Prevent hydration mismatch
+  if (!isMounted) return null; 
 
   return (
     <div 
@@ -136,7 +137,7 @@ export default function WishlistPage() {
                     <h3>{item.name}</h3>
                     <span className="price">₹{item.price}</span>
                     
-                    {/* 🔥 UPGRADED ACTION BUTTON 🔥 */}
+                    {/* 🔥 UPDATED ADD TO CART BUTTON 🔥 */}
                     <button 
                       onClick={() => handleAddToCart(item)}
                       disabled={isJustAdded}
@@ -144,11 +145,11 @@ export default function WishlistPage() {
                     >
                       {isJustAdded ? (
                         <>
-                          <CheckCircle2 size={16} /> ARTIFACT ACQUIRED
+                          <CheckCircle2 size={16} /> ADDED TO CART
                         </>
                       ) : (
                         <>
-                          <ShoppingCart size={14} /> ACQUIRE ARTIFACT
+                          <ShoppingCart size={14} /> ADD TO CART
                         </>
                       )}
                     </button>
@@ -365,7 +366,6 @@ export default function WishlistPage() {
           margin-bottom: 20px;
         }
 
-        /* 🔥 UPGRADED ACQUIRE BUTTON 🔥 */
         .cart-btn {
           display: flex;
           align-items: center;
