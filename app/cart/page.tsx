@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation"; // 🔥 1. Imported useRouter
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react"; // 🔥 1. Imported NextAuth session hook
 import { X, ArrowLeft, ShieldCheck, Truck, RefreshCw, Ticket, Check, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 
 export default function CartPage() {
-  const router = useRouter(); // 🔥 2. Initialized router for bulletproof navigation
+  const router = useRouter(); 
+  const { status } = useSession(); // 🔥 2. Grab the user's login status
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCartStore();
 
   const [couponInput, setCouponInput] = useState("");
@@ -27,6 +29,20 @@ export default function CartPage() {
   };
 
   const total = subtotal - discount;
+
+  // 🔥 3. The Secure Checkout Handler
+  const handleCheckout = () => {
+    if (status === "loading") return; // Wait a split second if NextAuth is still checking
+    
+    if (status === "unauthenticated") {
+      // If not logged in, send them to login. 
+      // We pass the callbackUrl so they come straight back to checkout after signing in!
+      router.push("/login?callbackUrl=/checkout"); 
+    } else {
+      // If logged in, proceed normally
+      router.push("/checkout");
+    }
+  };
 
   if (cart.length === 0) return (
     <div className="empty-state">
@@ -114,8 +130,11 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* 🔥 3. GUARANTEED YELLOW PAY NOW BUTTON (Native Button bypasses Next.js Link CSS bugs) 🔥 */}
-              <button onClick={() => router.push("/checkout")} className="pay-now-btn">
+              {/* 🔥 4. Guarded Checkout Button 🔥 */}
+              <button 
+                onClick={handleCheckout} 
+                className="pay-now-btn"
+              >
                 <span>PAY NOW</span>
                 <ArrowRight size={22} strokeWidth={3} />
               </button>
@@ -181,15 +200,15 @@ export default function CartPage() {
         .coupon-input-wrapper input { flex: 1; padding: 14px; background: none; border: none; outline: none; font-weight: 800; font-size: 12px; color: var(--text); }
         .apply-btn { background: none; border: none; color: #ff3e00; font-weight: 900; cursor: pointer; padding-left: 10px; }
 
-        /* 🔥 PREMIUM YELLOW PAY NOW BUTTON 🔥 */
+        /* YELLOW PAY NOW BUTTON */
         .pay-now-btn { 
           display: flex !important; 
           align-items: center !important; 
           justify-content: space-between !important; 
           width: 100% !important; 
           padding: 22px 24px !important; 
-          background: #ffc107 !important; /* Forced Vivid Cyber Yellow */
-          color: #000 !important; /* Forced Solid black text */
+          background: #ffc107 !important; 
+          color: #000 !important; 
           border: none !important;
           font-weight: 900 !important; 
           font-size: 18px !important; 
