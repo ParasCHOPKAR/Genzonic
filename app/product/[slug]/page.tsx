@@ -122,7 +122,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           <div className="size-section">
             <div className="size-header">
               <span className="size-label">SELECT SIZE</span>
-              <span className="size-guide">Size Guide</span>
+            
             </div>
             <div className="size-grid">
               {product.sizes && product.sizes.length > 0 ? (
