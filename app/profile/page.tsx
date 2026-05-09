@@ -3,9 +3,8 @@
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-// 🔥 Added new icons for the Order tab
-import { Package, Heart, Settings, LogOut, Truck, FileText, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Package, Heart, Settings, LogOut, Truck, FileText, ExternalLink, Loader2 } from "lucide-react";
 import { useWishlist } from "@/app/context/WishlistContext"; 
 
 export default function ProfilePage() {
@@ -13,20 +12,52 @@ export default function ProfilePage() {
   const { wishlist } = useWishlist();
   const [activeTab, setActiveTab] = useState("saved");
 
+  // 🔥 NEW: State for fetching real orders
+  const [orders, setOrders] = useState<any[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+
+  // 🔥 NEW: Fetch real orders when the user clicks the "ORDER ARCHIVE" tab
+  useEffect(() => {
+    if (activeTab === "orders" && session?.user?.email) {
+      setIsLoadingOrders(true);
+      
+      // Replace this URL with your actual backend endpoint that fetches user orders
+      // It might look like '/api/orders' or `/api/user/orders?email=${session.user.email}`
+      fetch(`/api/orders?email=${session.user.email}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // Check your API response structure (e.g., data.orders or just data)
+          if (data.success && data.orders) {
+            setOrders(data.orders);
+          } else if (Array.isArray(data)) {
+            setOrders(data);
+          }
+        })
+        .catch((err) => console.error("Error fetching orders:", err))
+        .finally(() => setIsLoadingOrders(false));
+    }
+  }, [activeTab, session?.user?.email]);
+
+  // Helper to format the status badge dynamically
+  const getStatusClass = (status: string) => {
+    const s = (status || "processing").toLowerCase();
+    if (s === "delivered") return "status-delivered";
+    if (s === "dispatched" || s === "shipped") return "status-dispatched";
+    return "status-processing";
+  };
+
   return (
     <div className="profile-wrapper">
       <div className="profile-container">
         
         {/* LEFT SIDEBAR */}
         <aside className="profile-sidebar">
-          {/* User ID Card */}
           <div className="user-card">
             <div className="brand-badge">GENZONIC</div>
             <h2 className="user-title">GENZONIC VIP</h2>
             <p className="user-email">{session?.user?.email || "GUEST_USER@SYS.COM"}</p>
           </div>
 
-          {/* Navigation Menu */}
           <nav className="profile-nav">
             <button 
               className={`nav-btn ${activeTab === "orders" ? "active" : ""}`}
@@ -91,54 +122,78 @@ export default function ProfilePage() {
             <div className="tab-section">
               <h1 className="section-title">ORDER ARCHIVE</h1>
               
-              <div className="orders-list">
-                {/* START OF ORDER CARD (You will eventually wrap this in a .map() function) */}
-                <div className="order-card">
-                  <div className="order-header">
-                    <div className="order-meta">
-                      <span className="order-id">ID: #GZ-88902-X</span>
-                      <span className="order-date">Placed: May 04, 2026</span>
-                    </div>
-                    {/* Status Badge: Change class to 'status-processing' or 'status-delivered' based on DB */}
-                    <div className="status-badge status-delivered">
-                      <Truck size={14} /> DELIVERED
-                    </div>
-                  </div>
+              {isLoadingOrders ? (
+                <div className="empty-state">
+                  <Loader2 className="spinner" size={32} style={{ margin: '0 auto 15px', animation: 'spin 1s linear infinite' }} />
+                  <p>RETRIEVING SECURED ARTIFACTS...</p>
+                </div>
+              ) : orders.length === 0 ? (
+                <div className="empty-state">
+                  <p>NO PAST TRANSACTIONS DETECTED.</p>
+                </div>
+              ) : (
+                <div className="orders-list">
+                  {/* 🔥 DYNAMICALLY MAPPING REAL ORDERS FROM YOUR DATABASE 🔥 */}
+                  {orders.map((order) => (
+                    <div key={order._id || order.id} className="order-card">
+                      <div className="order-header">
+                        <div className="order-meta">
+                          <span className="order-id">ID: {order.orderId || order._id}</span>
+                          <span className="order-date">
+                            Placed: {new Date(order.createdAt || Date.now()).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {/* Status dynamically updates based on what the DB says */}
+                        <div className={`status-badge ${getStatusClass(order.status)}`}>
+                          <Truck size={14} /> {(order.status || "PROCESSING").toUpperCase()}
+                        </div>
+                      </div>
 
-                  <div className="order-body">
-                    <div className="order-items-preview">
-                      <div className="mini-item">
-                        <div className="mini-item-img">
-                          <Image src="/fallback.png" alt="Shirt" fill style={{objectFit: "cover"}} />
+                      <div className="order-body">
+                        <div className="order-items-preview">
+                          {/* Map over the specific items inside this order */}
+                          {(order.items || order.products || []).map((item: any, index: number) => (
+                            <div key={index} className="mini-item">
+                              <div className="mini-item-img">
+                                <Image 
+                                  src={item.image || "/fallback.png"} 
+                                  alt={item.name || "Product"} 
+                                  fill 
+                                  style={{objectFit: "cover"}} 
+                                />
+                              </div>
+                              <div className="mini-item-info">
+                                <h4>{item.name}</h4>
+                                <p>Size: {item.size || "M"} | Qty: {item.quantity || 1}</p>
+                              </div>
+                              <div className="mini-item-price">₹{item.price}</div>
+                            </div>
+                          ))}
                         </div>
-                        <div className="mini-item-info">
-                          <h4>GENZONIC TSHIRT TESTING 2</h4>
-                          <p>Size: M | Qty: 1</p>
+                      </div>
+
+                      <div className="order-footer">
+                        <div className="payment-info">
+                          <span className="label">TOTAL PAID:</span>
+                          <span className="amount">₹{order.total || order.totalPrice}</span>
+                          <span className="method">(PAID)</span>
                         </div>
-                        <div className="mini-item-price">₹399</div>
+                        <div className="order-actions">
+                          {/* Dynamically link to the specific invoice ID */}
+                          <Link href={`/invoice/${order.orderId || order._id}`} className="action-btn outline">
+                            <FileText size={14} /> INVOICE
+                          </Link>
+                          {order.trackingLink && (
+                            <a href={order.trackingLink} target="_blank" rel="noreferrer" className="action-btn solid">
+                              TRACKING <ExternalLink size={14} />
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="order-footer">
-                    <div className="payment-info">
-                      <span className="label">TOTAL PAID:</span>
-                      <span className="amount">₹399</span>
-                      <span className="method">(PAID VIA UPI)</span>
-                    </div>
-                    <div className="order-actions">
-                      <Link href={`/invoice/GZ-88902-X`} className="action-btn outline">
-                        <FileText size={14} /> INVOICE
-                      </Link>
-                      <button className="action-btn solid">
-                        TRACKING <ExternalLink size={14} />
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-                {/* END OF ORDER CARD */}
-              </div>
-
+              )}
             </div>
           )}
 
@@ -156,56 +211,18 @@ export default function ProfilePage() {
 
       <style jsx>{`
         /* PROFILE BASE */
-        .profile-wrapper { 
-          padding: 220px 5% 100px; 
-          background: var(--bg); 
-          color: var(--text); 
-          min-height: 100vh; 
-        }
-
-        .profile-container { 
-          max-width: 1400px; 
-          margin: 0 auto; 
-          display: grid; 
-          grid-template-columns: 300px 1fr; 
-          gap: 50px; 
-          align-items: start;
-        }
+        .profile-wrapper { padding: 220px 5% 100px; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .profile-container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 300px 1fr; gap: 50px; align-items: start;}
 
         /* SIDEBAR STYLING */
-        .user-card { 
-          background: #0a0a0a; 
-          color: white; 
-          padding: 40px 20px; 
-          border-radius: 12px; 
-          text-align: center; 
-          margin-bottom: 30px;
-          border: 1px solid rgba(255,255,255,0.1);
-        }
+        .user-card { background: #0a0a0a; color: white; padding: 40px 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.1); }
         :global(.dark) .user-card { background: #111; border: 1px solid rgba(255,255,255,0.05); }
-
         .brand-badge { font-size: 24px; font-weight: 900; font-style: italic; letter-spacing: -1px; margin-bottom: 15px; }
         .user-title { font-size: 16px; font-weight: 900; letter-spacing: 2px; margin: 0 0 5px 0; }
         .user-email { font-size: 12px; opacity: 0.6; margin: 0; word-break: break-all; }
 
         .profile-nav { display: flex; flex-direction: column; gap: 5px; }
-        .nav-btn { 
-          display: flex; 
-          align-items: center; 
-          gap: 15px; 
-          width: 100%; 
-          padding: 16px 20px; 
-          background: transparent; 
-          border: none; 
-          color: var(--text); 
-          font-weight: 800; 
-          font-size: 13px; 
-          letter-spacing: 1px; 
-          cursor: pointer; 
-          text-align: left; 
-          border-radius: 8px; 
-          transition: 0.2s;
-        }
+        .nav-btn { display: flex; align-items: center; gap: 15px; width: 100%; padding: 16px 20px; background: transparent; border: none; color: var(--text); font-weight: 800; font-size: 13px; letter-spacing: 1px; cursor: pointer; text-align: left; border-radius: 8px; transition: 0.2s; }
         .nav-btn:hover { background: rgba(128,128,128,0.1); }
         .nav-btn.active { background: var(--text); color: var(--bg); }
         
@@ -234,38 +251,14 @@ export default function ProfilePage() {
 
         /* ================= ORDER ARCHIVE STYLES ================= */
         .orders-list { display: flex; flex-direction: column; gap: 25px; }
-        
-        .order-card { 
-          border: 1px solid rgba(128,128,128,0.2); 
-          border-radius: 8px; 
-          background: rgba(128,128,128,0.02);
-          overflow: hidden;
-        }
-
-        .order-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px;
-          border-bottom: 1px dashed rgba(128,128,128,0.2);
-          background: rgba(128,128,128,0.03);
-        }
-
+        .order-card { border: 1px solid rgba(128,128,128,0.2); border-radius: 8px; background: rgba(128,128,128,0.02); overflow: hidden; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px dashed rgba(128,128,128,0.2); background: rgba(128,128,128,0.03); }
         .order-meta { display: flex; flex-direction: column; gap: 5px; }
         .order-id { font-weight: 900; font-size: 16px; letter-spacing: 1px; }
         .order-date { font-size: 12px; font-weight: 700; opacity: 0.6; }
 
         /* Status Badges */
-        .status-badge { 
-          display: flex; 
-          align-items: center; 
-          gap: 6px; 
-          padding: 6px 12px; 
-          border-radius: 4px; 
-          font-size: 11px; 
-          font-weight: 900; 
-          letter-spacing: 1px; 
-        }
+        .status-badge { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 900; letter-spacing: 1px; }
         .status-processing { background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); }
         .status-dispatched { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
         .status-delivered { background: rgba(34, 197, 94, 0.1); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
@@ -273,45 +266,26 @@ export default function ProfilePage() {
         .order-body { padding: 20px; }
         .mini-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         .mini-item:last-child { margin-bottom: 0; }
-        
         .mini-item-img { position: relative; width: 60px; height: 80px; background: #111; border-radius: 4px; overflow: hidden; }
         .mini-item-info { flex: 1; }
         .mini-item-info h4 { margin: 0 0 5px 0; font-size: 13px; font-weight: 900; text-transform: uppercase; }
         .mini-item-info p { margin: 0; font-size: 12px; font-weight: 700; opacity: 0.6; }
         .mini-item-price { font-weight: 900; font-size: 14px; }
 
-        .order-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px;
-          border-top: 1px dashed rgba(128,128,128,0.2);
-        }
-
+        .order-footer { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-top: 1px dashed rgba(128,128,128,0.2); }
         .payment-info { display: flex; align-items: center; gap: 10px; }
         .payment-info .label { font-size: 11px; font-weight: 800; opacity: 0.6; letter-spacing: 1px; }
         .payment-info .amount { font-size: 18px; font-weight: 900; }
         .payment-info .method { font-size: 11px; font-weight: 700; opacity: 0.5; }
 
         .order-actions { display: flex; gap: 10px; }
-        .action-btn { 
-          display: flex; 
-          align-items: center; 
-          gap: 8px; 
-          padding: 10px 16px; 
-          font-size: 11px; 
-          font-weight: 900; 
-          letter-spacing: 1px; 
-          border-radius: 4px; 
-          cursor: pointer; 
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
+        .action-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; font-size: 11px; font-weight: 900; letter-spacing: 1px; border-radius: 4px; cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
         .action-btn.outline { background: transparent; border: 1px solid var(--text); color: var(--text); }
         .action-btn.outline:hover { background: var(--text); color: var(--bg); }
-        
         .action-btn.solid { background: var(--text); border: 1px solid var(--text); color: var(--bg); }
         .action-btn.solid:hover { opacity: 0.8; transform: translateY(-2px); }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* MOBILE FIXES */
         @media (max-width: 900px) {
