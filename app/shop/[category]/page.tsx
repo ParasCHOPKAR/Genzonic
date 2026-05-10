@@ -1,60 +1,103 @@
 "use client";
 
+// 🔥 1. ALL imports safely moved to the top
 import { useEffect, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Loader2, Heart, ShoppingBag } from "lucide-react";
-import { useWishlist } from "@/app/context/WishlistContext"; // 🔥 Imported the global memory
+import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { ArrowRight, Loader2, Heart } from "lucide-react";
+import { useWishlist } from "@/app/context/WishlistContext"; 
 
-// Simplified & Compact Product Card
-function InteractiveProductCard({ product }: { product: any }) {
-  // 🔥 Connected to your global WishlistContext
+// =========================
+// UPGRADED PRODUCT CARD
+// =========================
+const CategoryCard = ({ product }: { product: any }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const { toggleWishlist, isInWishlist } = useWishlist();
   
-  const productId = product._id || product.id;
-  const isLiked = isInWishlist(productId);
+  // Auth & Routing Hooks
+  const { status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
 
+  // Safely grab images (fallbacks included)
+  const frontImage = product.images?.[0] || product.image || "/fallback.png";
+  const backImage = product.images?.[1] || frontImage; 
+  const productId = product._id || product.id;
+  
+  const isWishlisted = isInWishlist(productId);
+  
   // Fake a 35% markup for the UI discount badge
   const originalPrice = product.originalPrice || Math.round(product.price * 1.35);
   const discountPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
 
-  // 🔥 Function to handle adding/removing from wishlist
-  const handleHeartClick = (e: React.MouseEvent) => {
+  const productUrl = `/product/${product.slug || productId}`;
+
+  // 🔥 The Secure Interceptor Function
+  const handleSecureBuy = (e: React.MouseEvent) => {
     e.preventDefault(); 
-    toggleWishlist({
-      id: productId,
-      name: product.name,
-      price: product.price,
-      image: product.image || "/fallback.png"
-    });
+    if (status === "unauthenticated") {
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+    } else {
+      router.push(productUrl);
+    }
   };
 
   return (
     <div className="product-card">
-      <Link href={`/product/${product.slug}`} className="image-wrapper">
-        {/* Like Button */}
+      
+      {/* IMAGE CONTAINER WITH HOVER EFFECT */}
+      <div 
+        className="image-wrapper"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Link href={productUrl} style={{ display: 'block', width: '100%', height: '100%' }}>
+          <Image 
+            src={frontImage} 
+            alt={`${product.name} Front`}
+            fill
+            style={{ objectFit: 'cover', opacity: isHovered ? 0 : 1, transition: 'opacity 0.4s ease' }}
+          />
+          <Image 
+            src={backImage} 
+            alt={`${product.name} Back`}
+            fill
+            style={{ objectFit: 'cover', opacity: isHovered ? 1 : 0, transition: 'opacity 0.4s ease' }}
+          />
+        </Link>
+
+        {/* Wishlist Button */}
         <button 
-          className="like-btn" 
-          onClick={handleHeartClick}
+          className="like-btn"
+          onClick={(e) => {
+            e.preventDefault(); 
+            toggleWishlist({
+              id: productId,
+              name: product.name,
+              price: product.price,
+              image: frontImage
+            });
+          }}
         >
           <Heart 
             size={16} 
-            fill={isLiked ? "#ff3e00" : "transparent"} 
-            color={isLiked ? "#ff3e00" : "var(--text)"} 
+            fill={isWishlisted ? "#ff3e00" : "transparent"} 
+            color={isWishlisted ? "#ff3e00" : "var(--text)"} 
           />
         </button>
+      </div>
 
-        <Image src={product.image || "/fallback.png"} alt={product.name} fill style={{ objectFit: 'cover' }} />
-      </Link>
-      
+      {/* INFO SECTION */}
       <div className="product-info">
         <div className="info-header">
-          <Link href={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
+          <Link href={productUrl}><h3>{product.name}</h3></Link>
         </div>
-
+        
         <div className="price-container">
           <span className="current-price">₹{product.price}</span>
-          {originalPrice > product.price && (
+          {discountPercent > 0 && (
             <>
               <span className="original-price">₹{originalPrice}</span>
               <span className="discount-badge">{discountPercent}% OFF</span>
@@ -62,16 +105,19 @@ function InteractiveProductCard({ product }: { product: any }) {
           )}
         </div>
 
-        {/* Redirects to the Product Detail Page */}
-        <Link href={`/product/${product.slug}`} className="buy-now-btn">
+        {/* Button triggers secure login redirect */}
+        <button onClick={handleSecureBuy} className="buy-now-btn">
           BUY NOW
-        </Link>
+        </button>
       </div>
     </div>
   );
-}
+};
 
-// MAIN PAGE
+
+// =========================
+// MAIN PAGE COMPONENT
+// =========================
 export default function CategoryShopPage({ params }: { params: Promise<{ category: string }> }) {
   const resolvedParams = use(params);
   const category = resolvedParams.category; 
@@ -117,7 +163,7 @@ export default function CategoryShopPage({ params }: { params: Promise<{ categor
       ) : (
         <div className="product-grid">
           {products.map((product: any) => (
-            <InteractiveProductCard key={product._id} product={product} />
+            <CategoryCard key={product._id} product={product} />
           ))}
         </div>
       )}
@@ -129,8 +175,7 @@ export default function CategoryShopPage({ params }: { params: Promise<{ categor
         .label { font-size: 10px; font-weight: 800; letter-spacing: 4px; opacity: 0.5; }
         .title { font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; letter-spacing: -2px; margin: 10px 0 0 0; }
         
-        /* 🔥 THE DENSER GRID 🔥 */
-        /* Changed from 300px to 220px so more items fit per row */
+        /* THE DENSER GRID */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 40px 20px; }
         
         .product-card { display: flex; flex-direction: column; gap: 12px; }
@@ -153,7 +198,7 @@ export default function CategoryShopPage({ params }: { params: Promise<{ categor
         .original-price { font-size: 12px; font-weight: 600; color: #888; text-decoration: line-through; }
         .discount-badge { background: var(--text); color: var(--bg); font-size: 9px; font-weight: 900; padding: 4px 6px; border-radius: 4px; letter-spacing: 1px; }
 
-        .buy-now-btn { background: transparent; border: 1px solid var(--text); color: var(--text); padding: 10px; width: 100%; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-align: center; text-decoration: none; border-radius: 4px; transition: 0.3s; margin-top: 5px; }
+        .buy-now-btn { background: transparent; border: 1px solid var(--text); color: var(--text); padding: 10px; width: 100%; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-align: center; text-decoration: none; border-radius: 4px; transition: 0.3s; margin-top: 5px; cursor: pointer; }
         .buy-now-btn:hover { background: var(--text); color: var(--bg); }
         
         /* Empty State */

@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+// 🔥 1. Added useRouter and usePathname here
+import { useParams, useRouter, usePathname } from "next/navigation"; 
+// 🔥 2. Added useSession for auth checking
+import { useSession } from "next-auth/react"; 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { Loader2, Heart } from "lucide-react";
@@ -22,8 +25,13 @@ if (typeof window !== "undefined") {
 const CategoryCard = ({ product }: { product: any }) => {
   const [isHovered, setIsHovered] = useState(false);
   
-  // 🔥 Connect to global memory instead of local fake state
+  // Connect to global memory instead of local fake state
   const { toggleWishlist, isInWishlist } = useWishlist();
+
+  // 🔥 3. Initialize Auth and Routing hooks
+  const { status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname(); // Grabs current URL (e.g. /shop/men)
 
   // Safely map MongoDB data
   const frontImage = product.images?.[0] || "/fallback.png";
@@ -38,6 +46,19 @@ const CategoryCard = ({ product }: { product: any }) => {
 
   // URL for the Product Details Page
   const productUrl = `/product/${product.slug || productId}`;
+
+  // 🔥 4. The Secure Interceptor Function
+  const handleSecureBuy = (e: React.MouseEvent) => {
+    e.preventDefault(); // Stop default navigation
+    
+    if (status === "unauthenticated") {
+      // Send to login, and tell it to return to this EXACT category page after success
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+    } else {
+      // If logged in, proceed to the product
+      router.push(productUrl);
+    }
+  };
 
   return (
     <div className="cat-card">
@@ -63,7 +84,7 @@ const CategoryCard = ({ product }: { product: any }) => {
           />
         </Link>
 
-        {/* 🔥 REAL Wishlist Button connected to Context 🔥 */}
+        {/* REAL Wishlist Button connected to Context */}
         <button 
           className="wishlist-btn"
           onClick={(e) => {
@@ -102,10 +123,10 @@ const CategoryCard = ({ product }: { product: any }) => {
           )}
         </div>
 
-        {/* BUY NOW BUTTON */}
-        <Link href={productUrl} className="buy-btn">
+        {/* 🔥 5. Secure BUY NOW Button 🔥 */}
+        <button onClick={handleSecureBuy} className="buy-btn">
           BUY NOW
-        </Link>
+        </button>
       </div>
     </div>
   );
@@ -229,8 +250,8 @@ export default function CategoryPage() {
         .badge { background: #000; color: #fff; font-size: 10px; font-weight: 900; padding: 3px 6px; border-radius: 3px; letter-spacing: 0.5px; }
         :global(.dark) .badge { background: #fff; color: #000; }
 
-        /* Buy Button */
-        .buy-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; background: transparent; border: 1px solid var(--text); color: var(--text); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-decoration: none; transition: all 0.3s ease; border-radius: 4px; margin-top: 5px; }
+        /* Buy Button (Now a <button> instead of <Link>) */
+        .buy-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; background: transparent; border: 1px solid var(--text); color: var(--text); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-decoration: none; transition: all 0.3s ease; border-radius: 4px; margin-top: 5px; cursor: pointer; }
         .buy-btn:hover { background: var(--text); color: var(--bg); }
 
         @media (max-width: 600px) {
