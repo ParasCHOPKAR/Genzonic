@@ -178,7 +178,7 @@ export default function Footer() {
 
       <div style={styles.grid} className="footer-grid">
 
-        {/* LEFT BLOCK: BRANDING & SOCIALS */}
+        {/* BLOCK 1: BRANDING & SOCIALS */}
         <div className="footer-content-block">
           <div ref={logoRef}>
             <Image
@@ -199,14 +199,14 @@ export default function Footer() {
           </div>
         </div>
 
-
-      {/* BLOCK 2: THE SHOP/VAULT */}
+        {/* BLOCK 2: THE SHOP/VAULT */}
+        <div className="footer-content-block">
           <h4 style={styles.title}>THE VAULT</h4>
           <div><Link href="/shop/men" className="f-link" style={styles.link}>Men's Artifacts</Link></div>
           <div><Link href="/shop/women" className="f-link" style={styles.link}>Women's Artifacts</Link></div>
           <div><Link href="/shop/kids" className="f-link" style={styles.link}>Kid's Artifacts</Link></div>
-          {/* Pointing to About ID */}
           <div><Link href="/about#about" className="f-link" style={styles.link}>About GenZonic</Link></div>
+        </div>
 
         {/* BLOCK 3: CONTACT HQ */}
         <div className="footer-content-block">
@@ -217,21 +217,21 @@ export default function Footer() {
           </div>
           <div style={styles.contactRow}>
             <Phone size={18} opacity={0.7} />
-            <a href="tel:+919876543210" className="contact-hover">+91 98765 43210</a> {/* Replace with your real number */}
+            <a href="tel:+919876543210" className="contact-hover">+91 98765 43210</a>
           </div>
           <div style={{ marginTop: "20px" }}>
             <Link href="/contact" className="f-link" style={styles.link}>Open Support Ticket</Link>
           </div>
         </div>
 
-
         {/* BLOCK 4: LEGAL */}
-       {/* BLOCK 4: LEGAL */}
+        <div className="footer-content-block">
           <h4 style={styles.title}>LEGAL</h4>
-          {/* Pointing to the specific IDs on the /about page */}
           <div><Link href="/about#privacy" className="f-link" style={styles.link}>Privacy Policy</Link></div>
           <div><Link href="/about#terms" className="f-link" style={styles.link}>Terms & Conditions</Link></div>
           <div><Link href="/about#returns" className="f-link" style={styles.link}>Return Policy</Link></div>
+        </div>
+
       </div>
 
       {/* BOTTOM BAR: COPYRIGHT & DEVELOPER */}
