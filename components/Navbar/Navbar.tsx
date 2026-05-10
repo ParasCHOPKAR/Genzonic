@@ -263,16 +263,16 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* SEARCH PILL */}
+        {/* SEARCH PILL (Sleek block) */}
         <div className="mobile-search-box">
-          <Search size={20} opacity={0.5} />
-          <input type="text" placeholder="Search archives..." />
+          <Search size={20} opacity={0.6} />
+          <input type="text" placeholder="Search the archive..." />
         </div>
 
-        {/* SCROLLABLE MENU AREA (Fills the blank space!) */}
+        {/* SCROLLABLE MENU AREA */}
         <div className="mobile-scroll-area">
           
-          {/* MAIN CATEGORIES */}
+          {/* MAIN CATEGORIES - Massive & Clean */}
           <div className="mobile-nav-links">
             <Link href="/shop/men" style={{ '--delay': '0.05s' } as React.CSSProperties} onClick={() => setMobileMenuOpen(false)}>
               <span>MEN'S</span> <ChevronRight size={24} className="arrow" />
@@ -295,24 +295,24 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* SECONDARY PERSONAL MENU (Appears if logged in) */}
+          {/* SECONDARY PERSONAL MENU (Clean list, no bulky boxes) */}
           {isAuthenticated && (
             <div className="mobile-secondary-links">
               <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
-                <User size={18} /> My Profile
+                <User size={20} strokeWidth={1.5} /> MY PROFILE
               </Link>
               <Link href="/cart" onClick={() => setMobileMenuOpen(false)}>
-                <ShoppingCart size={18} /> My Cart
+                <ShoppingCart size={20} strokeWidth={1.5} /> MY CART
                 {mounted && cartCount > 0 && <span className="nav-counter">{cartCount}</span>}
               </Link>
               <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)}>
-                <Heart size={18} /> Saved Styles
+                <Heart size={20} strokeWidth={1.5} /> SAVED STYLES
                 {mounted && wishlist.length > 0 && <span className="nav-counter">{wishlist.length}</span>}
               </Link>
               
               {user?.role === "admin" && (
                 <Link href="/admin" className="admin-link" onClick={() => setMobileMenuOpen(false)}>
-                  <ShieldAlert size={18} /> Command Center
+                  <ShieldAlert size={20} strokeWidth={1.5} /> COMMAND CENTER
                 </Link>
               )}
             </div>
@@ -332,7 +332,7 @@ export default function Navbar() {
                 <span className="user-card-email truncate">{user?.email}</span>
               </div>
               <button className="mobile-signout-btn" onClick={() => signOut({ callbackUrl: "/" })}>
-                <LogOut size={20} />
+                <LogOut size={18} strokeWidth={2} />
               </button>
             </div>
           )}
@@ -449,105 +449,101 @@ export default function Navbar() {
           .mobile-backdrop { display: block !important; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 99998 !important; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
           .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
 
-          /* 2. SIDEBAR DRAWER - FULL REDESIGN */
+          /* 2. SIDEBAR DRAWER - PREMIUM REDESIGN */
           .mobile-sidebar { 
             display: flex !important; flex-direction: column; position: fixed; top: 0; right: 0; 
             width: 100%; max-width: 420px; height: 100dvh; 
             background: var(--bg, #050505) !important; color: var(--text, #ffffff);
-            z-index: 99999 !important; padding: 25px 30px; 
-            transform: translateX(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            border-left: 1px solid rgba(128,128,128,0.15); box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+            z-index: 99999 !important; padding: 30px 25px 20px 25px; 
+            transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border-left: 1px solid rgba(128,128,128,0.15); box-shadow: -20px 0 60px rgba(0, 0, 0, 0.6);
           }
           .mobile-sidebar.open { transform: translateX(0); }
 
           /* HEADER */
           .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-          .sidebar-title { font-size: 11px; font-weight: 900; letter-spacing: 4px; opacity: 0.5; }
-          .sidebar-close-btn { background: transparent; border: none; color: inherit; cursor: pointer; padding: 5px; margin-right: -5px; transition: 0.3s; }
+          .sidebar-title { font-size: 11px; font-weight: 900; letter-spacing: 4px; opacity: 0.5; margin: 0; }
+          .sidebar-close-btn { background: transparent; border: none; color: inherit; cursor: pointer; padding: 5px; margin-right: -5px; transition: 0.2s; }
           .sidebar-close-btn:active { transform: scale(0.8); }
 
-          /* SEARCH PILL */
+          /* SEARCH PILL - Sharp Streetwear Style */
           .mobile-search-box { 
-            display: flex; align-items: center; gap: 12px; background: rgba(128,128,128,0.06); 
-            padding: 16px 20px; border-radius: 30px; margin-bottom: 30px; 
-            border: 1px solid rgba(128,128,128,0.1); transition: 0.3s; flex-shrink: 0;
+            display: flex; align-items: center; gap: 12px; background: rgba(128,128,128,0.08); 
+            padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; 
+            border: none; transition: 0.3s; flex-shrink: 0;
           }
-          .mobile-search-box:focus-within { border-color: var(--text); background: transparent; }
-          .mobile-search-box input { border: none; background: transparent; width: 100%; outline: none; font-size: 15px; color: inherit; font-weight: 600; }
+          .mobile-search-box:focus-within { background: rgba(128,128,128,0.15); }
+          .mobile-search-box input { border: none; background: transparent; width: 100%; outline: none; font-size: 14px; color: inherit; font-weight: 600; letter-spacing: 0.5px;}
 
-          /* SCROLL AREA (Pushes bottom actions down) */
+          /* SCROLL AREA */
           .mobile-scroll-area {
-            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 30px;
-            /* Hide scrollbar for a cleaner look */
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;
             -ms-overflow-style: none; scrollbar-width: none;
           }
           .mobile-scroll-area::-webkit-scrollbar { display: none; }
 
-          /* MASSIVE NAV LINKS */
+          /* MASSIVE NAV LINKS - Flex Fixed */
           .mobile-nav-links { display: flex; flex-direction: column; }
           .mobile-nav-links a, .mobile-premium-trigger { 
-            font-size: clamp(26px, 7vw, 32px); font-weight: 900; letter-spacing: -1px; 
-            color: inherit; text-decoration: none; padding: 20px 0; border-bottom: 1px solid rgba(128,128,128,0.1); 
-            display: flex; align-items: center; justify-content: space-between; background: transparent; 
-            border-top: none; border-left: none; border-right: none; width: 100%; cursor: pointer; text-align: left; 
+            display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important;
+            width: 100%; font-size: clamp(26px, 8vw, 36px); font-weight: 900; letter-spacing: -1px; 
+            color: inherit; text-decoration: none; padding: 22px 0; border-bottom: 1px solid rgba(128,128,128,0.15); 
+            background: transparent; border-top: none; border-left: none; border-right: none; cursor: pointer; 
             opacity: 0; transform: translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-wrap: nowrap !important; white-space: nowrap !important;
           }
           .mobile-sidebar.open .mobile-nav-links a, .mobile-sidebar.open .mobile-premium-trigger {
             opacity: 1; transform: translateY(0); transition-delay: var(--delay);
           }
           
-          .mobile-premium-trigger { color: #ffc107; border-bottom: none; padding-bottom: 10px; }
-          .premium-text { background: linear-gradient(90deg, #ffc107, #ff8f00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-          .arrow { opacity: 0.3; transition: 0.3s; }
+          .mobile-premium-trigger { color: var(--text); border-bottom: none; padding-bottom: 20px; }
+          .arrow { opacity: 0.3; transition: 0.3s; flex-shrink: 0; }
           .mobile-nav-links a:active .arrow { transform: translateX(6px); opacity: 1; }
 
-          /* SECONDARY MENU (Fills the gap beautifully) */
+          /* SECONDARY MENU (Clean List, No Border Box) */
           .mobile-secondary-links {
-            display: flex; flex-direction: column; gap: 10px; padding: 20px;
-            background: rgba(128,128,128,0.03); border-radius: 12px;
-            border: 1px solid rgba(128,128,128,0.1);
+            display: flex; flex-direction: column; padding-top: 10px;
             opacity: 0; transform: translateY(15px); transition: all 0.4s ease 0.3s;
           }
           .mobile-sidebar.open .mobile-secondary-links { opacity: 1; transform: translateY(0); }
 
           .mobile-secondary-links a {
-            display: flex; align-items: center; gap: 12px; padding: 12px 0;
-            font-size: 14px; font-weight: 700; color: inherit; text-decoration: none;
-            border-bottom: 1px dashed rgba(128,128,128,0.15);
+            display: flex; align-items: center; gap: 15px; padding: 16px 0;
+            font-size: 16px; font-weight: 700; color: inherit; text-decoration: none;
+            border-bottom: 1px solid rgba(128,128,128,0.08);
           }
-          .mobile-secondary-links a:last-child { border-bottom: none; padding-bottom: 0; }
-          .mobile-secondary-links a svg { opacity: 0.6; }
+          .mobile-secondary-links a:last-child { border-bottom: none; }
+          .mobile-secondary-links a svg { opacity: 0.5; }
           
           .nav-counter { margin-left: auto; background: var(--text); color: var(--bg); font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 900; }
           .admin-link { color: #3b82f6 !important; }
-          .admin-link svg { opacity: 1 !important; }
+          .admin-link svg { color: #3b82f6 !important; opacity: 1 !important; }
 
           /* BOTTOM ANCHORED ACTIONS */
           .mobile-bottom-actions { 
-            margin-top: 20px; padding-top: 20px; flex-shrink: 0;
-            border-top: 1px solid rgba(128,128,128,0.1);
+            margin-top: 20px; padding-top: 25px; flex-shrink: 0;
             opacity: 0; transform: translateY(10px); transition: all 0.4s ease 0.4s; 
           }
           .mobile-sidebar.open .mobile-bottom-actions { opacity: 1; transform: translateY(0); }
 
-          /* CLEAN USER CARD */
+          /* HIGH CONTRAST VIP CARD */
           .mobile-user-card {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.1);
-            border-radius: 8px; padding: 12px 16px;
+            background: var(--text); color: var(--bg); /* Inverted for emphasis */
+            border-radius: 8px; padding: 16px 20px;
           }
           .user-card-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
-          .user-card-label { font-size: 9px; font-weight: 900; letter-spacing: 2px; opacity: 0.5; }
-          .user-card-email { font-size: 13px; font-weight: 700; font-family: monospace; }
-          .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+          .user-card-label { font-size: 9px; font-weight: 900; letter-spacing: 2px; opacity: 0.6; }
+          .user-card-email { font-size: 13px; font-weight: 700; font-family: monospace; letter-spacing: 0.5px;}
+          .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
 
           .mobile-signout-btn {
-            background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none;
+            background: rgba(128,128,128,0.15); color: inherit; border: none;
             width: 40px; height: 40px; border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; flex-shrink: 0; transition: 0.2s;
           }
-          .mobile-signout-btn:active { background: #ef4444; color: white; }
+          .mobile-signout-btn:active { background: #ef4444; color: white; transform: scale(0.95); }
 
           .mobile-action-btn.primary { 
             display: flex; align-items: center; justify-content: center; 
@@ -562,8 +558,8 @@ export default function Navbar() {
 
         @media (max-width: 600px) {
           :global(.brand-logo) { height: 36px !important; width: auto !important; object-fit: contain !important; }
-          .mobile-sidebar { padding: 20px 20px; }
-          .mobile-nav-links a, .mobile-premium-trigger { padding: 16px 0; }
+          .mobile-sidebar { padding: 25px 20px 20px 20px; }
+          .mobile-nav-links a, .mobile-premium-trigger { padding: 18px 0; }
         }
       `}</style>
     </>
