@@ -178,7 +178,11 @@ export default function ProfilePage() {
                       <div key={order._id || order.id} className="order-card">
                         <div className="order-header">
                           <div className="order-meta">
-                            <span className="order-id">MANIFEST ID: <span className="mono">{order.orderId || order._id}</span></span>
+                           <span className="order-id">
+  MANIFEST ID: <span className="mono">
+    {order.manifestId || order.shortId || order.rzpOrderId || order.orderId || order._id}
+  </span>
+</span>
                             <span className="order-date">
                               AUTHORIZED: {new Date(order.createdAt || Date.now()).toLocaleDateString()}
                             </span>

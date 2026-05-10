@@ -1,51 +1,52 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Order from "@/models/Order";
-import { getServerSession } from "next-auth"; 
 
-export async function PATCH(req: Request, context: any) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const session = await getServerSession();
-    if (!session || session.user?.role !== "admin") {
-      return NextResponse.json({ success: false, message: "UNAUTHORIZED ACTION" }, { status: 401 });
-    }
-
     await connectDB();
-    const body = await req.json();
     
-    // 🔥 Now we extract trackingUrl too!
-    const { status, trackingUrl } = body; 
+    // 1. Grab the new status from the frontend request
+    const body = await request.json();
+    const { status } = body;
 
-    if (!status) {
-      return NextResponse.json({ success: false, message: "Status is required" }, { status: 400 });
+    // 2. Ensure we have the ID and the Status
+    if (!params.id || !status) {
+      return NextResponse.json(
+        { success: false, message: "Missing Order ID or Status" },
+        { status: 400 }
+      );
     }
 
-    const params = await context.params;
-    const orderId = params.id; 
-
-    // 🔥 Build the update object dynamically
-    const updateData: any = { status };
-    if (trackingUrl !== undefined) {
-      updateData.trackingUrl = trackingUrl; // Only update it if we actually sent one
-    }
-
+    // 3. Find the exact order in MongoDB and update its status
     const updatedOrder = await Order.findByIdAndUpdate(
-      orderId,
-      updateData,
-      { new: true } 
+      params.id,
+      { status: status },
+      { new: true } // Returns the updated document
     );
 
     if (!updatedOrder) {
-      return NextResponse.json({ success: false, message: "Order not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Order not found in database" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(
-      { success: true, message: "Status updated successfully", order: updatedOrder }, 
-      { status: 200 }
-    );
+    // 4. Success! Tell the frontend it worked
+    return NextResponse.json({ 
+      success: true, 
+      message: "Order status updated successfully",
+      order: updatedOrder 
+    });
 
-  } catch (error: any) {
-    console.error("UPDATE ORDER STATUS ERROR:", error);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  } catch (error) {
+    console.error("ADMIN STATUS UPDATE ERROR:", error);
+    return NextResponse.json(
+      { success: false, message: "Server error while updating status" },
+      { status: 500 }
+    );
   }
 }
