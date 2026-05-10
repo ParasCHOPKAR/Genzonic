@@ -2,19 +2,24 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Order from "@/models/Order";
 
+// 🔥 FIX: In Next.js 15+, params is a Promise that must be awaited
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } 
 ) {
   try {
     await connectDB();
+    
+    // 🔥 AWAIT the params before trying to use the ID
+    const resolvedParams = await params;
+    const orderId = resolvedParams.id;
     
     // 1. Grab the new status from the frontend request
     const body = await request.json();
     const { status } = body;
 
     // 2. Ensure we have the ID and the Status
-    if (!params.id || !status) {
+    if (!orderId || !status) {
       return NextResponse.json(
         { success: false, message: "Missing Order ID or Status" },
         { status: 400 }
@@ -23,7 +28,7 @@ export async function PATCH(
 
     // 3. Find the exact order in MongoDB and update its status
     const updatedOrder = await Order.findByIdAndUpdate(
-      params.id,
+      orderId,
       { status: status },
       { new: true } // Returns the updated document
     );
