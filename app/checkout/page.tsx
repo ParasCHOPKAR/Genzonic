@@ -297,7 +297,7 @@ export default function CheckoutPage() {
               </div>
               <div className="manifest-footer">
                 <div className="line"><span>SUBTOTAL</span><span>₹{total}</span></div>
-                <div className="line"><span>SHIPPING</span><span className="green">COMPLIMENTARY</span></div>
+                <div className="line"><span>SHIPPING</span><span className="green">Free</span></div>
                 <div className="line grand"><span>TOTAL DUE</span><span>₹{total}</span></div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Image from "next/image"
 import Link from "next/link"
 import { useTheme } from "@/app/context/ThemeContext"
+import { Instagram, Twitter, Facebook, Mail, Phone } from "lucide-react"
 
 export default function Footer() {
 
@@ -72,7 +73,7 @@ export default function Footer() {
       width: "100%",
       background: darkMode ? "#0a0a0a" : "#ffffff",
       color: darkMode ? "#ffffff" : "#000000",
-      padding: "220px 0 120px",
+      padding: "180px 0 100px",
       position: "relative" as const,
       overflow: "hidden",
       fontFamily: "Inter, sans-serif",
@@ -94,8 +95,8 @@ export default function Footer() {
       maxWidth: "1400px",
       margin: "0 auto",
       display: "grid",
-      gridTemplateColumns: "1fr 1fr 1fr 1fr",
-      gap: "70px",
+      gridTemplateColumns: "1.2fr 1fr 1.2fr 1fr",
+      gap: "60px",
       padding: "0 6%",
       position: "relative" as const,
       zIndex: 2
@@ -108,10 +109,11 @@ export default function Footer() {
     },
 
     desc: {
-      fontSize: "15px",
+      fontSize: "14px",
       lineHeight: 1.7,
       color: darkMode ? "#bbb" : "#555",
-      maxWidth: "340px"
+      maxWidth: "320px",
+      marginBottom: "25px"
     },
 
     title: {
@@ -119,37 +121,49 @@ export default function Footer() {
       letterSpacing: "0.25em",
       textTransform: "uppercase" as const,
       color: darkMode ? "#777" : "#888",
-      marginBottom: "22px",
-      fontWeight: 500
+      marginBottom: "25px",
+      fontWeight: 800
     },
 
     link: {
-      display: "block",
+      display: "inline-block",
       textDecoration: "none",
-      fontSize: "16px",
+      fontSize: "15px",
       color: darkMode ? "#fff" : "#000",
-      marginBottom: "14px",
-      fontWeight: 500,
+      marginBottom: "16px",
+      fontWeight: 600,
       position: "relative" as const
+    },
+
+    contactRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      fontSize: "15px",
+      fontWeight: 500,
+      color: darkMode ? "#ddd" : "#444",
+      marginBottom: "16px"
     },
 
     bigContainer: {
       width: "100%",
-      marginTop: "60px",
+      marginTop: "20px",
       pointerEvents: "none" as const,
       display: "flex",
-      justifyContent: "center"
+      justifyContent: "center",
+      position: "relative" as const,
+      zIndex: 1
     },
 
     bigText: {
-      fontSize: "17vw", /* Default Desktop Size */
+      fontSize: "17vw", 
       fontWeight: 900,
       lineHeight: "0.85",
       letterSpacing: "-0.02em",
       margin: 0,
       color: darkMode
-        ? "rgba(255,255,255,0.06)"
-        : "rgba(0,0,0,0.08)",
+        ? "rgba(255,255,255,0.04)"
+        : "rgba(0,0,0,0.05)",
       textTransform: "uppercase" as const,
       whiteSpace: "nowrap" as const
     }
@@ -164,10 +178,8 @@ export default function Footer() {
 
       <div style={styles.grid} className="footer-grid">
 
-        {/* LEFT BLOCK: BRANDING */}
-
+        {/* LEFT BLOCK: BRANDING & SOCIALS */}
         <div className="footer-content-block">
-
           <div ref={logoRef}>
             <Image
               src={darkMode ? "/bg-remove-white-okay.png" : "/bg-remove-black.png"}
@@ -177,57 +189,61 @@ export default function Footer() {
               style={styles.logoImage}
             />
           </div>
-
           <p style={styles.desc}>
             Bridging the gap between high-fashion presentation and core streetwear. More than just apparel—it is a curated physical artifact.
           </p>
-
+          <div className="social-links">
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={20} /></a>
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter"><Twitter size={20} /></a>
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook size={20} /></a>
+          </div>
         </div>
 
 
         {/* BLOCK 2: THE SHOP/VAULT */}
-
         <div className="footer-content-block">
-
           <h4 style={styles.title}>THE VAULT</h4>
-
-          <Link href="/shop/men" className="f-link" style={styles.link}>Men's Artifacts</Link>
-          <Link href="/shop/women" className="f-link" style={styles.link}>Women's Artifacts</Link>
-          <Link href="/shop/kids" className="f-link" style={styles.link}>Kid's Artifacts</Link>
-
+          <div><Link href="/shop/men" className="f-link" style={styles.link}>Men's Artifacts</Link></div>
+          <div><Link href="/shop/women" className="f-link" style={styles.link}>Women's Artifacts</Link></div>
+          <div><Link href="/shop/kids" className="f-link" style={styles.link}>Kid's Artifacts</Link></div>
+          <div><Link href="/about" className="f-link" style={styles.link}>About GenZonic</Link></div>
         </div>
 
 
-        {/* BLOCK 3: USER/SUPPORT */}
-
+        {/* BLOCK 3: CONTACT HQ */}
         <div className="footer-content-block">
-
-          <h4 style={styles.title}>SUPPORT</h4>
-
-          <Link href="/profile" className="f-link" style={styles.link}>Access Profile</Link>
-          <Link href="/cart" className="f-link" style={styles.link}>View Loadout</Link>
-          <Link href="/contact" className="f-link" style={styles.link}>Contact Command</Link>
-
+          <h4 style={styles.title}>CONTACT HQ</h4>
+          <div style={styles.contactRow}>
+            <Mail size={18} opacity={0.7} />
+            <a href="mailto:genzonic11@gmail.com" className="contact-hover">genzonic11@gmail.com</a>
+          </div>
+          <div style={styles.contactRow}>
+            <Phone size={18} opacity={0.7} />
+            <a href="tel:+919876543210" className="contact-hover">+91 98765 43210</a> {/* Replace with your real number */}
+          </div>
+          <div style={{ marginTop: "20px" }}>
+            <Link href="/contact" className="f-link" style={styles.link}>Open Support Ticket</Link>
+          </div>
         </div>
 
 
-        {/* BLOCK 4: LEGAL (Required for Razorpay) */}
-
+        {/* BLOCK 4: LEGAL */}
         <div className="footer-content-block">
-
           <h4 style={styles.title}>LEGAL</h4>
-
-          <Link href="/privacy" className="f-link" style={styles.link}>Privacy Policy</Link>
-          <Link href="/terms" className="f-link" style={styles.link}>Terms & Conditions</Link>
-          <Link href="/refunds" className="f-link" style={styles.link}>Refund Policy</Link>
-
+          <div><Link href="/privacy" className="f-link" style={styles.link}>Privacy Policy</Link></div>
+          <div><Link href="/terms" className="f-link" style={styles.link}>Terms & Conditions</Link></div>
+          <div><Link href="/return-policy" className="f-link" style={styles.link}>Return Policy</Link></div>
         </div>
 
       </div>
 
+      {/* BOTTOM BAR: COPYRIGHT & DEVELOPER */}
+      <div className="footer-bottom">
+        <p>© {new Date().getFullYear()} GENZONIC. ALL RIGHTS RESERVED.</p>
+        <p>DEVELOPED BY <span className="highlight">GENZONIC TEAM</span></p>
+      </div>
 
       {/* BIG BACKGROUND TEXT */}
-
       <div style={styles.bigContainer}>
         <h1 ref={bigTextRef} style={styles.bigText} className="big-bg-text">
           GENZONIC
@@ -235,16 +251,16 @@ export default function Footer() {
       </div>
 
       <style jsx>{`
-
+      /* Link Hover Animations */
       .f-link::after {
         content: "";
         position: absolute;
         left: 0;
         bottom: -4px;
         width: 0%;
-        height: 1px;
+        height: 2px;
         background: ${darkMode ? "#fff" : "#000"};
-        transition: width .35s ease;
+        transition: width .35s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .f-link:hover::after {
@@ -254,14 +270,65 @@ export default function Footer() {
       .f-link:hover {
         transform: translateX(6px);
         color: #ffc107 !important;
-        transition: all .3s ease;
+        transition: transform .3s ease, color .3s ease;
+      }
+
+      /* Social Icons */
+      .social-links {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+      }
+
+      .social-links a {
+        color: ${darkMode ? "#888" : "#666"};
+        transition: 0.3s ease;
+      }
+
+      .social-links a:hover {
+        color: ${darkMode ? "#fff" : "#000"};
+        transform: translateY(-3px);
+      }
+
+      /* Contact Hover */
+      .contact-hover {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .contact-hover:hover {
+        color: #ffc107;
+      }
+
+      /* Bottom Bar */
+      .footer-bottom {
+        width: 100%;
+        max-width: 1400px;
+        margin: 80px auto 0;
+        padding: 30px 6% 0;
+        border-top: 1px solid rgba(128,128,128,0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: ${darkMode ? "#666" : "#888"};
+        position: relative;
+        z-index: 2;
+      }
+
+      .highlight {
+        color: ${darkMode ? "#fff" : "#000"};
+        font-weight: 900;
       }
 
       /* 🔥 TABLET RESPONSIVE OVERRIDES 🔥 */
       @media (max-width: 900px) {
         .footer-base {
-          padding: 150px 0 100px !important;
-          min-height: 600px !important;
+          padding: 120px 0 80px !important;
+          min-height: auto !important;
         }
 
         .footer-grid {
@@ -273,7 +340,6 @@ export default function Footer() {
           grid-column: span 2;
         }
 
-        /* Scaled down to prevent overflow */
         .big-bg-text {
           font-size: 16vw !important; 
         }
@@ -282,8 +348,7 @@ export default function Footer() {
       /* 🔥 MOBILE RESPONSIVE OVERRIDES 🔥 */
       @media (max-width: 600px) {
         .footer-base {
-          padding: 100px 0 60px !important;
-          min-height: auto !important;
+          padding: 80px 0 40px !important;
         }
 
         .footer-grid {
@@ -295,16 +360,22 @@ export default function Footer() {
           grid-column: span 1 !important;
         }
 
-        /* 🔥 PERFECTLY SCALED MOBILE FIX 🔥 */
+        .footer-bottom {
+          flex-direction: column;
+          gap: 15px;
+          text-align: center;
+          margin-top: 50px;
+          padding-top: 20px;
+        }
+
+        /* Perfectly scaled mobile background text */
         .big-bg-text {
-          font-size: 13vw !important; /* Reduced from 28vw so the full word fits */
+          font-size: 13vw !important; 
           margin-top: 40px !important;
         }
       }
-
       `}</style>
 
     </footer>
-
   )
 }
