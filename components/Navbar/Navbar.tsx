@@ -16,10 +16,17 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   Search,
   User,
   LogOut,
-  ShieldAlert,
+  Key,
+  BookOpen,
+  Ticket,
+  Shield,
+  Box,
+  Check,
+  ShieldAlert
 } from "lucide-react";
 import "./Navbar.css";
 
@@ -250,7 +257,7 @@ export default function Navbar() {
         
         {/* HEADER */}
         <div className="sidebar-header">
-          <span className="sidebar-title">HQ NAVIGATION</span>
+          <span className="sidebar-title">NAVIGATION</span>
           <button className="sidebar-close-btn" onClick={() => setMobileMenuOpen(false)}>
             <X size={32} strokeWidth={1.5} />
           </button>
@@ -262,27 +269,54 @@ export default function Navbar() {
           <input type="text" placeholder="Search archives..." />
         </div>
 
-        {/* MASSIVE NAV LINKS */}
-        <div className="mobile-nav-links">
-          <Link href="/shop/men" style={{ '--delay': '0.1s' } as React.CSSProperties} onClick={() => setMobileMenuOpen(false)}>
-            <span>MEN'S</span> <span className="arrow">→</span>
-          </Link>
-          <Link href="/shop/women" style={{ '--delay': '0.15s' } as React.CSSProperties} onClick={() => setMobileMenuOpen(false)}>
-            <span>WOMEN'S</span> <span className="arrow">→</span>
-          </Link>
-          <Link href="/shop/kids" style={{ '--delay': '0.2s' } as React.CSSProperties} onClick={() => setMobileMenuOpen(false)}>
-            <span>KID'S</span> <span className="arrow">→</span>
-          </Link>
-          <button 
-            className="mobile-premium-trigger"
-            style={{ '--delay': '0.25s' } as React.CSSProperties}
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setCategoryOpen(true);
-            }}
-          >
-            <span className="premium-text">PREMIUM VAULT</span> <ChevronDown size={28} />
-          </button>
+        {/* SCROLLABLE MENU AREA (Fills the blank space!) */}
+        <div className="mobile-scroll-area">
+          
+          {/* MAIN CATEGORIES */}
+          <div className="mobile-nav-links">
+            <Link href="/shop/men" style={{ '--delay': '0.05s' } as React.CSSProperties} onClick={() => setMobileMenuOpen(false)}>
+              <span>MEN'S</span> <ChevronRight size={24} className="arrow" />
+            </Link>
+            <Link href="/shop/women" style={{ '--delay': '0.1s' } as React.CSSProperties} onClick={() => setMobileMenuOpen(false)}>
+              <span>WOMEN'S</span> <ChevronRight size={24} className="arrow" />
+            </Link>
+            <Link href="/shop/kids" style={{ '--delay': '0.15s' } as React.CSSProperties} onClick={() => setMobileMenuOpen(false)}>
+              <span>KID'S</span> <ChevronRight size={24} className="arrow" />
+            </Link>
+            <button 
+              className="mobile-premium-trigger"
+              style={{ '--delay': '0.2s' } as React.CSSProperties}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setCategoryOpen(true);
+              }}
+            >
+              <span className="premium-text">PREMIUM VAULT</span> <ChevronDown size={24} />
+            </button>
+          </div>
+
+          {/* SECONDARY PERSONAL MENU (Appears if logged in) */}
+          {isAuthenticated && (
+            <div className="mobile-secondary-links">
+              <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
+                <User size={18} /> My Profile
+              </Link>
+              <Link href="/cart" onClick={() => setMobileMenuOpen(false)}>
+                <ShoppingCart size={18} /> My Cart
+                {mounted && cartCount > 0 && <span className="nav-counter">{cartCount}</span>}
+              </Link>
+              <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)}>
+                <Heart size={18} /> Saved Styles
+                {mounted && wishlist.length > 0 && <span className="nav-counter">{wishlist.length}</span>}
+              </Link>
+              
+              {user?.role === "admin" && (
+                <Link href="/admin" className="admin-link" onClick={() => setMobileMenuOpen(false)}>
+                  <ShieldAlert size={18} /> Command Center
+                </Link>
+              )}
+            </div>
+          )}
         </div>
 
         {/* BOTTOM ANCHORED ACTIONS */}
@@ -292,33 +326,21 @@ export default function Navbar() {
               AUTHORIZE // SIGN IN
             </Link>
           ) : (
-            <div className="mobile-user-section">
-              <div className="mobile-user-tag">
-                <User size={16} />
-                <span className="truncate">{user?.email}</span>
+            <div className="mobile-user-card">
+              <div className="user-card-info">
+                <span className="user-card-label">CURRENT VIP</span>
+                <span className="user-card-email truncate">{user?.email}</span>
               </div>
-              
-              <div className="mobile-action-grid">
-                <Link href="/profile" className="mobile-action-btn solid" onClick={() => setMobileMenuOpen(false)}>
-                  MY PROFILE
-                </Link>
-                {user?.role === "admin" && (
-                  <Link href="/admin" className="mobile-action-btn admin" onClick={() => setMobileMenuOpen(false)}>
-                    <ShieldAlert size={16} /> ADMIN
-                  </Link>
-                )}
-              </div>
-
-              <button className="mobile-action-btn danger" onClick={() => signOut({ callbackUrl: "/" })}>
-                <LogOut size={16} /> SIGN OUT
+              <button className="mobile-signout-btn" onClick={() => signOut({ callbackUrl: "/" })}>
+                <LogOut size={20} />
               </button>
             </div>
           )}
         </div>
+
       </div>
 
       {/* ================= CATEGORY OVERLAY ================= */}
-      {/* ... (Category Overlay remains the same) ... */}
       <div className={`category-overlay ${categoryOpen ? "show" : ""}`}>
         <div className="overlay-header-split">
           <div className="overlay-brand-line">
@@ -341,7 +363,65 @@ export default function Navbar() {
             </div>
           </div>
           <div className="overlay-right-col">
-            {/* (Keep all the showcase cards exactly the same here...) */}
+            <div className="showcase-intro reveal-item" style={{ '--i': 1 } as React.CSSProperties}>
+              <h3>THE ULTIMATE EXPERIENCE</h3>
+              <p>GenZonic Premium bridges the gap between high-fashion presentation and core streetwear. It is not just clothing; it is a meticulously curated physical artifact.</p>
+            </div>
+            <div className="showcase-comparison reveal-item" style={{ '--i': 2 } as React.CSSProperties}>
+              <div className="comp-side regular-side">
+                <h4>REGULAR</h4>
+                <ul>
+                  <li>GenZonic Core Garment</li>
+                  <li>Standard Poly-mailer</li>
+                  <li>Basic Tagging</li>
+                </ul>
+              </div>
+              <div className="comp-side premium-side">
+                <h4>PREMIUM</h4>
+                <ul>
+                  <li><Check size={16} strokeWidth={3}/> GenZonic Core Garment</li>
+                  <li><Check size={16} strokeWidth={3}/> 5 Exclusive Artifacts</li>
+                  <li><Check size={16} strokeWidth={3}/> Structured Vault Box</li>
+                </ul>
+              </div>
+            </div>
+            <div className="showcase-items-grid">
+              <div className="perk-card reveal-item" style={{ '--i': 3 } as React.CSSProperties}>
+                <div className="perk-icon-wrapper"><Key size={28} strokeWidth={1.5} /></div>
+                <div className="perk-info">
+                  <h5>Custom Keychain</h5>
+                  <p>Heavyweight matte metal with engraved branding.</p>
+                </div>
+              </div>
+              <div className="perk-card reveal-item" style={{ '--i': 4 } as React.CSSProperties}>
+                <div className="perk-icon-wrapper"><BookOpen size={28} strokeWidth={1.5} /></div>
+                <div className="perk-info">
+                  <h5>Brand Story Card</h5>
+                  <p>High-GSM pressed paper detailing the lore.</p>
+                </div>
+              </div>
+              <div className="perk-card reveal-item" style={{ '--i': 5 } as React.CSSProperties}>
+                <div className="perk-icon-wrapper"><Ticket size={28} strokeWidth={1.5} /></div>
+                <div className="perk-info">
+                  <h5>Exclusive Discount</h5>
+                  <p>A physical NFC-enabled card for future drops.</p>
+                </div>
+              </div>
+              <div className="perk-card reveal-item" style={{ '--i': 6 } as React.CSSProperties}>
+                <div className="perk-icon-wrapper"><Shield size={28} strokeWidth={1.5} /></div>
+                <div className="perk-info">
+                  <h5>Custom Patches</h5>
+                  <p>Woven brand insignias with adhesive backing.</p>
+                </div>
+              </div>
+              <div className="perk-card reveal-item box-card" style={{ '--i': 7 } as React.CSSProperties}>
+                <div className="perk-icon-wrapper"><Box size={32} strokeWidth={1.5} /></div>
+                <div className="perk-info">
+                  <h5>Premium Utility Box</h5>
+                  <p>A matte-black rigid structure designed to be kept and reused.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -369,10 +449,10 @@ export default function Navbar() {
           .mobile-backdrop { display: block !important; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 99998 !important; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
           .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
 
-          /* 2. SIDEBAR DRAWER - REDESIGNED */
+          /* 2. SIDEBAR DRAWER - FULL REDESIGN */
           .mobile-sidebar { 
             display: flex !important; flex-direction: column; position: fixed; top: 0; right: 0; 
-            width: 100%; max-width: 420px; height: 100dvh; /* 100dvh fixes iOS Safari bottom bar issues */
+            width: 100%; max-width: 420px; height: 100dvh; 
             background: var(--bg, #050505) !important; color: var(--text, #ffffff);
             z-index: 99999 !important; padding: 25px 30px; 
             transform: translateX(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -389,46 +469,92 @@ export default function Navbar() {
           /* SEARCH PILL */
           .mobile-search-box { 
             display: flex; align-items: center; gap: 12px; background: rgba(128,128,128,0.06); 
-            padding: 16px 20px; border-radius: 30px; margin-bottom: 40px; 
-            border: 1px solid rgba(128,128,128,0.1); transition: 0.3s;
+            padding: 16px 20px; border-radius: 30px; margin-bottom: 30px; 
+            border: 1px solid rgba(128,128,128,0.1); transition: 0.3s; flex-shrink: 0;
           }
           .mobile-search-box:focus-within { border-color: var(--text); background: transparent; }
           .mobile-search-box input { border: none; background: transparent; width: 100%; outline: none; font-size: 15px; color: inherit; font-weight: 600; }
 
+          /* SCROLL AREA (Pushes bottom actions down) */
+          .mobile-scroll-area {
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 30px;
+            /* Hide scrollbar for a cleaner look */
+            -ms-overflow-style: none; scrollbar-width: none;
+          }
+          .mobile-scroll-area::-webkit-scrollbar { display: none; }
+
           /* MASSIVE NAV LINKS */
-          .mobile-nav-links { display: flex; flex-direction: column; gap: 15px; flex: 1; }
+          .mobile-nav-links { display: flex; flex-direction: column; }
           .mobile-nav-links a, .mobile-premium-trigger { 
-            font-size: clamp(28px, 8vw, 36px); font-weight: 900; letter-spacing: -1px; 
-            color: inherit; text-decoration: none; padding: 15px 0; border-bottom: 2px solid rgba(128,128,128,0.1); 
+            font-size: clamp(26px, 7vw, 32px); font-weight: 900; letter-spacing: -1px; 
+            color: inherit; text-decoration: none; padding: 20px 0; border-bottom: 1px solid rgba(128,128,128,0.1); 
             display: flex; align-items: center; justify-content: space-between; background: transparent; 
             border-top: none; border-left: none; border-right: none; width: 100%; cursor: pointer; text-align: left; 
-            opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0; transform: translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           }
-          /* Trigger staggered animation when open */
           .mobile-sidebar.open .mobile-nav-links a, .mobile-sidebar.open .mobile-premium-trigger {
             opacity: 1; transform: translateY(0); transition-delay: var(--delay);
           }
           
-          .mobile-premium-trigger { color: #ffc107; border-bottom: none; }
+          .mobile-premium-trigger { color: #ffc107; border-bottom: none; padding-bottom: 10px; }
           .premium-text { background: linear-gradient(90deg, #ffc107, #ff8f00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-          .arrow { opacity: 0.2; font-size: 24px; transition: 0.3s; }
-          .mobile-nav-links a:active .arrow { transform: translateX(10px); opacity: 1; }
+          .arrow { opacity: 0.3; transition: 0.3s; }
+          .mobile-nav-links a:active .arrow { transform: translateX(6px); opacity: 1; }
+
+          /* SECONDARY MENU (Fills the gap beautifully) */
+          .mobile-secondary-links {
+            display: flex; flex-direction: column; gap: 10px; padding: 20px;
+            background: rgba(128,128,128,0.03); border-radius: 12px;
+            border: 1px solid rgba(128,128,128,0.1);
+            opacity: 0; transform: translateY(15px); transition: all 0.4s ease 0.3s;
+          }
+          .mobile-sidebar.open .mobile-secondary-links { opacity: 1; transform: translateY(0); }
+
+          .mobile-secondary-links a {
+            display: flex; align-items: center; gap: 12px; padding: 12px 0;
+            font-size: 14px; font-weight: 700; color: inherit; text-decoration: none;
+            border-bottom: 1px dashed rgba(128,128,128,0.15);
+          }
+          .mobile-secondary-links a:last-child { border-bottom: none; padding-bottom: 0; }
+          .mobile-secondary-links a svg { opacity: 0.6; }
+          
+          .nav-counter { margin-left: auto; background: var(--text); color: var(--bg); font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 900; }
+          .admin-link { color: #3b82f6 !important; }
+          .admin-link svg { opacity: 1 !important; }
 
           /* BOTTOM ANCHORED ACTIONS */
-          .mobile-bottom-actions { margin-top: auto; padding-top: 30px; opacity: 0; transform: translateY(10px); transition: all 0.4s ease 0.4s; }
+          .mobile-bottom-actions { 
+            margin-top: 20px; padding-top: 20px; flex-shrink: 0;
+            border-top: 1px solid rgba(128,128,128,0.1);
+            opacity: 0; transform: translateY(10px); transition: all 0.4s ease 0.4s; 
+          }
           .mobile-sidebar.open .mobile-bottom-actions { opacity: 1; transform: translateY(0); }
 
-          .mobile-user-section { display: flex; flex-direction: column; gap: 12px; }
-          .mobile-user-tag { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-family: monospace; font-weight: 600; padding: 16px; background: rgba(128,128,128,0.05); border-radius: 8px; width: 100%; border: 1px solid rgba(128,128,128,0.1); }
-          .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
-          
-          .mobile-action-grid { display: flex; gap: 12px; }
-          .mobile-action-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 18px; font-size: 13px; font-weight: 900; letter-spacing: 2px; text-decoration: none; border-radius: 8px; border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-          
-          .mobile-action-btn.primary { background: var(--text, #fff); color: var(--bg, #000); }
-          .mobile-action-btn.solid { background: var(--text); color: var(--bg); } 
-          .mobile-action-btn.admin { background: #3b82f6; color: white; }
-          .mobile-action-btn.danger { background: rgba(239, 68, 68, 0.05); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+          /* CLEAN USER CARD */
+          .mobile-user-card {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.1);
+            border-radius: 8px; padding: 12px 16px;
+          }
+          .user-card-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+          .user-card-label { font-size: 9px; font-weight: 900; letter-spacing: 2px; opacity: 0.5; }
+          .user-card-email { font-size: 13px; font-weight: 700; font-family: monospace; }
+          .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+
+          .mobile-signout-btn {
+            background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none;
+            width: 40px; height: 40px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; flex-shrink: 0; transition: 0.2s;
+          }
+          .mobile-signout-btn:active { background: #ef4444; color: white; }
+
+          .mobile-action-btn.primary { 
+            display: flex; align-items: center; justify-content: center; 
+            width: 100%; padding: 18px; font-size: 13px; font-weight: 900; 
+            letter-spacing: 2px; text-decoration: none; border-radius: 8px; 
+            background: var(--text); color: var(--bg); text-transform: uppercase; 
+          }
 
           :global(.overlay-split-body) { grid-template-columns: 1fr !important; gap: 40px !important; }
           :global(.desktop-only-text) { display: none !important; }
@@ -437,7 +563,7 @@ export default function Navbar() {
         @media (max-width: 600px) {
           :global(.brand-logo) { height: 36px !important; width: auto !important; object-fit: contain !important; }
           .mobile-sidebar { padding: 20px 20px; }
-          .mobile-nav-links a, .mobile-premium-trigger { font-size: clamp(24px, 8vw, 30px); padding: 12px 0; }
+          .mobile-nav-links a, .mobile-premium-trigger { padding: 16px 0; }
         }
       `}</style>
     </>
