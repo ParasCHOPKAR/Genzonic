@@ -54,13 +54,26 @@ export const useCartStore = create<CartState>()((set) => ({
     ),
   })),
 
-  decreaseQty: (id, size) => set((state) => ({
-    cart: state.cart.map((i) =>
-      i.id === id && i.size === size && i.quantity > 1
-        ? { ...i, quantity: i.quantity - 1 }
-        : i
-    ),
-  })),
+decreaseQty: (id, size) => set((state) => {
+    // 1. Find the specific item we are trying to decrease
+    const existingItem = state.cart.find((i) => i.id === id && i.size === size);
+    
+    // 2. 🔥 If the quantity is exactly 1, completely remove it from the cart
+    if (existingItem && existingItem.quantity === 1) {
+      return {
+        cart: state.cart.filter((i) => !(i.id === id && i.size === size)),
+      };
+    }
+
+    // 3. Otherwise, just decrease the quantity normally
+    return {
+      cart: state.cart.map((i) =>
+        i.id === id && i.size === size
+          ? { ...i, quantity: i.quantity - 1 }
+          : i
+      ),
+    };
+  }),
 
   clearCart: () => set({ cart: [] }),
 }));
