@@ -4,21 +4,23 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Package, Heart, Settings, LogOut, Truck, FileText, ExternalLink, Loader2 } from "lucide-react";
+import { 
+  Package, Heart, Settings, LogOut, Truck, FileText, 
+  ExternalLink, Loader2, XCircle, RefreshCw, RotateCcw 
+} from "lucide-react";
 import { useWishlist } from "@/app/context/WishlistContext"; 
 
 export default function ProfilePage() {
   const { data: session } = useSession();
   const { wishlist } = useWishlist();
-  
-  // 🔥 FIXED: Default tab is now "orders" (Order Archive)
   const [activeTab, setActiveTab] = useState("orders");
 
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
 
-  useEffect(() => {
-    if (activeTab === "orders" && session?.user?.email) {
+  // Fetch Orders
+  const fetchOrders = () => {
+    if (session?.user?.email) {
       setIsLoadingOrders(true);
       fetch(`/api/orders?email=${session.user.email}`)
         .then((res) => res.json())
@@ -32,13 +34,59 @@ export default function ProfilePage() {
         .catch((err) => console.error("Error fetching orders:", err))
         .finally(() => setIsLoadingOrders(false));
     }
+  };
+
+  useEffect(() => {
+    if (activeTab === "orders") {
+      fetchOrders();
+    }
   }, [activeTab, session?.user?.email]);
 
   const getStatusClass = (status: string) => {
     const s = (status || "processing").toLowerCase();
     if (s === "delivered") return "status-delivered";
     if (s === "dispatched" || s === "shipped") return "status-dispatched";
+    if (s === "cancelled") return "status-cancelled";
     return "status-processing";
+  };
+
+  // 🔥 HELPER: Check if a date is within X days from today
+  const isWithinDays = (dateString: string, daysLimit: number) => {
+    if (!dateString) return false;
+    const targetDate = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - targetDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= daysLimit;
+  };
+
+  // 🔥 ACTION HANDLERS (Connect these to your backend APIs)
+  const handleOrderAction = async (orderId: string, action: "cancel" | "return" | "replace") => {
+    const confirmMessage = 
+      action === "cancel" ? "Are you sure you want to cancel this dispatch?" :
+      action === "return" ? "Initiate return and refund process for this artifact?" :
+      "Initiate replacement process for this artifact?";
+
+    if (!window.confirm(confirmMessage)) return;
+
+    try {
+      // Example API call - Update this to match your actual backend route!
+      const res = await fetch(`/api/orders/${orderId}/action`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action })
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        alert(`Successfully requested: ${action.toUpperCase()}`);
+        fetchOrders(); // Refresh the list to show updated status
+      } else {
+        alert(data.message || "Failed to process request. Contact Support.");
+      }
+    } catch (error) {
+      alert("Network error. Please try again later.");
+    }
   };
 
   return (
@@ -47,7 +95,6 @@ export default function ProfilePage() {
         
         {/* LEFT SIDEBAR */}
         <aside className="profile-sidebar">
-          {/* VIP Pass Card */}
           <div className="user-card">
             <div className="brand-badge">GENZONIC</div>
             <h2 className="user-title">VIP ACCESS</h2>
@@ -56,28 +103,16 @@ export default function ProfilePage() {
           </div>
 
           <nav className="profile-nav">
-            <button 
-              className={`nav-btn ${activeTab === "orders" ? "active" : ""}`}
-              onClick={() => setActiveTab("orders")}
-            >
-              <Package size={18} /> ORDER DETAILS
+            <button className={`nav-btn ${activeTab === "orders" ? "active" : ""}`} onClick={() => setActiveTab("orders")}>
+              <Package size={18} /> ORDER ARCHIVE
             </button>
-            
-            <button 
-              className={`nav-btn ${activeTab === "saved" ? "active" : ""}`}
-              onClick={() => setActiveTab("saved")}
-            >
+            <button className={`nav-btn ${activeTab === "saved" ? "active" : ""}`} onClick={() => setActiveTab("saved")}>
               <Heart size={18} /> SAVED STYLES <span className="count-badge">{wishlist.length}</span>
             </button>
-            <button 
-              className={`nav-btn ${activeTab === "settings" ? "active" : ""}`}
-              onClick={() => setActiveTab("settings")}
-            >
+            <button className={`nav-btn ${activeTab === "settings" ? "active" : ""}`} onClick={() => setActiveTab("settings")}>
               <Settings size={18} /> ACCOUNT SETTINGS
             </button>
-            
             <div className="divider"></div>
-            
             <button className="nav-btn signout-btn" onClick={() => signOut({ callbackUrl: '/' })}>
               <LogOut size={18} /> SIGN OUT
             </button>
@@ -134,55 +169,92 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="orders-list">
-                  {orders.map((order) => (
-                    <div key={order._id || order.id} className="order-card">
-                      <div className="order-header">
-                        <div className="order-meta">
-                          <span className="order-id">MANIFEST ID: <span className="mono">{order.orderId || order._id}</span></span>
-                          <span className="order-date">
-                            AUTHORIZED: {new Date(order.createdAt || Date.now()).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className={`status-badge ${getStatusClass(order.status)}`}>
-                          <Truck size={14} /> {(order.status || "PROCESSING").toUpperCase()}
-                        </div>
-                      </div>
+                  {orders.map((order) => {
+                    const statusStr = (order.status || "PROCESSING").toLowerCase();
+                    // Fallback to createdAt if deliveredAt or updatedAt is missing
+                    const timeReferenceDate = order.deliveredAt || order.updatedAt || order.createdAt;
 
-                      <div className="order-body">
-                        <div className="order-items-preview">
-                          {(order.items || order.products || []).map((item: any, index: number) => (
-                            <div key={index} className="mini-item">
-                              <div className="mini-item-img">
-                                <Image src={item.image || "/fallback.png"} alt={item.name || "Product"} fill style={{objectFit: "cover"}} />
-                              </div>
-                              <div className="mini-item-info">
-                                <h4>{item.name}</h4>
-                                <p>SIZE: {item.size || "M"} <span className="separator">|</span> QTY: {item.quantity || 1}</p>
-                              </div>
-                              <div className="mini-item-price">₹{item.price}</div>
-                            </div>
-                          ))}
+                    return (
+                      <div key={order._id || order.id} className="order-card">
+                        <div className="order-header">
+                          <div className="order-meta">
+                            <span className="order-id">MANIFEST ID: <span className="mono">{order.orderId || order._id}</span></span>
+                            <span className="order-date">
+                              AUTHORIZED: {new Date(order.createdAt || Date.now()).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className={`status-badge ${getStatusClass(statusStr)}`}>
+                            <Truck size={14} /> {statusStr.toUpperCase()}
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="order-footer">
-                        <div className="payment-info">
-                          <span className="label">TOTAL SECURED:</span>
-                          <span className="amount">₹{order.total || order.totalPrice}</span>
+                        <div className="order-body">
+                          <div className="order-items-preview">
+                            {(order.items || order.products || []).map((item: any, index: number) => (
+                              <div key={index} className="mini-item">
+                                <div className="mini-item-img">
+                                  <Image src={item.image || "/fallback.png"} alt={item.name || "Product"} fill style={{objectFit: "cover"}} />
+                                </div>
+                                <div className="mini-item-info">
+                                  <h4>{item.name}</h4>
+                                  <p>SIZE: {item.size || "M"} <span className="separator">|</span> QTY: {item.quantity || 1}</p>
+                                </div>
+                                <div className="mini-item-price">₹{item.price}</div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="order-actions">
-                          <Link href={`/invoice/${order.orderId || order._id}`} className="premium-btn outline small">
-                            <FileText size={14} /> INVOICE
-                          </Link>
-                          {order.trackingLink && (
-                            <a href={order.trackingLink} target="_blank" rel="noreferrer" className="premium-btn highlight small">
-                              TRACKING <ExternalLink size={14} />
-                            </a>
-                          )}
+
+                        <div className="order-footer">
+                          <div className="payment-info">
+                            <span className="label">TOTAL SECURED:</span>
+                            <span className="amount">₹{order.total || order.totalPrice}</span>
+                          </div>
+                          
+                          <div className="order-actions">
+                            {/* Standard Buttons */}
+                            <Link href={`/invoice/${order.orderId || order._id}`} className="premium-btn outline small">
+                              <FileText size={14} /> INVOICE
+                            </Link>
+                            {order.trackingLink && (
+                              <a href={order.trackingLink} target="_blank" rel="noreferrer" className="premium-btn highlight small">
+                                TRACKING <ExternalLink size={14} />
+                              </a>
+                            )}
+
+                            {/* 🔥 CONDITIONAL ACTIONS: Cancel, Return, Replace 🔥 */}
+                            
+                            {/* CANCEL: Only if status is "processing" */}
+                            {statusStr === "processing" && (
+                              <button onClick={() => handleOrderAction(order._id, "cancel")} className="premium-btn danger small">
+                                <XCircle size={14} /> CANCEL ORDER
+                              </button>
+                            )}
+
+                            {/* RETURN & REPLACE: Only if status is "delivered" */}
+                            {statusStr === "delivered" && (
+                              <>
+                                {/* RETURN: Within 3 Days */}
+                                {isWithinDays(timeReferenceDate, 3) && (
+                                  <button onClick={() => handleOrderAction(order._id, "return")} className="premium-btn warning small">
+                                    <RotateCcw size={14} /> RETURN
+                                  </button>
+                                )}
+                                
+                                {/* REPLACE: Within 7 Days */}
+                                {isWithinDays(timeReferenceDate, 7) && (
+                                  <button onClick={() => handleOrderAction(order._id, "replace")} className="premium-btn warning small">
+                                    <RefreshCw size={14} /> REPLACE
+                                  </button>
+                                )}
+                              </>
+                            )}
+
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -210,17 +282,7 @@ export default function ProfilePage() {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* VIP SIDEBAR STYLING */
-        .user-card { 
-          position: relative;
-          background: #000; 
-          color: white; 
-          padding: 40px 20px; 
-          border-radius: 8px; 
-          text-align: center; 
-          margin-bottom: 30px; 
-          overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+        .user-card { position: relative; background: #000; color: white; padding: 40px 20px; border-radius: 8px; text-align: center; margin-bottom: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         :global(.dark) .user-card { background: #111; border: 1px solid rgba(255,255,255,0.1); }
         .brand-badge { font-size: 22px; font-weight: 900; font-style: italic; letter-spacing: -1px; margin-bottom: 15px; color: #fff; }
         .user-title { font-size: 14px; font-weight: 900; letter-spacing: 4px; margin: 0 0 8px 0; color: #ff3e00; }
@@ -230,48 +292,36 @@ export default function ProfilePage() {
 
         /* NAVIGATION BAR */
         .profile-nav { display: flex; flex-direction: column; gap: 8px; }
-        .nav-btn { 
-          display: flex; align-items: center; gap: 15px; width: 100%; padding: 16px 20px; 
-          background: transparent; border: 2px solid transparent; color: var(--text); 
-          font-weight: 800; font-size: 12px; letter-spacing: 1px; cursor: pointer; 
-          text-align: left; border-radius: 6px; transition: all 0.3s ease;
-        }
+        .nav-btn { display: flex; align-items: center; gap: 15px; width: 100%; padding: 16px 20px; background: transparent; border: 2px solid transparent; color: var(--text); font-weight: 800; font-size: 12px; letter-spacing: 1px; cursor: pointer; text-align: left; border-radius: 6px; transition: all 0.3s ease; }
         .nav-btn:hover { background: rgba(128,128,128,0.05); transform: translateX(4px); }
         .nav-btn.active { background: var(--text); color: var(--bg); box-shadow: 4px 4px 0px rgba(128,128,128,0.2); transform: translateX(4px); }
-        
         .count-badge { margin-left: auto; background: rgba(128,128,128,0.2); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 900;}
         .nav-btn.active .count-badge { background: var(--bg); color: var(--text); }
-        
         .divider { height: 1px; background: rgba(128,128,128,0.2); margin: 10px 0; }
         .signout-btn { color: #ff3e00; }
         .signout-btn:hover { background: rgba(255, 62, 0, 0.05); color: #ff3e00; border-color: rgba(255, 62, 0, 0.2); }
 
         /* CONTENT AREA */
         .section-title { font-size: 36px; font-weight: 900; letter-spacing: -1.5px; margin: 0 0 40px 0; border-bottom: 3px solid var(--text); padding-bottom: 15px;}
-        
         .empty-state { padding: 80px 20px; text-align: center; background: rgba(128,128,128,0.02); border: 2px dashed rgba(128,128,128,0.2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;}
         .empty-icon { color: rgba(128,128,128,0.3); margin-bottom: 20px; }
         .empty-state p { font-weight: 800; letter-spacing: 2px; font-size: 12px; opacity: 0.5; margin-bottom: 30px;}
 
-        /* 🔥 PREMIUM BUTTON STYLES 🔥 */
-        .premium-btn {
-          display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-          padding: 14px 28px; background: var(--text); color: var(--bg);
-          font-weight: 900; font-size: 12px; letter-spacing: 2px; text-decoration: none;
-          border: 2px solid var(--text); border-radius: 4px; cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-          box-shadow: 4px 4px 0px rgba(128,128,128,0.2);
-        }
+        /* BUTTON STYLES */
+        .premium-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; background: var(--text); color: var(--bg); font-weight: 900; font-size: 12px; letter-spacing: 2px; text-decoration: none; border: 2px solid var(--text); border-radius: 4px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 4px 4px 0px rgba(128,128,128,0.2); }
         .premium-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(128,128,128,0.3); }
         .premium-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px transparent; }
-        
         .premium-btn.small { padding: 10px 16px; font-size: 11px; }
-        
         .premium-btn.outline { background: transparent; color: var(--text); }
         .premium-btn.outline:hover { background: var(--text); color: var(--bg); }
-
         .premium-btn.highlight { background: #22c55e; border-color: #22c55e; color: #fff; box-shadow: 4px 4px 0px rgba(34, 197, 94, 0.3); }
         .premium-btn.highlight:hover { background: #16a34a; box-shadow: 6px 6px 0px rgba(34, 197, 94, 0.4); }
+
+        /* 🔥 NEW DANGER & WARNING BUTTONS 🔥 */
+        .premium-btn.danger { background: transparent; border-color: #ef4444; color: #ef4444; box-shadow: 4px 4px 0px rgba(239, 68, 68, 0.1); }
+        .premium-btn.danger:hover { background: #ef4444; color: #fff; box-shadow: 6px 6px 0px rgba(239, 68, 68, 0.3); }
+        .premium-btn.warning { background: transparent; border-color: #f59e0b; color: #f59e0b; box-shadow: 4px 4px 0px rgba(245, 158, 11, 0.1); }
+        .premium-btn.warning:hover { background: #f59e0b; color: #fff; box-shadow: 6px 6px 0px rgba(245, 158, 11, 0.3); }
 
         /* SAVED GRID */
         .saved-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
@@ -302,6 +352,7 @@ export default function ProfilePage() {
         :global(.dark) .status-dispatched { color: #3b82f6; }
         .status-delivered { background: rgba(34, 197, 94, 0.1); color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.3); }
         :global(.dark) .status-delivered { color: #22c55e; }
+        .status-cancelled { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 
         .order-body { padding: 25px; }
         .mini-item { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
@@ -318,7 +369,7 @@ export default function ProfilePage() {
         .payment-info .label { font-size: 11px; font-weight: 800; color: #888; letter-spacing: 1px; }
         .payment-info .amount { font-size: 20px; font-weight: 900; }
 
-        .order-actions { display: flex; gap: 15px; }
+        .order-actions { display: flex; flex-wrap: wrap; gap: 15px; }
 
         .spinner { animation: spin 1s linear infinite; margin: 0 auto 20px; color: var(--text);}
         @keyframes spin { 100% { transform: rotate(360deg); } }
