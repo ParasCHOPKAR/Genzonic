@@ -200,15 +200,13 @@ export default function Footer() {
         </div>
 
 
-        {/* BLOCK 2: THE SHOP/VAULT */}
-        <div className="footer-content-block">
+      {/* BLOCK 2: THE SHOP/VAULT */}
           <h4 style={styles.title}>THE VAULT</h4>
           <div><Link href="/shop/men" className="f-link" style={styles.link}>Men's Artifacts</Link></div>
           <div><Link href="/shop/women" className="f-link" style={styles.link}>Women's Artifacts</Link></div>
           <div><Link href="/shop/kids" className="f-link" style={styles.link}>Kid's Artifacts</Link></div>
-          <div><Link href="/about" className="f-link" style={styles.link}>About GenZonic</Link></div>
-        </div>
-
+          {/* Pointing to About ID */}
+          <div><Link href="/about#about" className="f-link" style={styles.link}>About GenZonic</Link></div>
 
         {/* BLOCK 3: CONTACT HQ */}
         <div className="footer-content-block">
@@ -228,13 +226,12 @@ export default function Footer() {
 
 
         {/* BLOCK 4: LEGAL */}
-        <div className="footer-content-block">
+       {/* BLOCK 4: LEGAL */}
           <h4 style={styles.title}>LEGAL</h4>
-          <div><Link href="/privacy" className="f-link" style={styles.link}>Privacy Policy</Link></div>
-          <div><Link href="/terms" className="f-link" style={styles.link}>Terms & Conditions</Link></div>
-          <div><Link href="/return-policy" className="f-link" style={styles.link}>Return Policy</Link></div>
-        </div>
-
+          {/* Pointing to the specific IDs on the /about page */}
+          <div><Link href="/about#privacy" className="f-link" style={styles.link}>Privacy Policy</Link></div>
+          <div><Link href="/about#terms" className="f-link" style={styles.link}>Terms & Conditions</Link></div>
+          <div><Link href="/about#returns" className="f-link" style={styles.link}>Return Policy</Link></div>
       </div>
 
       {/* BOTTOM BAR: COPYRIGHT & DEVELOPER */}
