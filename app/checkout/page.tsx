@@ -28,6 +28,9 @@ export default function CheckoutPage() {
   const [stateName, setStateName] = useState("");
   const [isFetchingPin, setIsFetchingPin] = useState(false);
   const [pinError, setPinError] = useState("");
+  
+  // 🔥 NEW: Tracks if the API successfully filled the data so we can lock the fields
+  const [isAutoFilled, setIsAutoFilled] = useState(false);
 
   // 🔥 Strict Pincode Logic & API Fetch
   const handlePincodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,20 +57,24 @@ export default function CheckoutPage() {
           const postOffice = data[0].PostOffice[0];
           setDistrict(postOffice.District);
           setStateName(postOffice.State);
+          setIsAutoFilled(true); // 🔥 LOCK THE FIELDS
         } else {
           setPinError("INVALID PINCODE DETECTED.");
           setDistrict("");
           setStateName("");
+          setIsAutoFilled(false); // Unlock so they can type manually
         }
       } catch (error) {
         setPinError("NETWORK ERROR. PLEASE ENTER MANUALLY.");
+        setIsAutoFilled(false); // Unlock so they can type manually
       } finally {
         setIsFetchingPin(false);
       }
     } else {
-      // Clear auto-filled data if they backspace
+      // Clear auto-filled data and unlock if they backspace
       setDistrict("");
       setStateName("");
+      setIsAutoFilled(false);
     }
   };
 
@@ -238,7 +245,7 @@ export default function CheckoutPage() {
               <div className="input-group full"><label>AREA / LOCALITY *</label><input name="area" type="text" required /></div>
               <div className="input-group full"><label>LANDMARK</label><input name="landmark" type="text" /></div>
               
-              {/* 🔥 AUTO-FILLED DISTRICT & STATE 🔥 */}
+              {/* 🔥 AUTO-FILLED DISTRICT & STATE (LOCKED ON SUCCESS) 🔥 */}
               <div className="input-row full">
                 <div className="input-group">
                   <label>CITY / DISTRICT *</label>
@@ -247,7 +254,8 @@ export default function CheckoutPage() {
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
                     placeholder="AUTO-FILL"
-                    readOnly={isFetchingPin} 
+                    readOnly={isAutoFilled || isFetchingPin} 
+                    className={isAutoFilled ? "disabled-input" : ""}
                     required
                   />
                 </div>
@@ -258,7 +266,8 @@ export default function CheckoutPage() {
                     value={stateName}
                     onChange={(e) => setStateName(e.target.value)}
                     placeholder="AUTO-FILL"
-                    readOnly={isFetchingPin}
+                    readOnly={isAutoFilled || isFetchingPin}
+                    className={isAutoFilled ? "disabled-input" : ""}
                     required
                   />
                 </div>
@@ -319,6 +328,8 @@ export default function CheckoutPage() {
           input, select { background: rgba(128,128,128,0.03); border: 1px solid rgba(128,128,128,0.2); padding: 16px; color: var(--text); font-weight: 700; font-size: 13px; outline: none; transition: 0.2s; border-radius: 4px; }
           select { cursor: pointer; appearance: auto; }
           input:focus, select:focus { border-color: var(--text); background: transparent; }
+          
+          /* Automatically applied when fields are locked */
           .disabled-input, select:disabled { background: rgba(128,128,128,0.1); cursor: not-allowed; font-weight: 900; opacity: 0.7; border-color: rgba(128,128,128,0.1); }
 
           /* 🔥 PINCODE CSS 🔥 */

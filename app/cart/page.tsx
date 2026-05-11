@@ -100,7 +100,7 @@ export default function CartPage() {
               <h2 className="summary-title">ORDER SUMMARY</h2>
               
               <div className="summary-row"><span>SUBTOTAL</span><span>₹{subtotal}</span></div>
-              <div className="summary-row"><span className="orange-text">SHIPPING</span><span className="orange-text">COMPLIMENTARY</span></div>
+              <div className="summary-row"><span className="orange-text">SHIPPING</span><span className="orange-text">Free</span></div>
               
               {isApplied && (
                 <div className="summary-row discount">

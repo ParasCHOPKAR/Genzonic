@@ -193,8 +193,8 @@ export default function Footer() {
             Bridging the gap between high-fashion presentation and core streetwear. More than just apparel—it is a curated physical artifact.
           </p>
           <div className="social-links">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={20} /></a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter"><Twitter size={20} /></a>
+            <a href="https://www.instagram.com/genzonic.official?igsh=MXc3NW13d2x0bWR2Yg%3D%3D" target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={20} /></a>
+   
             <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook size={20} /></a>
           </div>
         </div>
