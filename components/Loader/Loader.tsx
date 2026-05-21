@@ -3,36 +3,50 @@
 import React, { useState, useEffect } from 'react';
 
 const Loader = () => {
+  // 1. New state to track if we should render the loader at all
+  const [shouldRender, setShouldRender] = useState(false);
+  
   const [progress, setProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [unmount, setUnmount] = useState(false);
 
+  // Check Session Storage on Mount
   useEffect(() => {
-    // Simulate loading progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => setIsLoaded(true), 400); 
-          setTimeout(() => setUnmount(true), 1600); 
-          return 100;
-        }
-        return prev + 1; 
-      });
-    }, 35);
+    const hasVisited = sessionStorage.getItem("genzonic_visited");
 
-    return () => clearInterval(interval);
+    if (!hasVisited) {
+      // First time visiting this session -> Show loader & start animation
+      setShouldRender(true);
+      sessionStorage.setItem("genzonic_visited", "true");
+
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setTimeout(() => setIsLoaded(true), 400); 
+            setTimeout(() => setUnmount(true), 1600); 
+            return 100;
+          }
+          return prev + 1; 
+        });
+      }, 35);
+
+      return () => clearInterval(interval);
+    } else {
+      // Has already visited this session -> Instantly unmount
+      setUnmount(true);
+    }
   }, []);
 
   const waveYOffset = 300 - (progress * 3.5);
 
-  if (unmount) return null;
+  // 2. If unmount is true OR shouldRender is false, render absolutely nothing
+  if (unmount || !shouldRender) return null;
 
   return (
     <>
       <style>{`
-        /* 
-          BASE CSS (DESKTOP) 
+        /* BASE CSS (DESKTOP) 
           Preserved exactly as your original code 
         */
         .loader-wrapper {
@@ -46,7 +60,7 @@ const Loader = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          z-index: 9999;
+          z-index: 999999; /* Boosted z-index to ensure it covers navbar */
           overflow: hidden;
           transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1), opacity 1s ease-in-out;
         }
@@ -119,8 +133,7 @@ const Loader = () => {
           margin-top: -10px;
         }
 
-        /* 
-          MOBILE RESPONSIVE CSS 
+        /* MOBILE RESPONSIVE CSS 
           Only triggers on smaller screens to fix overflow 
         */
         @media (max-width: 768px) {
