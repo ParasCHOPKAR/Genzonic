@@ -28,8 +28,8 @@ import {
   Check,
   ShieldAlert,
   Crown,
-  Settings,
-  HelpCircle,
+  Info,
+  Mail,
   Gift,
   Link as LinkIcon
 } from "lucide-react";
@@ -337,17 +337,17 @@ export default function Navbar() {
             <Link href="/wishlist" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
               <Heart size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>WISHLIST</span>
             </Link>
-            <Link href="/orders" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+            <Link href="/profile" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
               <Box size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>MY ORDERS</span>
             </Link>
             <button className="lux-sec-item" onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
               <Search size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>SEARCH</span>
             </button>
-            <Link href="/settings" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-              <Settings size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>SETTINGS</span>
+            <Link href="/about" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Info size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>ABOUT</span>
             </Link>
-            <Link href="/support" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-              <HelpCircle size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>HELP & SUPPORT</span>
+            <Link href="/contact" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Mail size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>CONTACT</span>
             </Link>
             {isAuthenticated && (
               <button className="lux-sec-item" onClick={() => signOut({ callbackUrl: "/" })} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
