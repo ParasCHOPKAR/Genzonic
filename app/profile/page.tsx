@@ -3,7 +3,8 @@
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
 import {
   Package,
   Heart,
@@ -26,7 +27,8 @@ export default function ProfilePage() {
 
   const [activeTab, setActiveTab] = useState("orders");
   const [orders, setOrders] = useState<any[]>([]);
-  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isLoadingOrders, setIsLoadingOrders] =
+    useState(false);
 
   // ================= FETCH ORDERS =================
   const fetchOrders = async () => {
@@ -49,7 +51,7 @@ export default function ProfilePage() {
         setOrders([]);
       }
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error(error);
     } finally {
       setIsLoadingOrders(false);
     }
@@ -66,21 +68,27 @@ export default function ProfilePage() {
     const s = (status || "processing").toLowerCase();
 
     if (s === "delivered") return "status-delivered";
-    if (s === "dispatched" || s === "shipped")
-      return "status-dispatched";
+
+    if (s === "shipped" || s === "dispatched") {
+      return "status-shipped";
+    }
+
     if (s === "cancelled") return "status-cancelled";
 
     return "status-processing";
   };
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "Processing";
+  const formatDate = (date: string) => {
+    if (!date) return "Processing";
 
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    return new Date(date).toLocaleDateString(
+      "en-US",
+      {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }
+    );
   };
 
   const isWithinDays = (
@@ -103,17 +111,17 @@ export default function ProfilePage() {
     return diffDays <= daysLimit;
   };
 
-  // ================= ACTION HANDLER =================
+  // ================= ACTIONS =================
   const handleOrderAction = async (
     orderId: string,
     action: "cancel" | "return" | "replace"
   ) => {
     const confirmMessage =
       action === "cancel"
-        ? "Are you sure you want to cancel this order?"
+        ? "Cancel this order?"
         : action === "return"
-        ? "Do you want to initiate a return request?"
-        : "Do you want to request a replacement?";
+        ? "Request return?"
+        : "Request replacement?";
 
     if (!window.confirm(confirmMessage)) return;
 
@@ -132,14 +140,14 @@ export default function ProfilePage() {
       const data = await res.json();
 
       if (data.success) {
-        alert(`${action} request submitted successfully`);
+        alert(`${action} request submitted`);
         fetchOrders();
       } else {
-        alert(data.message || "Something went wrong");
+        alert(data.message || "Failed");
       }
     } catch (error) {
       console.error(error);
-      alert("Network error");
+      alert("Something went wrong");
     }
   };
 
@@ -149,12 +157,17 @@ export default function ProfilePage() {
         {/* ================= SIDEBAR ================= */}
         <aside className="profile-sidebar">
           <div className="user-card">
-            <div className="brand-badge">GenZonic</div>
+            <div className="brand-badge">
+              GenZonic
+            </div>
 
-            <h2 className="user-title">VIP ACCESS</h2>
+            <h2 className="user-title">
+              VIP ACCESS
+            </h2>
 
             <p className="user-email">
-              {session?.user?.email || "guest@sys.com"}
+              {session?.user?.email ||
+                "guest@gmail.com"}
             </p>
 
             <div className="scan-line"></div>
@@ -163,22 +176,30 @@ export default function ProfilePage() {
           <nav className="profile-nav">
             <button
               className={`nav-btn ${
-                activeTab === "orders" ? "active" : ""
+                activeTab === "orders"
+                  ? "active"
+                  : ""
               }`}
-              onClick={() => setActiveTab("orders")}
+              onClick={() =>
+                setActiveTab("orders")
+              }
             >
-              <Package size={18} />
-              Orders
+              <Package size={16} />
+              <span>Orders</span>
             </button>
 
             <button
               className={`nav-btn ${
-                activeTab === "saved" ? "active" : ""
+                activeTab === "saved"
+                  ? "active"
+                  : ""
               }`}
-              onClick={() => setActiveTab("saved")}
+              onClick={() =>
+                setActiveTab("saved")
+              }
             >
-              <Heart size={18} />
-              Wishlist
+              <Heart size={16} />
+              <span>Wishlist</span>
 
               <span className="count-badge">
                 {wishlist.length}
@@ -187,15 +208,17 @@ export default function ProfilePage() {
 
             <button
               className={`nav-btn ${
-                activeTab === "settings" ? "active" : ""
+                activeTab === "settings"
+                  ? "active"
+                  : ""
               }`}
-              onClick={() => setActiveTab("settings")}
+              onClick={() =>
+                setActiveTab("settings")
+              }
             >
-              <Settings size={18} />
-              Settings
+              <Settings size={16} />
+              <span>Settings</span>
             </button>
-
-            <div className="divider"></div>
 
             <button
               className="nav-btn signout-btn"
@@ -205,29 +228,31 @@ export default function ProfilePage() {
                 })
               }
             >
-              <LogOut size={18} />
-              Sign Out
+              <LogOut size={16} />
+              <span>Sign Out</span>
             </button>
           </nav>
         </aside>
 
         {/* ================= CONTENT ================= */}
         <main className="profile-content">
-          {/* ================= WISHLIST ================= */}
+          {/* ================= SAVED ================= */}
           {activeTab === "saved" && (
-            <div className="tab-section fade-in">
+            <div className="tab-section">
               <h1 className="section-title">
-                Saved Styles
+                Wishlist
               </h1>
 
               {wishlist.length === 0 ? (
                 <div className="empty-state">
                   <Heart
-                    size={40}
+                    size={36}
                     className="empty-icon"
                   />
 
-                  <p>Your wishlist is empty.</p>
+                  <p>
+                    Your wishlist is empty
+                  </p>
 
                   <Link
                     href="/shop/men"
@@ -275,7 +300,7 @@ export default function ProfilePage() {
 
           {/* ================= ORDERS ================= */}
           {activeTab === "orders" && (
-            <div className="tab-section fade-in">
+            <div className="tab-section">
               <h1 className="section-title">
                 Order Archive
               </h1>
@@ -284,32 +309,33 @@ export default function ProfilePage() {
                 <div className="empty-state">
                   <Loader2
                     className="spinner"
-                    size={40}
+                    size={36}
                   />
 
-                  <p>Loading orders...</p>
+                  <p>Loading Orders...</p>
                 </div>
               ) : orders.length === 0 ? (
                 <div className="empty-state">
                   <Package
-                    size={40}
+                    size={36}
                     className="empty-icon"
                   />
 
-                  <p>No orders found.</p>
+                  <p>No Orders Found</p>
 
                   <Link
                     href="/shop/men"
                     className="premium-btn"
                   >
-                    Start Shopping
+                    Shop Now
                   </Link>
                 </div>
               ) : (
                 <div className="orders-list">
                   {orders.map((order) => {
                     const statusStr = (
-                      order.status || "Processing"
+                      order.status ||
+                      "processing"
                     ).toLowerCase();
 
                     const timeReferenceDate =
@@ -319,7 +345,7 @@ export default function ProfilePage() {
 
                     return (
                       <div
-                        key={order._id || order.id}
+                        key={order._id}
                         className="order-card"
                       >
                         {/* HEADER */}
@@ -330,11 +356,9 @@ export default function ProfilePage() {
                               <span className="mono">
                                 {order.manifestId ||
                                   order.shortId ||
-                                  order.rzpOrderId ||
                                   order._id
                                     ?.slice(-8)
-                                    .toUpperCase() ||
-                                  order._id}
+                                    .toUpperCase()}
                               </span>
                             </span>
 
@@ -352,7 +376,7 @@ export default function ProfilePage() {
                               statusStr
                             )}`}
                           >
-                            <Truck size={14} />
+                            <Truck size={13} />
 
                             {statusStr
                               .charAt(0)
@@ -363,7 +387,7 @@ export default function ProfilePage() {
 
                         {/* BODY */}
                         <div className="order-body">
-                          {/* LEFT */}
+                          {/* ITEMS */}
                           <div className="order-items-preview">
                             {(
                               order.items ||
@@ -386,8 +410,7 @@ export default function ProfilePage() {
                                         "/fallback.png"
                                       }
                                       alt={
-                                        item.name ||
-                                        "Product"
+                                        item.name
                                       }
                                       fill
                                       style={{
@@ -420,14 +443,15 @@ export default function ProfilePage() {
                                   </div>
 
                                   <div className="mini-item-price">
-                                    ₹{item.price}
+                                    ₹
+                                    {item.price}
                                   </div>
                                 </div>
                               )
                             )}
                           </div>
 
-                          {/* RIGHT */}
+                          {/* SUMMARY */}
                           <div className="order-summary-panel">
                             <div className="payment-info">
                               <span className="label">
@@ -462,7 +486,7 @@ export default function ProfilePage() {
                                   }
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="premium-btn highlight small"
+                                  className="premium-btn green small"
                                 >
                                   Track
                                   <ExternalLink
@@ -546,19 +570,19 @@ export default function ProfilePage() {
 
           {/* ================= SETTINGS ================= */}
           {activeTab === "settings" && (
-            <div className="tab-section fade-in">
+            <div className="tab-section">
               <h1 className="section-title">
-                Account Settings
+                Settings
               </h1>
 
               <div className="empty-state">
                 <Settings
-                  size={40}
+                  size={36}
                   className="empty-icon"
                 />
 
                 <p>
-                  Account settings coming soon.
+                  Settings panel coming soon
                 </p>
               </div>
             </div>
@@ -566,87 +590,75 @@ export default function ProfilePage() {
         </main>
       </div>
 
-      {/* ================= STYLES ================= */}
       <style jsx>{`
+        * {
+          box-sizing: border-box;
+        }
+
         .profile-wrapper {
+          width: 100%;
           min-height: 100vh;
-          padding: 140px 5% 80px;
+          padding: 110px 16px 50px;
           background: var(--bg);
           color: var(--text);
-          font-family: "Inter", sans-serif;
+          overflow-x: hidden;
         }
 
         .profile-container {
+          width: 100%;
           max-width: 1400px;
           margin: 0 auto;
+
           display: grid;
-          grid-template-columns: 300px 1fr;
-          gap: 40px;
-          align-items: flex-start;
-        }
-
-        .mono {
-          font-family: monospace;
-        }
-
-        .fade-in {
-          animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          grid-template-columns: 280px 1fr;
+          gap: 30px;
         }
 
         /* ================= SIDEBAR ================= */
         .profile-sidebar {
+          width: 100%;
           position: sticky;
-          top: 120px;
+          top: 110px;
+          height: fit-content;
         }
 
         .user-card {
           position: relative;
           overflow: hidden;
+
           background: linear-gradient(
             135deg,
             #111,
             #000
           );
 
-          color: white;
-          padding: 35px 22px;
           border-radius: 20px;
-          margin-bottom: 25px;
+
+          padding: 28px 22px;
+
+          margin-bottom: 20px;
 
           border: 1px solid
             rgba(255, 255, 255, 0.08);
-
-          box-shadow: 0 20px 50px
-            rgba(0, 0, 0, 0.2);
         }
 
         .brand-badge {
-          font-size: 24px;
+          font-size: 30px;
           font-weight: 900;
-          margin-bottom: 12px;
+          color: #fff;
+          margin-bottom: 10px;
         }
 
         .user-title {
           font-size: 13px;
           letter-spacing: 3px;
           color: #ffc107;
-          margin-bottom: 10px;
+          margin-bottom: 12px;
         }
 
         .user-email {
           font-size: 12px;
-          opacity: 0.7;
+          color: rgba(255, 255, 255, 0.7);
           word-break: break-word;
         }
 
@@ -655,8 +667,8 @@ export default function ProfilePage() {
           left: 0;
           width: 100%;
           height: 1px;
-          background: rgba(255, 193, 7, 0.6);
-          box-shadow: 0 0 10px
+          background: rgba(255, 193, 7, 0.8);
+          box-shadow: 0 0 12px
             rgba(255, 193, 7, 0.8);
 
           animation: scan 3s linear infinite;
@@ -675,21 +687,23 @@ export default function ProfilePage() {
         .profile-nav {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 10px;
         }
 
         .nav-btn {
           width: 100%;
-          border: none;
-          background: transparent;
 
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 10px;
 
           padding: 14px 16px;
 
-          border-radius: 12px;
+          border-radius: 14px;
+
+          border: none;
+
+          background: transparent;
 
           color: var(--text);
 
@@ -707,21 +721,20 @@ export default function ProfilePage() {
 
         .nav-btn.active {
           background: rgba(128, 128, 128, 0.12);
-          border-left: 4px solid var(--text);
+          border-left: 4px solid
+            var(--text);
         }
 
         .count-badge {
           margin-left: auto;
-          background: rgba(128, 128, 128, 0.2);
-          padding: 3px 8px;
-          border-radius: 20px;
-          font-size: 11px;
-        }
 
-        .divider {
-          height: 1px;
           background: rgba(128, 128, 128, 0.15);
-          margin: 10px 0;
+
+          padding: 2px 8px;
+
+          border-radius: 30px;
+
+          font-size: 11px;
         }
 
         .signout-btn {
@@ -729,31 +742,40 @@ export default function ProfilePage() {
         }
 
         /* ================= CONTENT ================= */
-        .section-title {
-          font-size: 32px;
-          font-weight: 900;
-          margin-bottom: 28px;
+        .profile-content {
+          width: 100%;
+          min-width: 0;
         }
 
+        .section-title {
+          font-size: 34px;
+          font-weight: 900;
+          margin-bottom: 25px;
+        }
+
+        /* ================= EMPTY ================= */
         .empty-state {
-          padding: 80px 20px;
-          text-align: center;
           border-radius: 20px;
+
           border: 1px dashed
             rgba(128, 128, 128, 0.2);
 
           background: rgba(128, 128, 128, 0.03);
+
+          padding: 70px 20px;
+
+          text-align: center;
         }
 
         .empty-icon {
-          opacity: 0.3;
-          margin-bottom: 20px;
+          opacity: 0.4;
+          margin-bottom: 16px;
         }
 
         .empty-state p {
-          margin-bottom: 25px;
-          opacity: 0.7;
+          margin-bottom: 24px;
           font-weight: 600;
+          opacity: 0.7;
         }
 
         /* ================= BUTTONS ================= */
@@ -763,31 +785,28 @@ export default function ProfilePage() {
           justify-content: center;
           gap: 8px;
 
-          padding: 12px 18px;
-
           border-radius: 12px;
 
-          border: 1px solid var(--text);
+          padding: 12px 16px;
+
+          text-decoration: none;
+
+          font-size: 13px;
+          font-weight: 700;
+
+          cursor: pointer;
+
+          border: 1px solid
+            var(--text);
 
           background: var(--text);
           color: var(--bg);
 
-          font-size: 13px;
-          font-weight: 800;
-
-          text-decoration: none;
-          cursor: pointer;
-
           transition: 0.3s;
-        }
-
-        .premium-btn:hover {
-          transform: translateY(-2px);
         }
 
         .premium-btn.small {
           width: 100%;
-          padding: 11px 14px;
         }
 
         .premium-btn.outline {
@@ -796,7 +815,7 @@ export default function ProfilePage() {
           border-color: rgba(128, 128, 128, 0.3);
         }
 
-        .premium-btn.highlight {
+        .premium-btn.green {
           background: #22c55e;
           border-color: #22c55e;
           color: white;
@@ -814,31 +833,26 @@ export default function ProfilePage() {
           color: #f59e0b;
         }
 
-        /* ================= WISHLIST ================= */
+        /* ================= SAVED ================= */
         .saved-grid {
           display: grid;
+
           grid-template-columns: repeat(
             auto-fill,
             minmax(220px, 1fr)
           );
 
-          gap: 24px;
+          gap: 20px;
         }
 
         .mini-product-card {
-          overflow: hidden;
           border-radius: 18px;
+          overflow: hidden;
 
           border: 1px solid
             rgba(128, 128, 128, 0.15);
 
           background: rgba(128, 128, 128, 0.02);
-
-          transition: 0.3s;
-        }
-
-        .mini-product-card:hover {
-          transform: translateY(-6px);
         }
 
         .image-box {
@@ -853,24 +867,27 @@ export default function ProfilePage() {
 
         .info-box h3 {
           font-size: 14px;
-          margin-bottom: 8px;
+          margin-bottom: 10px;
+          line-height: 1.4;
         }
 
         .info-box p {
+          margin-bottom: 16px;
           font-weight: 700;
-          margin-bottom: 15px;
         }
 
         /* ================= ORDERS ================= */
         .orders-list {
           display: flex;
           flex-direction: column;
-          gap: 25px;
+          gap: 22px;
         }
 
         .order-card {
-          border-radius: 20px;
+          width: 100%;
           overflow: hidden;
+
+          border-radius: 20px;
 
           border: 1px solid
             rgba(128, 128, 128, 0.15);
@@ -883,9 +900,9 @@ export default function ProfilePage() {
           justify-content: space-between;
           align-items: center;
 
-          gap: 20px;
+          gap: 16px;
 
-          padding: 18px 24px;
+          padding: 18px 20px;
 
           border-bottom: 1px solid
             rgba(128, 128, 128, 0.1);
@@ -902,6 +919,11 @@ export default function ProfilePage() {
           font-weight: 700;
         }
 
+        .mono {
+          margin-left: 6px;
+          font-family: monospace;
+        }
+
         .order-date {
           font-size: 12px;
           opacity: 0.7;
@@ -912,11 +934,14 @@ export default function ProfilePage() {
           align-items: center;
           gap: 6px;
 
-          padding: 8px 14px;
+          padding: 8px 12px;
+
           border-radius: 30px;
 
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 800;
+
+          white-space: nowrap;
         }
 
         .status-processing {
@@ -924,7 +949,7 @@ export default function ProfilePage() {
           color: #f59e0b;
         }
 
-        .status-dispatched {
+        .status-shipped {
           background: rgba(59, 130, 246, 0.1);
           color: #3b82f6;
         }
@@ -941,33 +966,41 @@ export default function ProfilePage() {
 
         .order-body {
           display: grid;
-          grid-template-columns: 2fr 320px;
+          grid-template-columns: 1fr 300px;
         }
 
+        /* ================= ITEMS ================= */
         .order-items-preview {
-          padding: 24px;
-          border-right: 1px solid
-            rgba(128, 128, 128, 0.1);
+          padding: 20px;
 
           display: flex;
           flex-direction: column;
           gap: 18px;
+
+          border-right: 1px solid
+            rgba(128, 128, 128, 0.1);
         }
 
         .mini-item {
           display: flex;
           align-items: center;
           gap: 14px;
+
+          min-width: 0;
         }
 
         .mini-item-img {
           position: relative;
-          width: 70px;
-          min-width: 70px;
-          height: 90px;
+
+          width: 72px;
+          min-width: 72px;
+
+          height: 92px;
 
           border-radius: 10px;
           overflow: hidden;
+
+          background: #eee;
         }
 
         .mini-item-info {
@@ -977,8 +1010,10 @@ export default function ProfilePage() {
 
         .mini-item-info h4 {
           font-size: 14px;
-          margin-bottom: 6px;
           line-height: 1.4;
+          margin-bottom: 6px;
+
+          word-break: break-word;
         }
 
         .mini-item-info p {
@@ -989,6 +1024,7 @@ export default function ProfilePage() {
         .mini-item-price {
           font-size: 14px;
           font-weight: 800;
+
           white-space: nowrap;
         }
 
@@ -996,8 +1032,9 @@ export default function ProfilePage() {
           margin: 0 8px;
         }
 
+        /* ================= SUMMARY ================= */
         .order-summary-panel {
-          padding: 24px;
+          padding: 20px;
 
           display: flex;
           flex-direction: column;
@@ -1017,14 +1054,14 @@ export default function ProfilePage() {
         }
 
         .amount {
-          font-size: 28px;
+          font-size: 30px;
           font-weight: 900;
         }
 
         .order-actions {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 10px;
         }
 
         .spinner {
@@ -1032,7 +1069,7 @@ export default function ProfilePage() {
         }
 
         @keyframes spin {
-          to {
+          100% {
             transform: rotate(360deg);
           }
         }
@@ -1051,6 +1088,8 @@ export default function ProfilePage() {
             flex-direction: row;
             overflow-x: auto;
             padding-bottom: 10px;
+
+            scrollbar-width: none;
           }
 
           .profile-nav::-webkit-scrollbar {
@@ -1059,10 +1098,6 @@ export default function ProfilePage() {
 
           .nav-btn {
             min-width: max-content;
-          }
-
-          .divider {
-            display: none;
           }
 
           .order-body {
@@ -1079,19 +1114,15 @@ export default function ProfilePage() {
         /* ================= MOBILE ================= */
         @media (max-width: 768px) {
           .profile-wrapper {
-            padding: 110px 16px 50px;
+            padding: 95px 12px 40px;
           }
 
           .section-title {
-            font-size: 24px;
+            font-size: 28px;
           }
 
           .saved-grid {
-            grid-template-columns: repeat(
-              2,
-              1fr
-            );
-            gap: 16px;
+            grid-template-columns: 1fr 1fr;
           }
 
           .order-header {
@@ -1100,64 +1131,98 @@ export default function ProfilePage() {
           }
 
           .order-summary-panel {
-            padding: 18px;
+            width: 100%;
           }
 
           .amount {
             font-size: 24px;
           }
-
-          .mini-item {
-            align-items: flex-start;
-          }
-
-          .mini-item-img {
-            width: 60px;
-            min-width: 60px;
-            height: 78px;
-          }
         }
 
         /* ================= SMALL MOBILE ================= */
-        @media (max-width: 500px) {
+        @media (max-width: 520px) {
           .profile-wrapper {
-            padding: 95px 12px 40px;
+            padding: 90px 10px 30px;
+          }
+
+          .profile-container {
+            gap: 18px;
           }
 
           .user-card {
-            padding: 28px 18px;
+            padding: 24px 16px;
+            border-radius: 16px;
           }
 
           .brand-badge {
+            font-size: 26px;
+          }
+
+          .profile-nav {
+            gap: 8px;
+          }
+
+          .nav-btn {
+            padding: 12px 14px;
+            font-size: 13px;
+          }
+
+          .section-title {
             font-size: 22px;
+            margin-bottom: 18px;
           }
 
           .saved-grid {
             grid-template-columns: 1fr;
           }
 
+          .order-card {
+            border-radius: 16px;
+          }
+
           .order-header {
-            padding: 16px;
+            padding: 14px;
           }
 
           .order-items-preview {
-            padding: 16px;
-          }
-
-          .order-summary-panel {
-            padding: 16px;
+            padding: 14px;
+            gap: 14px;
           }
 
           .mini-item {
-            gap: 12px;
+            align-items: flex-start;
+            gap: 10px;
+          }
+
+          .mini-item-img {
+            width: 58px;
+            min-width: 58px;
+            height: 74px;
           }
 
           .mini-item-info h4 {
-            font-size: 13px;
+            font-size: 12px;
+          }
+
+          .mini-item-info p {
+            font-size: 11px;
           }
 
           .mini-item-price {
             font-size: 13px;
+          }
+
+          .order-summary-panel {
+            padding: 14px;
+          }
+
+          .amount {
+            font-size: 22px;
+          }
+
+          .premium-btn {
+            font-size: 12px;
+            padding: 11px 14px;
           }
 
           .order-actions {
