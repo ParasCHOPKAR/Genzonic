@@ -107,7 +107,7 @@ export default function Navbar() {
       const emailName = user.email.split("@")[0].replace(/[0-9]/g, ""); 
       return emailName.charAt(0).toUpperCase() + emailName.slice(1); 
     }
-    return "VIP";
+    return "Guest";
   };
 
   const marqueeText =
@@ -252,7 +252,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ================= TRUE MOBILE SIDEBAR (LUXURY DRAWER) ================= */}
+      {/* ================= TRUE MOBILE SIDEBAR (REFERENCE MATCH) ================= */}
       <div 
         className={`mobile-backdrop ${mobileMenuOpen ? "open" : ""}`} 
         onClick={() => setMobileMenuOpen(false)}
@@ -261,85 +261,109 @@ export default function Navbar() {
       <div className={`mobile-sidebar-luxury ${mobileMenuOpen ? "open" : ""}`}>
         <div className="sidebar-scroll-wrapper">
           
-          {/* CLOSE BUTTON */}
-          <div className="lux-close-row">
+          {/* HEADER (Close & Logo) */}
+          <div className="lux-header-block">
             <button className="lux-close-btn" onClick={() => setMobileMenuOpen(false)}>
-              <X size={20} strokeWidth={1.5} color="#888" />
+              <X size={20} strokeWidth={1} color="#666" />
             </button>
-          </div>
-
-          {/* BRAND LOGO */}
-          <div className="lux-logo-row">
-            <Image 
-              src="/bg-remove-black-text.png" 
-              width={140} 
-              height={45} 
-              alt="GenZonic" 
-              className="lux-logo" 
-            />
+            <div className="lux-logo-container">
+              <Image 
+                src="/bg-remove-black-text.png" 
+                width={150} 
+                height={40} 
+                alt="GenZonic" 
+                className="lux-logo" 
+              />
+            </div>
           </div>
 
           {/* PROFILE SECTION */}
           <div className="lux-profile-section">
-            <div className="lux-avatar">
-              <User size={28} strokeWidth={2} color="#666" />
+            <div className="lux-avatar-ring">
+              <div className="lux-avatar-inner">
+                <User size={26} strokeWidth={1.5} color="#555" />
+              </div>
             </div>
             <div className="lux-profile-info">
               {isAuthenticated ? (
                 <>
                   <span className="lux-greeting">Hi, {getDisplayName()}</span>
                   <Link href="/profile" className="lux-account-link" onClick={() => setMobileMenuOpen(false)}>
-                    My Account <LinkIcon size={12} style={{marginLeft: '4px'}}/>
+                    My Account <LinkIcon size={12} strokeWidth={2}/>
                   </Link>
                 </>
               ) : (
                 <>
-                  <span className="lux-greeting">Welcome</span>
+                  <span className="lux-greeting">Welcome, Guest</span>
                   <Link href="/login" className="lux-account-link" onClick={() => setMobileMenuOpen(false)}>
-                    Sign In / Register <LinkIcon size={12} style={{marginLeft: '4px'}}/>
+                    Sign In / Register <LinkIcon size={12} strokeWidth={2}/>
                   </Link>
                 </>
               )}
             </div>
           </div>
 
-          {/* MAIN NAVIGATION */}
+          {/* MAIN NAVIGATION (Men, Women, Kids) */}
           <div className="lux-main-nav">
-            <Link href="/shop/men" onClick={() => setMobileMenuOpen(false)}>MEN <ChevronRight size={20} strokeWidth={1.5}/></Link>
-            <Link href="/shop/women" onClick={() => setMobileMenuOpen(false)}>WOMEN <ChevronRight size={20} strokeWidth={1.5}/></Link>
-            <Link href="/shop/kids" onClick={() => setMobileMenuOpen(false)}>KIDS <ChevronRight size={20} strokeWidth={1.5}/></Link>
+            <Link href="/shop/men" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)}>
+              <span>MEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666"/>
+            </Link>
+            <Link href="/shop/women" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)}>
+              <span>WOMEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666"/>
+            </Link>
+            <Link href="/shop/kids" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)}>
+              <span>KIDS</span> <ChevronRight size={18} strokeWidth={1.5} color="#666"/>
+            </Link>
             
+            {/* PREMIUM BUTTON */}
             <button 
-              className="lux-premium-btn"
+              className="lux-nav-item lux-premium-btn"
               onClick={() => {
                 setMobileMenuOpen(false);
                 setCategoryOpen(true);
               }}
             >
-              PREMIUM COLLECTION <Crown size={20} strokeWidth={2} />
+              <span>PREMIUM COLLECTION</span> <Crown size={20} strokeWidth={1.5} color="#8a6c32" />
             </button>
           </div>
 
           {/* SECONDARY NAVIGATION */}
           <div className="lux-secondary-nav">
-            <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)}><Heart size={18} strokeWidth={1.5}/> WISHLIST</Link>
-            <Link href="/orders" onClick={() => setMobileMenuOpen(false)}><Box size={18} strokeWidth={1.5}/> MY ORDERS</Link>
-            <button onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }}><Search size={18} strokeWidth={1.5}/> SEARCH</button>
-            <Link href="/settings" onClick={() => setMobileMenuOpen(false)}><Settings size={18} strokeWidth={1.5}/> SETTINGS</Link>
-            <Link href="/support" onClick={() => setMobileMenuOpen(false)}><HelpCircle size={18} strokeWidth={1.5}/> HELP & SUPPORT</Link>
+            <Link href="/wishlist" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
+              <Heart size={18} strokeWidth={1.5} color="#555"/> <span>WISHLIST</span>
+            </Link>
+            <Link href="/orders" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
+              <Box size={18} strokeWidth={1.5} color="#555"/> <span>MY ORDERS</span>
+            </Link>
+            <button className="lux-sec-item" onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }}>
+              <Search size={18} strokeWidth={1.5} color="#555"/> <span>SEARCH</span>
+            </button>
+            <Link href="/settings" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
+              <Settings size={18} strokeWidth={1.5} color="#555"/> <span>SETTINGS</span>
+            </Link>
+            <Link href="/support" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
+              <HelpCircle size={18} strokeWidth={1.5} color="#555"/> <span>HELP & SUPPORT</span>
+            </Link>
             {isAuthenticated && (
-              <button onClick={() => signOut({ callbackUrl: "/" })}><LogOut size={18} strokeWidth={1.5}/> LOG OUT</button>
+              <button className="lux-sec-item" onClick={() => signOut({ callbackUrl: "/" })}>
+                <LogOut size={18} strokeWidth={1.5} color="#555"/> <span>LOG OUT</span>
+              </button>
+            )}
+            {user?.role === "admin" && (
+              <Link href="/admin" className="lux-sec-item" style={{color: '#3b82f6'}} onClick={() => setMobileMenuOpen(false)}>
+                <ShieldAlert size={18} strokeWidth={1.5} color="#3b82f6"/> <span>ADMIN PANEL</span>
+              </Link>
             )}
           </div>
 
           {/* PROMO BANNER */}
-          <div className="lux-promo-banner">
-            <div className="lux-gift-icon">
-              <Gift size={28} strokeWidth={1.5} color="#fff" />
-            </div>
-            <div className="lux-promo-text">
-              <strong>GET EXTRA 10% OFF</strong>
-              <span>YOUR FIRST ORDER</span>
+          <div className="lux-promo-container">
+            <div className="lux-promo-banner">
+              <Gift size={32} strokeWidth={1} color="#fff" />
+              <div className="lux-promo-text">
+                <strong>GET EXTRA 10% OFF</strong>
+                <span>YOUR FIRST ORDER</span>
+              </div>
             </div>
           </div>
 
@@ -455,15 +479,15 @@ export default function Navbar() {
           .mobile-backdrop { display: block !important; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); z-index: 99998 !important; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
           .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
 
-          /* 2. SIDEBAR LUXURY DRAWER */
+          /* 2. SIDEBAR LUXURY DRAWER - Matches reference exact colors */
           .mobile-sidebar-luxury {
             display: flex !important; position: fixed; top: 0; left: 0; 
-            width: 85%; max-width: 360px; height: 100dvh; 
-            background: #fdfcf9 !important; color: #111 !important;
+            width: 85%; max-width: 380px; height: 100dvh; 
+            background: #faf9f6 !important; /* Subtle paper off-white */
+            color: #111 !important;
             z-index: 99999 !important; 
             transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
             font-family: 'Inter', sans-serif;
           }
           .mobile-sidebar-luxury.open { transform: translateX(0); }
@@ -471,68 +495,73 @@ export default function Navbar() {
           .sidebar-scroll-wrapper { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; -ms-overflow-style: none; scrollbar-width: none; }
           .sidebar-scroll-wrapper::-webkit-scrollbar { display: none; }
 
-          /* CLOSE BUTTON */
-          .lux-close-row { padding: 15px 20px 5px; }
+          /* HEADER - Close Button & Logo */
+          .lux-header-block { padding: 15px 20px 20px; display: flex; flex-direction: column; gap: 15px; }
           .lux-close-btn { 
-            background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; 
-            width: 34px; height: 34px; display: grid; place-items: center; 
-            cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
+            width: 36px; height: 36px; border-radius: 8px;
+            background: linear-gradient(to bottom, #ffffff, #e6e6e6);
+            border: 1px solid #ccc; box-shadow: inset 0 1px 0 #fff;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
           }
-          .lux-close-btn:active { transform: scale(0.9); }
-          
-          /* LOGO */
-          .lux-logo-row { padding: 5px 20px 20px; border-bottom: 1px solid #eaeaea; }
-          .lux-logo { height: 35px !important; width: auto !important; object-fit: contain; }
+          .lux-logo { height: 32px !important; width: auto !important; object-fit: contain; margin-left: -5px; }
 
-          /* PROFILE */
-          .lux-profile-section { display: flex; align-items: center; gap: 15px; padding: 20px; border-bottom: 1px solid #eaeaea; background: #fff; }
-          .lux-avatar { 
-            width: 48px; height: 48px; border-radius: 50%; background: #dcdcdc;
-            display: grid; place-items: center; border: 2px solid #b8903c;
-            box-shadow: 0 4px 10px rgba(184, 144, 60, 0.3);
+          /* PROFILE SECTION */
+          .lux-profile-section { display: flex; align-items: center; gap: 15px; padding: 0 20px 25px; }
+          .lux-avatar-ring {
+            width: 52px; height: 52px; border-radius: 50%;
+            border: 2px solid #d4af37; /* Gold ring */
+            padding: 2px;
+            display: flex; align-items: center; justify-content: center;
+          }
+          .lux-avatar-inner {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: #d4d4d4; /* Inner grey */
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
           }
           .lux-profile-info { display: flex; flex-direction: column; gap: 2px; }
-          .lux-greeting { font-size: 15px; font-weight: 600; color: #111; }
-          .lux-account-link { display: flex; align-items: center; font-size: 12px; color: #1a4f8b; text-decoration: underline; font-weight: 500;}
+          .lux-greeting { font-size: 16px; font-weight: 500; color: #111; }
+          .lux-account-link { display: flex; align-items: center; font-size: 13px; color: #333; text-decoration: underline; font-weight: 400;}
 
-          /* MAIN NAV */
-          .lux-main-nav { display: flex; flex-direction: column; background: #fff;}
-          .lux-main-nav > a {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 20px; font-size: 15px; font-weight: 800; color: #111; text-decoration: none;
-            border-bottom: 1px solid #eaeaea; letter-spacing: 0.5px; transition: 0.2s;
-          }
-          .lux-main-nav > a:active { background: #f9f9f9; }
-          .lux-main-nav > a svg { color: #888; }
+          /* MAIN NAV (Men, Women, Kids, Premium) */
+          .lux-main-nav { display: flex; flex-direction: column; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; }
           
-          .lux-premium-btn {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 20px; font-size: 15px; font-weight: 800; color: #785a28;
-            background: linear-gradient(90deg, #f7ebb0 0%, #e6c875 100%);
-            border: none; text-align: left; cursor: pointer; letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #d4af37; transition: 0.2s;
+          /* 🔥 FIXED: Explicit Flexbox rules with !important to bypass Tailwind resets 🔥 */
+          .lux-nav-item {
+            display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important;
+            padding: 16px 20px; font-size: 15px; font-weight: 700; color: #111; text-decoration: none;
+            background: #f4f4f4; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; cursor: pointer;
+            flex-wrap: nowrap !important;
           }
-          .lux-premium-btn:active { opacity: 0.9; }
+          .lux-main-nav .lux-nav-item:last-child { border-bottom: none; }
+          .lux-nav-item svg { display: block !important; flex-shrink: 0 !important; }
+          
+          /* Premium Collection Button Specifics */
+          .lux-premium-btn {
+            background: linear-gradient(to right, #e2c77d, #d3ab55) !important;
+            color: #333 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.3); border: none !important;
+          }
 
           /* SECONDARY NAV */
-          .lux-secondary-nav { padding: 15px 0; display: flex; flex-direction: column; background: #fdfcf9;}
-          .lux-secondary-nav a, .lux-secondary-nav button {
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-            font-size: 13px; font-weight: 500; color: #333; text-decoration: none;
-            background: none; border: none; text-align: left; cursor: pointer;
-            letter-spacing: 0.5px; transition: 0.2s;
+          .lux-secondary-nav { padding: 15px 0; display: flex; flex-direction: column; }
+          
+          /* 🔥 FIXED: Explicit Flexbox rules for Secondary Nav 🔥 */
+          .lux-sec-item {
+            display: flex !important; flex-direction: row !important; align-items: center !important; gap: 15px !important;
+            padding: 12px 20px; font-size: 14px; font-weight: 400; color: #111; text-decoration: none;
+            background: transparent; border: none; text-align: left; cursor: pointer; text-transform: uppercase;
+            flex-wrap: nowrap !important;
           }
-          .lux-secondary-nav a:active, .lux-secondary-nav button:active { background: rgba(0,0,0,0.03); }
-          .lux-secondary-nav svg { color: #b8903c; } 
+          .lux-sec-item svg { display: block !important; flex-shrink: 0 !important; }
 
           /* PROMO BANNER */
+          .lux-promo-container { padding: 20px; margin-top: auto; }
           .lux-promo-banner {
-            margin: auto 20px 20px; padding: 15px 20px; display: flex; align-items: center; gap: 15px;
-            background: linear-gradient(to bottom, #d6b35d, #a88231);
-            border-radius: 4px; color: #fff; box-shadow: 0 4px 15px rgba(168, 130, 49, 0.4);
-            cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px; padding: 15px 20px;
+            background: linear-gradient(to bottom, #d4b05a, #a67c27);
+            border-radius: 4px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
           }
-          .lux-promo-banner:active { transform: scale(0.98); }
+          .lux-promo-banner svg { flex-shrink: 0; }
           .lux-promo-text { display: flex; flex-direction: column; }
           .lux-promo-text strong { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; }
           .lux-promo-text span { font-size: 11px; font-weight: 500; opacity: 0.9; }
