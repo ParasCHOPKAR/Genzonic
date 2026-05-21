@@ -3,26 +3,28 @@
 import React, { useState, useEffect } from 'react';
 
 const Loader = () => {
-  // 1. New state to track if we should render the loader at all
-  const [shouldRender, setShouldRender] = useState(false);
+  // 🔥 FIXED: Default to TRUE so it covers the screen immediately,
+  // preventing the underlying website from flashing before the loader starts.
+  const [shouldRender, setShouldRender] = useState(true);
   
   const [progress, setProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [unmount, setUnmount] = useState(false);
 
-  // Check Session Storage on Mount
   useEffect(() => {
     const hasVisited = sessionStorage.getItem("genzonic_visited");
 
     if (!hasVisited) {
-      // First time visiting this session -> Show loader & start animation
-      setShouldRender(true);
-      sessionStorage.setItem("genzonic_visited", "true");
-
+      // First time visiting this session -> Start animation
       const interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
+            
+            // 🔥 FIXED: Write to sessionStorage ONLY when the animation finishes.
+            // This prevents React Strict Mode from breaking the loader on the first load!
+            sessionStorage.setItem("genzonic_visited", "true");
+            
             setTimeout(() => setIsLoaded(true), 400); 
             setTimeout(() => setUnmount(true), 1600); 
             return 100;
@@ -33,22 +35,21 @@ const Loader = () => {
 
       return () => clearInterval(interval);
     } else {
-      // Has already visited this session -> Instantly unmount
+      // Has already visited this session -> Instantly hide
+      setShouldRender(false);
       setUnmount(true);
     }
   }, []);
 
   const waveYOffset = 300 - (progress * 3.5);
 
-  // 2. If unmount is true OR shouldRender is false, render absolutely nothing
+  // If unmount is true OR shouldRender is false, render absolutely nothing
   if (unmount || !shouldRender) return null;
 
   return (
     <>
       <style>{`
-        /* BASE CSS (DESKTOP) 
-          Preserved exactly as your original code 
-        */
+        /* BASE CSS (DESKTOP) */
         .loader-wrapper {
           position: fixed;
           top: 0;
@@ -60,7 +61,7 @@ const Loader = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          z-index: 999999; /* Boosted z-index to ensure it covers navbar */
+          z-index: 999999; 
           overflow: hidden;
           transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1), opacity 1s ease-in-out;
         }
@@ -133,23 +134,17 @@ const Loader = () => {
           margin-top: -10px;
         }
 
-        /* MOBILE RESPONSIVE CSS 
-          Only triggers on smaller screens to fix overflow 
-        */
+        /* MOBILE RESPONSIVE CSS */
         @media (max-width: 768px) {
           .loader-percentage {
             padding-right: 10%;
             font-size: 0.9rem;
-            margin-top: -3vw; /* Prevents overlap when SVG scales down */
+            margin-top: -3vw;
           }
           
-          /* The brand-text font-size is intentionally NOT overridden here.
-             Keeping it at 185px allows it to scale perfectly in proportion 
-             with the shrinking SVG viewBox. */
-
           .watermark-logo {
             height: auto; 
-            width: 90vw; /* Constrains width so it doesn't bleed off screen */
+            width: 90vw; 
             max-height: 40vh; 
           }
         }
@@ -204,4 +199,4 @@ const Loader = () => {
   );
 };
 
-export default Loader;
+export default Loader;``
