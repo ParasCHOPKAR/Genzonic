@@ -157,7 +157,7 @@ export default function Navbar() {
             <Link href="/shop/kids" className="nav-item">Kids</Link>
           </nav>
 
-          {/* ===== RIGHT SIDE ACTIONS - CSS GRID LAYOUT ===== */}
+          {/* ===== RIGHT SIDE ACTIONS ===== */}
           <div className="nav-actions grid-layout">
 
             {/* SEARCH */}
@@ -252,7 +252,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ================= TRUE MOBILE SIDEBAR (REFERENCE MATCH) ================= */}
+      {/* ================= TRUE MOBILE SIDEBAR (BULLETPROOF LAYOUT) ================= */}
       <div 
         className={`mobile-backdrop ${mobileMenuOpen ? "open" : ""}`} 
         onClick={() => setMobileMenuOpen(false)}
@@ -262,11 +262,15 @@ export default function Navbar() {
         <div className="sidebar-scroll-wrapper">
           
           {/* HEADER (Close & Logo) */}
-          <div className="lux-header-block">
-            <button className="lux-close-btn" onClick={() => setMobileMenuOpen(false)}>
-              <X size={20} strokeWidth={1} color="#666" />
+          <div className="lux-header-block" style={{ display: "flex", flexDirection: "column", gap: "15px", padding: "15px 20px 20px" }}>
+            <button 
+              className="lux-close-btn" 
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px" }}
+            >
+              <X size={20} strokeWidth={1} color="#666" style={{ display: "block" }} />
             </button>
-            <div className="lux-logo-container">
+            <div className="lux-logo-container" style={{ display: "flex" }}>
               <Image 
                 src="/bg-remove-black-text.png" 
                 width={150} 
@@ -278,25 +282,25 @@ export default function Navbar() {
           </div>
 
           {/* PROFILE SECTION */}
-          <div className="lux-profile-section">
-            <div className="lux-avatar-ring">
-              <div className="lux-avatar-inner">
-                <User size={26} strokeWidth={1.5} color="#555" />
+          <div className="lux-profile-section" style={{ display: "flex", alignItems: "center", gap: "15px", padding: "0 20px 25px" }}>
+            <div className="lux-avatar-ring" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div className="lux-avatar-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <User size={26} strokeWidth={1.5} color="#555" style={{ display: "block" }} />
               </div>
             </div>
-            <div className="lux-profile-info">
+            <div className="lux-profile-info" style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
               {isAuthenticated ? (
                 <>
-                  <span className="lux-greeting">Hi, {getDisplayName()}</span>
-                  <Link href="/profile" className="lux-account-link" onClick={() => setMobileMenuOpen(false)}>
-                    My Account <LinkIcon size={12} strokeWidth={2}/>
+                  <span className="lux-greeting" style={{ fontWeight: 600 }}>Hi, {getDisplayName()}</span>
+                  <Link href="/profile" className="lux-account-link" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                    My Account <LinkIcon size={12} strokeWidth={2} style={{ display: "block" }}/>
                   </Link>
                 </>
               ) : (
                 <>
-                  <span className="lux-greeting">Welcome, Guest</span>
-                  <Link href="/login" className="lux-account-link" onClick={() => setMobileMenuOpen(false)}>
-                    Sign In / Register <LinkIcon size={12} strokeWidth={2}/>
+                  <span className="lux-greeting" style={{ fontWeight: 600 }}>Welcome, Guest</span>
+                  <Link href="/login" className="lux-account-link" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                    Sign In / Register <LinkIcon size={12} strokeWidth={2} style={{ display: "block" }}/>
                   </Link>
                 </>
               )}
@@ -304,15 +308,15 @@ export default function Navbar() {
           </div>
 
           {/* MAIN NAVIGATION (Men, Women, Kids) */}
-          <div className="lux-main-nav">
-            <Link href="/shop/men" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)}>
-              <span>MEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666"/>
+          <div className="lux-main-nav" style={{ display: "flex", flexDirection: "column", borderTop: "1px solid #e0e0e0", borderBottom: "1px solid #e0e0e0" }}>
+            <Link href="/shop/men" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <span>MEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666" style={{ display: "block", flexShrink: 0 }}/>
             </Link>
-            <Link href="/shop/women" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)}>
-              <span>WOMEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666"/>
+            <Link href="/shop/women" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <span>WOMEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666" style={{ display: "block", flexShrink: 0 }}/>
             </Link>
-            <Link href="/shop/kids" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)}>
-              <span>KIDS</span> <ChevronRight size={18} strokeWidth={1.5} color="#666"/>
+            <Link href="/shop/kids" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <span>KIDS</span> <ChevronRight size={18} strokeWidth={1.5} color="#666" style={{ display: "block", flexShrink: 0 }}/>
             </Link>
             
             {/* PREMIUM BUTTON */}
@@ -322,45 +326,46 @@ export default function Navbar() {
                 setMobileMenuOpen(false);
                 setCategoryOpen(true);
               }}
+              style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}
             >
-              <span>PREMIUM COLLECTION</span> <Crown size={20} strokeWidth={1.5} color="#8a6c32" />
+              <span>PREMIUM COLLECTION</span> <Crown size={20} strokeWidth={1.5} color="#8a6c32" style={{ display: "block", flexShrink: 0 }} />
             </button>
           </div>
 
           {/* SECONDARY NAVIGATION */}
-          <div className="lux-secondary-nav">
-            <Link href="/wishlist" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
-              <Heart size={18} strokeWidth={1.5} color="#555"/> <span>WISHLIST</span>
+          <div className="lux-secondary-nav" style={{ display: "flex", flexDirection: "column", padding: "15px 0" }}>
+            <Link href="/wishlist" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Heart size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>WISHLIST</span>
             </Link>
-            <Link href="/orders" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
-              <Box size={18} strokeWidth={1.5} color="#555"/> <span>MY ORDERS</span>
+            <Link href="/orders" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Box size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>MY ORDERS</span>
             </Link>
-            <button className="lux-sec-item" onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }}>
-              <Search size={18} strokeWidth={1.5} color="#555"/> <span>SEARCH</span>
+            <button className="lux-sec-item" onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Search size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>SEARCH</span>
             </button>
-            <Link href="/settings" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
-              <Settings size={18} strokeWidth={1.5} color="#555"/> <span>SETTINGS</span>
+            <Link href="/settings" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Settings size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>SETTINGS</span>
             </Link>
-            <Link href="/support" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)}>
-              <HelpCircle size={18} strokeWidth={1.5} color="#555"/> <span>HELP & SUPPORT</span>
+            <Link href="/support" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <HelpCircle size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>HELP & SUPPORT</span>
             </Link>
             {isAuthenticated && (
-              <button className="lux-sec-item" onClick={() => signOut({ callbackUrl: "/" })}>
-                <LogOut size={18} strokeWidth={1.5} color="#555"/> <span>LOG OUT</span>
+              <button className="lux-sec-item" onClick={() => signOut({ callbackUrl: "/" })} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+                <LogOut size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>LOG OUT</span>
               </button>
             )}
             {user?.role === "admin" && (
-              <Link href="/admin" className="lux-sec-item" style={{color: '#3b82f6'}} onClick={() => setMobileMenuOpen(false)}>
-                <ShieldAlert size={18} strokeWidth={1.5} color="#3b82f6"/> <span>ADMIN PANEL</span>
+              <Link href="/admin" className="lux-sec-item" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%", color: "#3b82f6" }} onClick={() => setMobileMenuOpen(false)}>
+                <ShieldAlert size={18} strokeWidth={1.5} color="#3b82f6" style={{ display: "block", flexShrink: 0 }}/> <span>ADMIN PANEL</span>
               </Link>
             )}
           </div>
 
           {/* PROMO BANNER */}
-          <div className="lux-promo-container">
-            <div className="lux-promo-banner">
-              <Gift size={32} strokeWidth={1} color="#fff" />
-              <div className="lux-promo-text">
+          <div className="lux-promo-container" style={{ padding: "20px", marginTop: "auto" }}>
+            <div className="lux-promo-banner" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px" }}>
+              <Gift size={32} strokeWidth={1} color="#fff" style={{ display: "block", flexShrink: 0 }} />
+              <div className="lux-promo-text" style={{ display: "flex", flexDirection: "column" }}>
                 <strong>GET EXTRA 10% OFF</strong>
                 <span>YOUR FIRST ORDER</span>
               </div>
@@ -496,45 +501,34 @@ export default function Navbar() {
           .sidebar-scroll-wrapper::-webkit-scrollbar { display: none; }
 
           /* HEADER - Close Button & Logo */
-          .lux-header-block { padding: 15px 20px 20px; display: flex; flex-direction: column; gap: 15px; }
           .lux-close-btn { 
-            width: 36px; height: 36px; border-radius: 8px;
+            border-radius: 8px;
             background: linear-gradient(to bottom, #ffffff, #e6e6e6);
             border: 1px solid #ccc; box-shadow: inset 0 1px 0 #fff;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            cursor: pointer;
           }
           .lux-logo { height: 32px !important; width: auto !important; object-fit: contain; margin-left: -5px; }
 
           /* PROFILE SECTION */
-          .lux-profile-section { display: flex; align-items: center; gap: 15px; padding: 0 20px 25px; }
           .lux-avatar-ring {
             width: 52px; height: 52px; border-radius: 50%;
             border: 2px solid #d4af37; /* Gold ring */
             padding: 2px;
-            display: flex; align-items: center; justify-content: center;
           }
           .lux-avatar-inner {
             width: 100%; height: 100%; border-radius: 50%;
             background: #d4d4d4; /* Inner grey */
-            display: flex; align-items: center; justify-content: center;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
           }
-          .lux-profile-info { display: flex; flex-direction: column; gap: 2px; }
-          .lux-greeting { font-size: 16px; font-weight: 500; color: #111; }
-          .lux-account-link { display: flex; align-items: center; font-size: 13px; color: #333; text-decoration: underline; font-weight: 400;}
+          .lux-greeting { font-size: 16px; color: #111; }
+          .lux-account-link { font-size: 13px; color: #333; text-decoration: underline;}
 
-          /* MAIN NAV (Men, Women, Kids, Premium) */
-          .lux-main-nav { display: flex; flex-direction: column; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; }
-          
-          /* 🔥 FIXED: Explicit Flexbox rules with !important to bypass Tailwind resets 🔥 */
+          /* MAIN NAV */
           .lux-nav-item {
-            display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important;
             padding: 16px 20px; font-size: 15px; font-weight: 700; color: #111; text-decoration: none;
             background: #f4f4f4; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; cursor: pointer;
-            flex-wrap: nowrap !important;
           }
           .lux-main-nav .lux-nav-item:last-child { border-bottom: none; }
-          .lux-nav-item svg { display: block !important; flex-shrink: 0 !important; }
           
           /* Premium Collection Button Specifics */
           .lux-premium-btn {
@@ -543,26 +537,17 @@ export default function Navbar() {
           }
 
           /* SECONDARY NAV */
-          .lux-secondary-nav { padding: 15px 0; display: flex; flex-direction: column; }
-          
-          /* 🔥 FIXED: Explicit Flexbox rules for Secondary Nav 🔥 */
           .lux-sec-item {
-            display: flex !important; flex-direction: row !important; align-items: center !important; gap: 15px !important;
             padding: 12px 20px; font-size: 14px; font-weight: 400; color: #111; text-decoration: none;
             background: transparent; border: none; text-align: left; cursor: pointer; text-transform: uppercase;
-            flex-wrap: nowrap !important;
           }
-          .lux-sec-item svg { display: block !important; flex-shrink: 0 !important; }
 
           /* PROMO BANNER */
-          .lux-promo-container { padding: 20px; margin-top: auto; }
           .lux-promo-banner {
-            display: flex; align-items: center; gap: 15px; padding: 15px 20px;
+            padding: 15px 20px;
             background: linear-gradient(to bottom, #d4b05a, #a67c27);
             border-radius: 4px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
           }
-          .lux-promo-banner svg { flex-shrink: 0; }
-          .lux-promo-text { display: flex; flex-direction: column; }
           .lux-promo-text strong { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; }
           .lux-promo-text span { font-size: 11px; font-weight: 500; opacity: 0.9; }
 
