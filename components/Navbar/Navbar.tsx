@@ -150,11 +150,11 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* ===== NAV LINKS ===== */}
+          {/* ===== NAV LINKS (Highlighted Desktop) ===== */}
           <nav className="nav-links desktop-only">
-            <Link href="/shop/men" className="nav-item">Men</Link>
-            <Link href="/shop/women" className="nav-item">Women</Link>
-            <Link href="/shop/kids" className="nav-item">Kids</Link>
+            <Link href="/shop/men" className="nav-item nav-highlight">Men</Link>
+            <Link href="/shop/women" className="nav-item nav-highlight">Women</Link>
+            <Link href="/shop/kids" className="nav-item nav-highlight">Kids</Link>
           </nav>
 
           {/* ===== RIGHT SIDE ACTIONS ===== */}
@@ -252,54 +252,54 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ================= TRUE MOBILE SIDEBAR (BULLETPROOF LAYOUT) ================= */}
+      {/* ================= TRUE MOBILE SIDEBAR (BLACK/WHITE/ORANGE) ================= */}
       <div 
         className={`mobile-backdrop ${mobileMenuOpen ? "open" : ""}`} 
         onClick={() => setMobileMenuOpen(false)}
       />
 
-      <div className={`mobile-sidebar-luxury ${mobileMenuOpen ? "open" : ""}`}>
+      <div className={`mobile-sidebar-clean ${mobileMenuOpen ? "open" : ""}`}>
         <div className="sidebar-scroll-wrapper">
           
           {/* HEADER (Close & Logo) */}
-          <div className="lux-header-block" style={{ display: "flex", flexDirection: "column", gap: "15px", padding: "15px 20px 20px" }}>
+          <div className="clean-header-block" style={{ display: "flex", flexDirection: "column", gap: "15px", padding: "15px 20px 20px" }}>
             <button 
-              className="lux-close-btn" 
+              className="clean-close-btn" 
               onClick={() => setMobileMenuOpen(false)}
               style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px" }}
             >
-              <X size={20} strokeWidth={1} color="#666" style={{ display: "block" }} />
+              <X size={20} strokeWidth={2} color="#000" style={{ display: "block" }} />
             </button>
-            <div className="lux-logo-container" style={{ display: "flex" }}>
+            <div className="clean-logo-container" style={{ display: "flex" }}>
               <Image 
                 src="/bg-remove-black-text.png" 
                 width={150} 
                 height={40} 
                 alt="GenZonic" 
-                className="lux-logo" 
+                className="clean-logo" 
               />
             </div>
           </div>
 
           {/* PROFILE SECTION */}
-          <div className="lux-profile-section" style={{ display: "flex", alignItems: "center", gap: "15px", padding: "0 20px 25px" }}>
-            <div className="lux-avatar-ring" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div className="lux-avatar-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <User size={26} strokeWidth={1.5} color="#555" style={{ display: "block" }} />
+          <div className="clean-profile-section" style={{ display: "flex", alignItems: "center", gap: "15px", padding: "0 20px 25px" }}>
+            <div className="clean-avatar-ring" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div className="clean-avatar-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <User size={24} strokeWidth={2} color="#000" style={{ display: "block" }} />
               </div>
             </div>
-            <div className="lux-profile-info" style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <div className="clean-profile-info" style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
               {isAuthenticated ? (
                 <>
-                  <span className="lux-greeting" style={{ fontWeight: 600 }}>Hi, {getDisplayName()}</span>
-                  <Link href="/profile" className="lux-account-link" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span className="clean-greeting" style={{ fontWeight: 800 }}>Hi, {getDisplayName()}</span>
+                  <Link href="/profile" className="clean-account-link" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                     My Account <LinkIcon size={12} strokeWidth={2} style={{ display: "block" }}/>
                   </Link>
                 </>
               ) : (
                 <>
-                  <span className="lux-greeting" style={{ fontWeight: 600 }}>Welcome, Guest</span>
-                  <Link href="/login" className="lux-account-link" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span className="clean-greeting" style={{ fontWeight: 800 }}>Welcome, Guest</span>
+                  <Link href="/login" className="clean-account-link" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                     Sign In / Register <LinkIcon size={12} strokeWidth={2} style={{ display: "block" }}/>
                   </Link>
                 </>
@@ -307,65 +307,65 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* MAIN NAVIGATION (Men, Women, Kids) */}
-          <div className="lux-main-nav" style={{ display: "flex", flexDirection: "column", borderTop: "1px solid #e0e0e0", borderBottom: "1px solid #e0e0e0" }}>
-            <Link href="/shop/men" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <span>MEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666" style={{ display: "block", flexShrink: 0 }}/>
+          {/* MAIN NAVIGATION (Men, Women, Kids) - MASSIVE HIGHLIGHT */}
+          <div className="clean-main-nav" style={{ display: "flex", flexDirection: "column", borderTop: "2px solid #000", borderBottom: "2px solid #000", background: "#fff" }}>
+            <Link href="/shop/men" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <span>MEN</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
             </Link>
-            <Link href="/shop/women" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <span>WOMEN</span> <ChevronRight size={18} strokeWidth={1.5} color="#666" style={{ display: "block", flexShrink: 0 }}/>
+            <Link href="/shop/women" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <span>WOMEN</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
             </Link>
-            <Link href="/shop/kids" className="lux-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <span>KIDS</span> <ChevronRight size={18} strokeWidth={1.5} color="#666" style={{ display: "block", flexShrink: 0 }}/>
+            <Link href="/shop/kids" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <span>KIDS</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
             </Link>
             
-            {/* PREMIUM BUTTON */}
+            {/* PREMIUM BUTTON - BLACK AND ORANGE */}
             <button 
-              className="lux-nav-item lux-premium-btn"
+              className="clean-nav-item clean-premium-btn"
               onClick={() => {
                 setMobileMenuOpen(false);
                 setCategoryOpen(true);
               }}
               style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}
             >
-              <span>PREMIUM COLLECTION</span> <Crown size={20} strokeWidth={1.5} color="#8a6c32" style={{ display: "block", flexShrink: 0 }} />
+              <span>PREMIUM VAULT</span> <Crown size={20} strokeWidth={2} color="#FF3E00" style={{ display: "block", flexShrink: 0 }} />
             </button>
           </div>
 
           {/* SECONDARY NAVIGATION */}
-          <div className="lux-secondary-nav" style={{ display: "flex", flexDirection: "column", padding: "15px 0" }}>
-            <Link href="/wishlist" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-              <Heart size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>WISHLIST</span>
+          <div className="clean-secondary-nav" style={{ display: "flex", flexDirection: "column", padding: "15px 0" }}>
+            <Link href="/wishlist" className="clean-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Heart size={18} strokeWidth={2} color="#000" style={{ display: "block", flexShrink: 0 }} className="sec-icon"/> <span>WISHLIST</span>
             </Link>
-            <Link href="/profile" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-              <Box size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>MY ORDERS</span>
+            <Link href="/profile" className="clean-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Box size={18} strokeWidth={2} color="#000" style={{ display: "block", flexShrink: 0 }} className="sec-icon"/> <span>MY ORDERS</span>
             </Link>
-            <button className="lux-sec-item" onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-              <Search size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>SEARCH</span>
+            <button className="clean-sec-item" onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Search size={18} strokeWidth={2} color="#000" style={{ display: "block", flexShrink: 0 }} className="sec-icon"/> <span>SEARCH</span>
             </button>
-            <Link href="/about" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-              <Info size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>ABOUT</span>
+            <Link href="/about" className="clean-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Info size={18} strokeWidth={2} color="#000" style={{ display: "block", flexShrink: 0 }} className="sec-icon"/> <span>ABOUT</span>
             </Link>
-            <Link href="/contact" className="lux-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-              <Mail size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>CONTACT</span>
+            <Link href="/contact" className="clean-sec-item" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+              <Mail size={18} strokeWidth={2} color="#000" style={{ display: "block", flexShrink: 0 }} className="sec-icon"/> <span>CONTACT</span>
             </Link>
             {isAuthenticated && (
-              <button className="lux-sec-item" onClick={() => signOut({ callbackUrl: "/" })} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
-                <LogOut size={18} strokeWidth={1.5} color="#555" style={{ display: "block", flexShrink: 0 }}/> <span>LOG OUT</span>
+              <button className="clean-sec-item" onClick={() => signOut({ callbackUrl: "/" })} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%" }}>
+                <LogOut size={18} strokeWidth={2} color="#000" style={{ display: "block", flexShrink: 0 }} className="sec-icon"/> <span>LOG OUT</span>
               </button>
             )}
             {user?.role === "admin" && (
-              <Link href="/admin" className="lux-sec-item" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%", color: "#3b82f6" }} onClick={() => setMobileMenuOpen(false)}>
-                <ShieldAlert size={18} strokeWidth={1.5} color="#3b82f6" style={{ display: "block", flexShrink: 0 }}/> <span>ADMIN PANEL</span>
+              <Link href="/admin" className="clean-sec-item" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px", width: "100%", color: "#FF3E00" }} onClick={() => setMobileMenuOpen(false)}>
+                <ShieldAlert size={18} strokeWidth={2} color="#FF3E00" style={{ display: "block", flexShrink: 0 }}/> <span style={{color: "#FF3E00"}}>ADMIN PANEL</span>
               </Link>
             )}
           </div>
 
-          {/* PROMO BANNER */}
-          <div className="lux-promo-container" style={{ padding: "20px", marginTop: "auto" }}>
-            <div className="lux-promo-banner" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px" }}>
-              <Gift size={32} strokeWidth={1} color="#fff" style={{ display: "block", flexShrink: 0 }} />
-              <div className="lux-promo-text" style={{ display: "flex", flexDirection: "column" }}>
+          {/* PROMO BANNER (Solid Orange) */}
+          <div className="clean-promo-container" style={{ padding: "20px", marginTop: "auto" }}>
+            <div className="clean-promo-banner" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px" }}>
+              <Gift size={32} strokeWidth={2} color="#fff" style={{ display: "block", flexShrink: 0 }} />
+              <div className="clean-promo-text" style={{ display: "flex", flexDirection: "column" }}>
                 <strong>GET EXTRA 10% OFF</strong>
                 <span>YOUR FIRST ORDER</span>
               </div>
@@ -471,9 +471,14 @@ export default function Navbar() {
         .hover-scale { transition: transform 0.2s ease; }
         .hover-scale:hover { transform: scale(1.1); }
 
-        .badge-pop { position: absolute; top: 0px; right: 0px; background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; border-radius: 50%; width: 18px; height: 18px; display: grid; place-items: center; box-shadow: 0px 2px 5px rgba(0,0,0,0.2); pointer-events: none; transform: translate(25%, -25%); }
+        .badge-pop { position: absolute; top: 0px; right: 0px; background-color: #FF3E00; color: white; font-size: 10px; font-weight: bold; border-radius: 50%; width: 18px; height: 18px; display: grid; place-items: center; box-shadow: 0px 2px 5px rgba(0,0,0,0.2); pointer-events: none; transform: translate(25%, -25%); }
 
-        .mobile-backdrop, .mobile-sidebar-luxury, .mobile-menu-btn { display: none !important; }
+        /* DESKTOP NAV HIGHLIGHTS */
+        .nav-highlight { font-weight: 800 !important; }
+        .nav-highlight::after { background: #FF3E00 !important; height: 3px !important; bottom: -8px !important; }
+        .nav-highlight:hover { color: #FF3E00 !important; }
+
+        .mobile-backdrop, .mobile-sidebar-clean, .mobile-menu-btn { display: none !important; }
 
         @media (max-width: 1024px) {
           .desktop-only, .nav-links, .search-wrapper, .collections-btn, .auth-group { display: none !important; }
@@ -484,72 +489,89 @@ export default function Navbar() {
           .mobile-backdrop { display: block !important; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); z-index: 99998 !important; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
           .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
 
-          /* 2. SIDEBAR LUXURY DRAWER - Matches reference exact colors */
-          .mobile-sidebar-luxury {
+          /* 2. SIDEBAR CLEAN DRAWER - Black, White, Orange */
+          .mobile-sidebar-clean {
             display: flex !important; position: fixed; top: 0; left: 0; 
             width: 85%; max-width: 380px; height: 100dvh; 
-            background: #faf9f6 !important; /* Subtle paper off-white */
-            color: #111 !important;
+            background: #ffffff !important; /* Pure White Base */
+            color: #000000 !important;
             z-index: 99999 !important; 
             transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
             font-family: 'Inter', sans-serif;
           }
-          .mobile-sidebar-luxury.open { transform: translateX(0); }
+          .mobile-sidebar-clean.open { transform: translateX(0); }
 
           .sidebar-scroll-wrapper { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; -ms-overflow-style: none; scrollbar-width: none; }
           .sidebar-scroll-wrapper::-webkit-scrollbar { display: none; }
 
           /* HEADER - Close Button & Logo */
-          .lux-close-btn { 
-            border-radius: 8px;
-            background: linear-gradient(to bottom, #ffffff, #e6e6e6);
-            border: 1px solid #ccc; box-shadow: inset 0 1px 0 #fff;
+          .clean-close-btn { 
+            border-radius: 0;
+            background: transparent;
+            border: 2px solid #000; 
             cursor: pointer;
+            transition: all 0.2s ease;
           }
-          .lux-logo { height: 32px !important; width: auto !important; object-fit: contain; margin-left: -5px; }
+          .clean-close-btn:active { background: #FF3E00; border-color: #FF3E00; color: #fff !important; }
+          .clean-close-btn:active svg { color: #fff !important; }
+          
+          .clean-logo { height: 32px !important; width: auto !important; object-fit: contain; margin-left: -5px; }
 
           /* PROFILE SECTION */
-          .lux-avatar-ring {
+          .clean-avatar-ring {
             width: 52px; height: 52px; border-radius: 50%;
-            border: 2px solid #d4af37; /* Gold ring */
-            padding: 2px;
+            border: 2px solid #000; /* Pure Black Ring */
+            padding: 3px;
           }
-          .lux-avatar-inner {
+          .clean-avatar-inner {
             width: 100%; height: 100%; border-radius: 50%;
-            background: #d4d4d4; /* Inner grey */
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            background: #f4f4f4; 
           }
-          .lux-greeting { font-size: 16px; color: #111; }
-          .lux-account-link { font-size: 13px; color: #333; text-decoration: underline;}
+          .clean-greeting { font-size: 16px; color: #000; text-transform: uppercase; letter-spacing: 0.5px;}
+          .clean-account-link { font-size: 13px; color: #888; text-decoration: underline; transition: color 0.2s;}
+          .clean-account-link:hover, .clean-account-link:active { color: #FF3E00; }
 
-          /* MAIN NAV */
-          .lux-nav-item {
-            padding: 16px 20px; font-size: 15px; font-weight: 700; color: #111; text-decoration: none;
-            background: #f4f4f4; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; cursor: pointer;
+          /* MAIN NAV - Bold & Massive */
+          .primary-highlight {
+            padding: 20px 20px !important; font-size: 20px !important; font-weight: 900 !important; color: #000 !important; text-decoration: none;
+            background: #fff; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; cursor: pointer;
+            letter-spacing: 1px; transition: all 0.2s ease;
           }
-          .lux-main-nav .lux-nav-item:last-child { border-bottom: none; }
+          .primary-highlight:active { background: #fafafa; color: #FF3E00 !important; padding-left: 25px !important; }
+          .primary-highlight:active svg { color: #FF3E00 !important; }
           
-          /* Premium Collection Button Specifics */
-          .lux-premium-btn {
-            background: linear-gradient(to right, #e2c77d, #d3ab55) !important;
-            color: #333 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.3); border: none !important;
+          /* Premium Collection Button - Solid Black with Orange text */
+          .clean-premium-btn {
+            background: #000 !important;
+            color: #FF3E00 !important; 
+            border: none !important;
+            padding: 20px 20px !important; font-size: 16px !important; font-weight: 900 !important;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: all 0.2s ease;
           }
+          .clean-premium-btn:active { background: #FF3E00 !important; color: #000 !important; }
+          .clean-premium-btn:active svg { color: #000 !important; }
 
           /* SECONDARY NAV */
-          .lux-sec-item {
-            padding: 12px 20px; font-size: 14px; font-weight: 400; color: #111; text-decoration: none;
-            background: transparent; border: none; text-align: left; cursor: pointer; text-transform: uppercase;
+          .clean-sec-item {
+            padding: 14px 20px !important; font-size: 14px !important; font-weight: 700 !important; color: #000 !important; 
+            text-decoration: none; background: transparent; border: none; text-align: left; cursor: pointer; text-transform: uppercase;
+            transition: all 0.2s ease;
           }
+          .clean-sec-item:active { color: #FF3E00 !important; background: #fafafa; }
+          .clean-sec-item:active .sec-icon { color: #FF3E00 !important; }
 
-          /* PROMO BANNER */
-          .lux-promo-banner {
-            padding: 15px 20px;
-            background: linear-gradient(to bottom, #d4b05a, #a67c27);
-            border-radius: 4px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+          /* PROMO BANNER - Streetwear Orange */
+          .clean-promo-banner {
+            padding: 18px 20px;
+            background: #FF3E00; /* VIBRANT ORANGE */
+            border-radius: 0; color: #fff; 
+            box-shadow: 0 4px 15px rgba(255, 62, 0, 0.3);
+            border: 2px solid #000;
           }
-          .lux-promo-text strong { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; }
-          .lux-promo-text span { font-size: 11px; font-weight: 500; opacity: 0.9; }
+          .clean-promo-text strong { font-size: 14px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
+          .clean-promo-text span { font-size: 11px; font-weight: 700; opacity: 0.9; text-transform: uppercase;}
 
           :global(.overlay-split-body) { grid-template-columns: 1fr !important; gap: 40px !important; }
           :global(.desktop-only-text) { display: none !important; }
@@ -557,7 +579,7 @@ export default function Navbar() {
 
         @media (max-width: 600px) {
           :global(.brand-logo) { height: 36px !important; width: auto !important; object-fit: contain !important; }
-          .mobile-sidebar-luxury { max-width: 100%; }
+          .mobile-sidebar-clean { max-width: 100%; }
         }
       `}</style>
     </>
