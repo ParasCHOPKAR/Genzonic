@@ -92,19 +92,18 @@ export default function Navbar() {
     };
   }, [categoryOpen, mobileMenuOpen]);
 
-  // 🔥 NEW: FETCH FEATURED PRODUCTS FROM ADMIN PANEL
+  // 🔥 UPDATED: FETCH ALL FEATURED PRODUCTS (UNLIMITED)
   useEffect(() => {
     if (categoryOpen && premiumProducts.length === 0) {
       setIsLoadingPremium(true);
       fetch("/api/products")
         .then((res) => res.json())
         .then((data) => {
-          // Supports APIs returning { products: [...] } or just an array [...]
           const productsArray = data.products || data || [];
           
-          // Filter for items marked as 'featured' in MongoDB and limit to 4 for the grid
+          // Filter for featured items and set ALL of them (removed .slice restriction)
           const premiumItems = productsArray.filter((item: any) => item.featured === true);
-          setPremiumProducts(premiumItems.slice(0, 4));
+          setPremiumProducts(premiumItems);
         })
         .catch((err) => console.error("Vault fetch error:", err))
         .finally(() => setIsLoadingPremium(false));
@@ -393,7 +392,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ================= CATEGORY OVERLAY (DYNAMIC PREMIUM VAULT) ================= */}
+      {/* ================= CATEGORY OVERLAY (FULL WIDTH PREMIUM VAULT) ================= */}
       <div className={`category-overlay ${categoryOpen ? "show" : ""}`}>
         <div className="overlay-header-split">
           <div className="overlay-brand-line">
@@ -407,69 +406,59 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div className="overlay-split-body">
-          <div className="overlay-left-col">
-            <div className="nav-vertical-list">
-              <Link href="/shop/men" style={{ '--i': 1 } as React.CSSProperties} onClick={() => setCategoryOpen(false)}>MEN'S <span className="hover-arrow">→</span></Link>
-              <Link href="/shop/women" style={{ '--i': 2 } as React.CSSProperties} onClick={() => setCategoryOpen(false)}>WOMEN'S <span className="hover-arrow">→</span></Link>
-              <Link href="/shop/kids" style={{ '--i': 3 } as React.CSSProperties} onClick={() => setCategoryOpen(false)}>KID'S <span className="hover-arrow">→</span></Link>
-            </div>
+        {/* 🔥 UPDATED: FULL WIDTH SCROLLABLE BODY 🔥 */}
+        <div style={{ padding: "40px 20px", height: "calc(100vh - 100px)", overflowY: "auto", width: "100%" }}>
+          <div className="showcase-intro reveal-item" style={{ '--i': 1, marginBottom: "40px", textAlign: "center", maxWidth: "800px", marginInline: "auto" } as React.CSSProperties}>
+            <h3 style={{ margin: "0 0 10px 0", fontSize: "32px", fontWeight: 900, letterSpacing: "2px", textTransform: "uppercase" }}>THE VAULT</h3>
+            <p style={{ margin: 0, fontSize: "14px", color: "#a3b8cc", lineHeight: 1.6 }}>Exclusive drops and limited-run artifacts curated directly from the central design archives.</p>
           </div>
           
-          {/* 🔥 NEW: DYNAMIC PRODUCT GRID IN RIGHT COLUMN */}
-          <div className="overlay-right-col" style={{ padding: "20px" }}>
-            <div className="showcase-intro reveal-item" style={{ '--i': 1, marginBottom: "30px" } as React.CSSProperties}>
-              <h3 style={{ margin: "0 0 10px 0", fontSize: "28px", fontWeight: 900, letterSpacing: "2px", textTransform: "uppercase" }}>THE VAULT</h3>
-              <p style={{ margin: 0, fontSize: "14px", color: "#a3b8cc", lineHeight: 1.6 }}>Exclusive drops and limited-run artifacts curated directly from the central design archives.</p>
-            </div>
-            
-            <div className="premium-products-container reveal-item" style={{ '--i': 2 } as React.CSSProperties }>
-              {isLoadingPremium ? (
-                <div style={{ color: "#00b4d8", padding: "40px 0", letterSpacing: "4px", fontSize: "12px", fontWeight: "bold" }}>
-                  DECRYPTING SECURE VAULT...
-                </div>
-              ) : premiumProducts.length > 0 ? (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "25px" }}>
-                  {premiumProducts.map((product) => (
-                    <Link 
-                      href={`/product/${product.slug}`} 
-                      key={product._id} 
-                      className="hover-scale" 
-                      onClick={() => setCategoryOpen(false)}
-                      style={{ display: "block", textDecoration: "none", cursor: "pointer" }}
-                    >
-                      <div style={{ 
-                        position: "relative", 
-                        width: "100%", 
-                        aspectRatio: "3/4", 
-                        backgroundColor: "#0e1e21", 
-                        borderRadius: "8px", 
-                        overflow: "hidden",
-                        border: "1px solid #14282c",
-                        marginBottom: "12px"
-                      }}>
-                        <Image 
-                          src={product.image || product.images?.[0] || "/placeholder.png"} 
-                          alt={product.name} 
-                          fill 
-                          style={{ objectFit: "cover" }} 
-                        />
-                      </div>
-                      <h5 style={{ color: "#fff", fontSize: "13px", fontWeight: 700, margin: "0 0 6px 0", textTransform: "uppercase", letterSpacing: "1px" }}>
-                        {product.name}
-                      </h5>
-                      <p style={{ color: "#FF3E00", margin: 0, fontWeight: 900, fontSize: "15px" }}>
-                        ₹{product.price}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ padding: "40px", border: "1px dashed #14282c", borderRadius: "8px", color: "#52667a", textAlign: "center", fontSize: "13px", letterSpacing: "1px" }}>
-                  THE VAULT IS CURRENTLY EMPTY.
-                </div>
-              )}
-            </div>
+          <div className="premium-products-container reveal-item" style={{ '--i': 2, maxWidth: "1400px", marginInline: "auto" } as React.CSSProperties }>
+            {isLoadingPremium ? (
+              <div style={{ color: "#00b4d8", padding: "60px 0", textAlign: "center", letterSpacing: "4px", fontSize: "14px", fontWeight: "bold" }}>
+                DECRYPTING SECURE VAULT...
+              </div>
+            ) : premiumProducts.length > 0 ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "30px", paddingBottom: "60px" }}>
+                {premiumProducts.map((product) => (
+                  <Link 
+                    href={`/product/${product.slug}`} 
+                    key={product._id} 
+                    className="hover-scale" 
+                    onClick={() => setCategoryOpen(false)}
+                    style={{ display: "block", textDecoration: "none", cursor: "pointer" }}
+                  >
+                    <div style={{ 
+                      position: "relative", 
+                      width: "100%", 
+                      aspectRatio: "3/4", 
+                      backgroundColor: "#0e1e21", 
+                      borderRadius: "8px", 
+                      overflow: "hidden",
+                      border: "1px solid #14282c",
+                      marginBottom: "16px"
+                    }}>
+                      <Image 
+                        src={product.image || product.images?.[0] || "/placeholder.png"} 
+                        alt={product.name} 
+                        fill 
+                        style={{ objectFit: "cover" }} 
+                      />
+                    </div>
+                    <h5 style={{ color: "#fff", fontSize: "14px", fontWeight: 700, margin: "0 0 6px 0", textTransform: "uppercase", letterSpacing: "1px" }}>
+                      {product.name}
+                    </h5>
+                    <p style={{ color: "#FF3E00", margin: 0, fontWeight: 900, fontSize: "16px" }}>
+                      ₹{product.price}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div style={{ padding: "60px", border: "1px dashed #14282c", borderRadius: "8px", color: "#52667a", textAlign: "center", fontSize: "14px", letterSpacing: "2px" }}>
+                THE VAULT IS CURRENTLY EMPTY.
+              </div>
+            )}
           </div>
         </div>
       </div>
