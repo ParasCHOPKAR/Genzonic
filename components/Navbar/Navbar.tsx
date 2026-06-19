@@ -100,8 +100,6 @@ export default function Navbar() {
         .then((res) => res.json())
         .then((data) => {
           const productsArray = data.products || data || [];
-          
-          // Filter for featured items and set ALL of them (removed .slice restriction)
           const premiumItems = productsArray.filter((item: any) => item.featured === true);
           setPremiumProducts(premiumItems);
         })
@@ -419,40 +417,132 @@ export default function Navbar() {
                 DECRYPTING SECURE VAULT...
               </div>
             ) : premiumProducts.length > 0 ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "30px", paddingBottom: "60px" }}>
-                {premiumProducts.map((product) => (
-                  <Link 
-                    href={`/product/${product.slug}`} 
-                    key={product._id} 
-                    className="hover-scale" 
-                    onClick={() => setCategoryOpen(false)}
-                    style={{ display: "block", textDecoration: "none", cursor: "pointer" }}
-                  >
-                    <div style={{ 
-                      position: "relative", 
-                      width: "100%", 
-                      aspectRatio: "3/4", 
-                      backgroundColor: "#0e1e21", 
-                      borderRadius: "8px", 
-                      overflow: "hidden",
-                      border: "1px solid #14282c",
-                      marginBottom: "16px"
-                    }}>
-                      <Image 
-                        src={product.image || product.images?.[0] || "/placeholder.png"} 
-                        alt={product.name} 
-                        fill 
-                        style={{ objectFit: "cover" }} 
-                      />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "30px", paddingBottom: "60px" }}>
+                {premiumProducts.map((product) => {
+                  const isInWishlist = wishlist.some((w: any) => w._id === product._id);
+                  const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+                  const discountPercent = hasDiscount ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
+                  return (
+                    <div key={product._id} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      
+                      {/* Image Container with Wishlist Heart */}
+                      <div style={{ 
+                        position: "relative", 
+                        width: "100%", 
+                        aspectRatio: "3/4", 
+                        backgroundColor: "#f4f4f4", 
+                        borderRadius: "8px", 
+                        overflow: "hidden"
+                      }}>
+                        <Link 
+                          href={`/product/${product.slug}`} 
+                          onClick={() => setCategoryOpen(false)}
+                          style={{ display: "block", width: "100%", height: "100%" }}
+                        >
+                          <Image 
+                            src={product.image || product.images?.[0] || "/placeholder.png"} 
+                            alt={product.name} 
+                            fill 
+                            style={{ objectFit: "cover" }} 
+                          />
+                        </Link>
+                        
+                        {/* Heart Button Overlay */}
+                        <button style={{ 
+                          position: "absolute", 
+                          top: "12px", 
+                          right: "12px", 
+                          backgroundColor: "#fff", 
+                          border: "none", 
+                          borderRadius: "50%", 
+                          width: "36px", 
+                          height: "36px", 
+                          display: "flex", 
+                          alignItems: "center", 
+                          justifyContent: "center", 
+                          cursor: "pointer", 
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                          zIndex: 2
+                        }}>
+                          <Heart 
+                            size={18} 
+                            fill={isInWishlist ? "#FF3E00" : "none"} 
+                            color={isInWishlist ? "#FF3E00" : "#000"} 
+                          />
+                        </button>
+                      </div>
+                      
+                      {/* Product Details Area */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                        <Link 
+                          href={`/product/${product.slug}`} 
+                          onClick={() => setCategoryOpen(false)}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <h5 style={{ 
+                            color: theme === "dark" ? "#fff" : "#000", 
+                            fontSize: "15px", 
+                            fontWeight: 900, 
+                            margin: 0, 
+                            textTransform: "uppercase", 
+                            letterSpacing: "0.5px" 
+                          }}>
+                            {product.name}
+                          </h5>
+                        </Link>
+
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <span style={{ color: theme === "dark" ? "#fff" : "#000", fontWeight: 900, fontSize: "18px" }}>
+                            ₹{product.price}
+                          </span>
+                          
+                          {hasDiscount && (
+                            <>
+                              <span style={{ color: "#94a3b8", textDecoration: "line-through", fontSize: "14px", fontWeight: 600 }}>
+                                ₹{product.originalPrice}
+                              </span>
+                              <span style={{ 
+                                backgroundColor: theme === "dark" ? "#fff" : "#000", 
+                                color: theme === "dark" ? "#000" : "#fff", 
+                                fontSize: "11px", 
+                                fontWeight: 800, 
+                                padding: "4px 8px", 
+                                borderRadius: "4px" 
+                              }}>
+                                {discountPercent}% OFF
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Buy Now Button */}
+                      <Link 
+                        href={`/product/${product.slug}`} 
+                        onClick={() => setCategoryOpen(false)}
+                        className="hover-scale"
+                        style={{ 
+                          display: "block", 
+                          width: "100%", 
+                          padding: "12px 0", 
+                          textAlign: "center", 
+                          backgroundColor: "transparent", 
+                          border: `2px solid ${theme === "dark" ? "#fff" : "#000"}`, 
+                          color: theme === "dark" ? "#fff" : "#000", 
+                          fontWeight: 800, 
+                          fontSize: "14px", 
+                          textTransform: "uppercase", 
+                          borderRadius: "4px", 
+                          textDecoration: "none", 
+                          marginTop: "auto" 
+                        }}
+                      >
+                        BUY NOW
+                      </Link>
                     </div>
-                    <h5 style={{ color: "#fff", fontSize: "14px", fontWeight: 700, margin: "0 0 6px 0", textTransform: "uppercase", letterSpacing: "1px" }}>
-                      {product.name}
-                    </h5>
-                    <p style={{ color: "#FF3E00", margin: 0, fontWeight: 900, fontSize: "16px" }}>
-                      ₹{product.price}
-                    </p>
-                  </Link>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div style={{ padding: "60px", border: "1px dashed #14282c", borderRadius: "8px", color: "#52667a", textAlign: "center", fontSize: "14px", letterSpacing: "2px" }}>
