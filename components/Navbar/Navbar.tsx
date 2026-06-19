@@ -404,8 +404,13 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* 🔥 UPDATED: FULL WIDTH SCROLLABLE BODY 🔥 */}
-        <div style={{ padding: "40px 20px", height: "calc(100vh - 100px)", overflowY: "auto", width: "100%" }}>
+        {/* 🔥 CSS INJECTION TO HIDE SCROLLBAR BUT KEEP SCROLLING 🔥 */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          .hide-scroll-vault::-webkit-scrollbar { display: none; }
+        `}} />
+
+        {/* 🔥 UPDATED: FULL WIDTH SCROLLABLE BODY WITH SMALLER GRID 🔥 */}
+        <div className="hide-scroll-vault" style={{ padding: "40px 20px", height: "calc(100vh - 100px)", overflowY: "auto", width: "100%", scrollbarWidth: "none", msOverflowStyle: "none" }}>
           <div className="showcase-intro reveal-item" style={{ '--i': 1, marginBottom: "40px", textAlign: "center", maxWidth: "800px", marginInline: "auto" } as React.CSSProperties}>
             <h3 style={{ margin: "0 0 10px 0", fontSize: "32px", fontWeight: 900, letterSpacing: "2px", textTransform: "uppercase" }}>THE VAULT</h3>
             <p style={{ margin: 0, fontSize: "14px", color: "#a3b8cc", lineHeight: 1.6 }}>Exclusive drops and limited-run artifacts curated directly from the central design archives.</p>
@@ -417,14 +422,14 @@ export default function Navbar() {
                 DECRYPTING SECURE VAULT...
               </div>
             ) : premiumProducts.length > 0 ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "30px", paddingBottom: "60px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: "20px", paddingBottom: "60px" }}>
                 {premiumProducts.map((product) => {
                   const isInWishlist = wishlist.some((w: any) => w._id === product._id);
                   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
                   const discountPercent = hasDiscount ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
 
                   return (
-                    <div key={product._id} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div key={product._id} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       
                       {/* Image Container with Wishlist Heart */}
                       <div style={{ 
@@ -451,13 +456,13 @@ export default function Navbar() {
                         {/* Heart Button Overlay */}
                         <button style={{ 
                           position: "absolute", 
-                          top: "12px", 
-                          right: "12px", 
+                          top: "10px", 
+                          right: "10px", 
                           backgroundColor: "#fff", 
                           border: "none", 
                           borderRadius: "50%", 
-                          width: "36px", 
-                          height: "36px", 
+                          width: "32px", 
+                          height: "32px", 
                           display: "flex", 
                           alignItems: "center", 
                           justifyContent: "center", 
@@ -466,7 +471,7 @@ export default function Navbar() {
                           zIndex: 2
                         }}>
                           <Heart 
-                            size={18} 
+                            size={16} 
                             fill={isInWishlist ? "#FF3E00" : "none"} 
                             color={isInWishlist ? "#FF3E00" : "#000"} 
                           />
@@ -474,7 +479,7 @@ export default function Navbar() {
                       </div>
                       
                       {/* Product Details Area */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <Link 
                           href={`/product/${product.slug}`} 
                           onClick={() => setCategoryOpen(false)}
@@ -482,7 +487,7 @@ export default function Navbar() {
                         >
                           <h5 style={{ 
                             color: theme === "dark" ? "#fff" : "#000", 
-                            fontSize: "15px", 
+                            fontSize: "13px", 
                             fontWeight: 900, 
                             margin: 0, 
                             textTransform: "uppercase", 
@@ -492,22 +497,22 @@ export default function Navbar() {
                           </h5>
                         </Link>
 
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <span style={{ color: theme === "dark" ? "#fff" : "#000", fontWeight: 900, fontSize: "18px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <span style={{ color: theme === "dark" ? "#fff" : "#000", fontWeight: 900, fontSize: "16px" }}>
                             ₹{product.price}
                           </span>
                           
                           {hasDiscount && (
                             <>
-                              <span style={{ color: "#94a3b8", textDecoration: "line-through", fontSize: "14px", fontWeight: 600 }}>
+                              <span style={{ color: "#94a3b8", textDecoration: "line-through", fontSize: "12px", fontWeight: 600 }}>
                                 ₹{product.originalPrice}
                               </span>
                               <span style={{ 
                                 backgroundColor: theme === "dark" ? "#fff" : "#000", 
                                 color: theme === "dark" ? "#000" : "#fff", 
-                                fontSize: "11px", 
+                                fontSize: "10px", 
                                 fontWeight: 800, 
-                                padding: "4px 8px", 
+                                padding: "3px 6px", 
                                 borderRadius: "4px" 
                               }}>
                                 {discountPercent}% OFF
@@ -525,13 +530,13 @@ export default function Navbar() {
                         style={{ 
                           display: "block", 
                           width: "100%", 
-                          padding: "12px 0", 
+                          padding: "10px 0", 
                           textAlign: "center", 
                           backgroundColor: "transparent", 
                           border: `2px solid ${theme === "dark" ? "#fff" : "#000"}`, 
                           color: theme === "dark" ? "#fff" : "#000", 
                           fontWeight: 800, 
-                          fontSize: "14px", 
+                          fontSize: "13px", 
                           textTransform: "uppercase", 
                           borderRadius: "4px", 
                           textDecoration: "none", 
