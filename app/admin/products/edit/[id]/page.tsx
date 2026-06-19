@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, UploadCloud, CheckCircle, Save } from "lucide-react";
+import { Loader2, UploadCloud, Save } from "lucide-react";
 
 export default function EditProductPage() {
   const { id } = useParams();
@@ -20,17 +20,17 @@ export default function EditProductPage() {
     size: "S",
     stock: "",
     description: "",
-    image: "" 
+    image: "",
+    featured: false // 🔥 Added featured to state
   });
 
-  // 🔥 Fetch Existing Product Data
+  // Fetch Existing Product Data
   useEffect(() => {
     if (!id) return;
     
     fetch(`/api/products/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        // THE FIX: We make sure to target data.product, and provide fallback empty strings
         if (data.success && data.product) {
           setForm({
             name: data.product.name || "",
@@ -41,6 +41,7 @@ export default function EditProductPage() {
             stock: data.product.stock || "",
             description: data.product.description || "",
             image: data.product.image || "",
+            featured: data.product.featured || false, // 🔥 Fetch existing featured status
           });
         }
       })
@@ -204,6 +205,20 @@ export default function EditProductPage() {
           <div className="input-group full-width">
             <label>Description / Lore</label>
             <textarea name="description" rows={4} value={form.description} onChange={handleChange} required />
+          </div>
+
+          {/* 🔥 PREMIUM VAULT CHECKBOX 🔥 */}
+          <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "5px", marginBottom: "15px" }}>
+            <input 
+              type="checkbox" 
+              id="featured" 
+              checked={form.featured} 
+              onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+              style={{ width: "20px", height: "20px", accentColor: "#FF3E00", cursor: "pointer" }}
+            />
+            <label htmlFor="featured" style={{ fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", color: "#64748b", cursor: "pointer" }}>
+              Add to Premium Vault (Featured)
+            </label>
           </div>
 
           <button type="submit" disabled={loading || uploadingImage} className="submit-button">
