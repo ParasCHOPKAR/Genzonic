@@ -10,7 +10,7 @@ export default function AddProductForm() {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   
-  // Manage all text/select form state
+  // Manage all text/select form state (Added 'featured' here)
   const [form, setForm] = useState({
     name: "",
     price: "",
@@ -18,6 +18,7 @@ export default function AddProductForm() {
     color: "",
     stock: "",
     description: "",
+    featured: false, // 🔥 Default is false
   });
 
   // MULTI-SIZE SELECTOR STATE
@@ -37,7 +38,7 @@ export default function AddProductForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 🔥 NEW MULTI-IMAGE UPLOAD LOGIC 🔥
+  // MULTI-IMAGE UPLOAD LOGIC
   const handleMultiImageUpload = async (e: any) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
@@ -129,11 +130,11 @@ export default function AddProductForm() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <label style={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }}>CATEGORY</label>
-<select name="category" value={form.category} onChange={handleChange} style={inputStyle}>
-  <option value="men">MENS</option>  {/* value MUST be "men" */}
-  <option value="women">WOMENS</option>
-  <option value="kids">KIDS</option>
-</select>
+              <select name="category" value={form.category} onChange={handleChange} style={inputStyle}>
+                <option value="men">MENS</option>  {/* value MUST be "men" */}
+                <option value="women">WOMENS</option>
+                <option value="kids">KIDS</option>
+              </select>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <label style={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }}>COLOR</label>
@@ -168,7 +169,7 @@ export default function AddProductForm() {
             <input name="stock" type="number" value={form.stock} onChange={handleChange} required style={inputStyle} />
           </div>
 
-          {/* 🔥 NEW MULTI-IMAGE UPLOAD INPUT 🔥 */}
+          {/* MULTI-IMAGE UPLOAD INPUT */}
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <label style={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }}>
               PRODUCT IMAGES (SELECT MULTIPLE)
@@ -201,6 +202,20 @@ export default function AddProductForm() {
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <label style={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }}>DESCRIPTION</label>
             <textarea name="description" rows={4} value={form.description} onChange={handleChange} required style={inputStyle} />
+          </div>
+
+          {/* 🔥 NEW PREMIUM VAULT CHECKBOX 🔥 */}
+          <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "5px", marginBottom: "5px" }}>
+            <input 
+              type="checkbox" 
+              id="featured" 
+              checked={form.featured} 
+              onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+              style={{ width: "20px", height: "20px", accentColor: "#FF3E00", cursor: "pointer" }}
+            />
+            <label htmlFor="featured" style={{ fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", color: "#64748b", cursor: "pointer" }}>
+              Add to Premium Vault (Featured)
+            </label>
           </div>
 
           <button type="submit" disabled={loading || uploadingImage} style={{ background: "#ff3e00", color: "white", padding: "15px", border: "none", borderRadius: "6px", fontWeight: 800, cursor: "pointer", marginTop: "10px", transition: "0.2s", opacity: (loading || uploadingImage) ? 0.7 : 1 }}>
