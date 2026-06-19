@@ -20,13 +20,8 @@ import {
   Search,
   User,
   LogOut,
-  Key,
-  BookOpen,
-  Ticket,
-  Shield,
-  Box,
-  Check,
   ShieldAlert,
+  Box,
   Crown,
   Info,
   Mail,
@@ -67,6 +62,10 @@ export default function Navbar() {
   // HYDRATION FIX STATE
   const [mounted, setMounted] = useState(false);
 
+  // 🔥 NEW: VAULT FETCH STATES
+  const [premiumProducts, setPremiumProducts] = useState<any[]>([]);
+  const [isLoadingPremium, setIsLoadingPremium] = useState(false);
+
   /* =========================
      EFFECTS
   ========================= */
@@ -92,6 +91,25 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [categoryOpen, mobileMenuOpen]);
+
+  // 🔥 NEW: FETCH FEATURED PRODUCTS FROM ADMIN PANEL
+  useEffect(() => {
+    if (categoryOpen && premiumProducts.length === 0) {
+      setIsLoadingPremium(true);
+      fetch("/api/products")
+        .then((res) => res.json())
+        .then((data) => {
+          // Supports APIs returning { products: [...] } or just an array [...]
+          const productsArray = data.products || data || [];
+          
+          // Filter for items marked as 'featured' in MongoDB and limit to 4 for the grid
+          const premiumItems = productsArray.filter((item: any) => item.featured === true);
+          setPremiumProducts(premiumItems.slice(0, 4));
+        })
+        .catch((err) => console.error("Vault fetch error:", err))
+        .finally(() => setIsLoadingPremium(false));
+    }
+  }, [categoryOpen, premiumProducts.length]);
 
   /* =========================
      MATH & PARSERS
@@ -252,7 +270,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ================= TRUE MOBILE SIDEBAR (BLACK/WHITE/ORANGE) ================= */}
+      {/* ================= TRUE MOBILE SIDEBAR ================= */}
       <div 
         className={`mobile-backdrop ${mobileMenuOpen ? "open" : ""}`} 
         onClick={() => setMobileMenuOpen(false)}
@@ -307,7 +325,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* MAIN NAVIGATION (Men, Women, Kids) - MASSIVE HIGHLIGHT */}
+          {/* MAIN NAVIGATION (Men, Women, Kids) */}
           <div className="clean-main-nav" style={{ display: "flex", flexDirection: "column", borderTop: "2px solid #000", borderBottom: "2px solid #000", background: "#fff" }}>
             <Link href="/shop/men" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <span>MEN</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
@@ -319,7 +337,7 @@ export default function Navbar() {
               <span>KIDS</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
             </Link>
             
-            {/* PREMIUM BUTTON - BLACK AND ORANGE */}
+            {/* PREMIUM BUTTON */}
             <button 
               className="clean-nav-item clean-premium-btn"
               onClick={() => {
@@ -361,7 +379,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* PROMO BANNER (Solid Orange) */}
+          {/* PROMO BANNER */}
           <div className="clean-promo-container" style={{ padding: "20px", marginTop: "auto" }}>
             <div className="clean-promo-banner" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px" }}>
               <Gift size={32} strokeWidth={2} color="#fff" style={{ display: "block", flexShrink: 0 }} />
@@ -375,7 +393,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ================= CATEGORY OVERLAY ================= */}
+      {/* ================= CATEGORY OVERLAY (DYNAMIC PREMIUM VAULT) ================= */}
       <div className={`category-overlay ${categoryOpen ? "show" : ""}`}>
         <div className="overlay-header-split">
           <div className="overlay-brand-line">
@@ -397,191 +415,64 @@ export default function Navbar() {
               <Link href="/shop/kids" style={{ '--i': 3 } as React.CSSProperties} onClick={() => setCategoryOpen(false)}>KID'S <span className="hover-arrow">→</span></Link>
             </div>
           </div>
-          <div className="overlay-right-col">
-            <div className="showcase-intro reveal-item" style={{ '--i': 1 } as React.CSSProperties}>
-              <h3>THE ULTIMATE EXPERIENCE</h3>
-              <p>GenZonic Premium bridges the gap between high-fashion presentation and core streetwear. It is not just clothing; it is a meticulously curated physical artifact.</p>
+          
+          {/* 🔥 NEW: DYNAMIC PRODUCT GRID IN RIGHT COLUMN */}
+          <div className="overlay-right-col" style={{ padding: "20px" }}>
+            <div className="showcase-intro reveal-item" style={{ '--i': 1, marginBottom: "30px" } as React.CSSProperties}>
+              <h3 style={{ margin: "0 0 10px 0", fontSize: "28px", fontWeight: 900, letterSpacing: "2px", textTransform: "uppercase" }}>THE VAULT</h3>
+              <p style={{ margin: 0, fontSize: "14px", color: "#a3b8cc", lineHeight: 1.6 }}>Exclusive drops and limited-run artifacts curated directly from the central design archives.</p>
             </div>
-            <div className="showcase-comparison reveal-item" style={{ '--i': 2 } as React.CSSProperties}>
-              <div className="comp-side regular-side">
-                <h4>REGULAR</h4>
-                <ul>
-                  <li>GenZonic Core Garment</li>
-                  <li>Standard Poly-mailer</li>
-                  <li>Basic Tagging</li>
-                </ul>
-              </div>
-              <div className="comp-side premium-side">
-                <h4>PREMIUM</h4>
-                <ul>
-                  <li><Check size={16} strokeWidth={3}/> GenZonic Core Garment</li>
-                  <li><Check size={16} strokeWidth={3}/> 5 Exclusive Artifacts</li>
-                  <li><Check size={16} strokeWidth={3}/> Structured Vault Box</li>
-                </ul>
-              </div>
-            </div>
-            <div className="showcase-items-grid">
-              <div className="perk-card reveal-item" style={{ '--i': 3 } as React.CSSProperties}>
-                <div className="perk-icon-wrapper"><Key size={28} strokeWidth={1.5} /></div>
-                <div className="perk-info">
-                  <h5>Custom Keychain</h5>
-                  <p>Heavyweight matte metal with engraved branding.</p>
+            
+            <div className="premium-products-container reveal-item" style={{ '--i': 2 } as React.CSSProperties }>
+              {isLoadingPremium ? (
+                <div style={{ color: "#00b4d8", padding: "40px 0", letterSpacing: "4px", fontSize: "12px", fontWeight: "bold" }}>
+                  DECRYPTING SECURE VAULT...
                 </div>
-              </div>
-              <div className="perk-card reveal-item" style={{ '--i': 4 } as React.CSSProperties}>
-                <div className="perk-icon-wrapper"><BookOpen size={28} strokeWidth={1.5} /></div>
-                <div className="perk-info">
-                  <h5>Brand Story Card</h5>
-                  <p>High-GSM pressed paper detailing the lore.</p>
+              ) : premiumProducts.length > 0 ? (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "25px" }}>
+                  {premiumProducts.map((product) => (
+                    <Link 
+                      href={`/product/${product.slug}`} 
+                      key={product._id} 
+                      className="hover-scale" 
+                      onClick={() => setCategoryOpen(false)}
+                      style={{ display: "block", textDecoration: "none", cursor: "pointer" }}
+                    >
+                      <div style={{ 
+                        position: "relative", 
+                        width: "100%", 
+                        aspectRatio: "3/4", 
+                        backgroundColor: "#0e1e21", 
+                        borderRadius: "8px", 
+                        overflow: "hidden",
+                        border: "1px solid #14282c",
+                        marginBottom: "12px"
+                      }}>
+                        <Image 
+                          src={product.image || product.images?.[0] || "/placeholder.png"} 
+                          alt={product.name} 
+                          fill 
+                          style={{ objectFit: "cover" }} 
+                        />
+                      </div>
+                      <h5 style={{ color: "#fff", fontSize: "13px", fontWeight: 700, margin: "0 0 6px 0", textTransform: "uppercase", letterSpacing: "1px" }}>
+                        {product.name}
+                      </h5>
+                      <p style={{ color: "#FF3E00", margin: 0, fontWeight: 900, fontSize: "15px" }}>
+                        ₹{product.price}
+                      </p>
+                    </Link>
+                  ))}
                 </div>
-              </div>
-              <div className="perk-card reveal-item" style={{ '--i': 5 } as React.CSSProperties}>
-                <div className="perk-icon-wrapper"><Ticket size={28} strokeWidth={1.5} /></div>
-                <div className="perk-info">
-                  <h5>Exclusive Discount</h5>
-                  <p>A physical NFC-enabled card for future drops.</p>
+              ) : (
+                <div style={{ padding: "40px", border: "1px dashed #14282c", borderRadius: "8px", color: "#52667a", textAlign: "center", fontSize: "13px", letterSpacing: "1px" }}>
+                  THE VAULT IS CURRENTLY EMPTY.
                 </div>
-              </div>
-              <div className="perk-card reveal-item" style={{ '--i': 6 } as React.CSSProperties}>
-                <div className="perk-icon-wrapper"><Shield size={28} strokeWidth={1.5} /></div>
-                <div className="perk-info">
-                  <h5>Custom Patches</h5>
-                  <p>Woven brand insignias with adhesive backing.</p>
-                </div>
-              </div>
-              <div className="perk-card reveal-item box-card" style={{ '--i': 7 } as React.CSSProperties}>
-                <div className="perk-icon-wrapper"><Box size={32} strokeWidth={1.5} /></div>
-                <div className="perk-info">
-                  <h5>Premium Utility Box</h5>
-                  <p>A matte-black rigid structure designed to be kept and reused.</p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-
-      {/* ================= RESPONSIVE MOBILE OVERRIDES ================= */}
-      <style jsx>{`
-        /* CSS GRID LAYOUT - FORCES PERFECT ALIGNMENT */
-        .grid-layout { display: grid !important; grid-auto-flow: column; align-items: center; gap: 12px; }
-        .icon-grid-btn { display: grid !important; place-items: center !important; width: 40px !important; height: 40px !important; margin: 0 !important; padding: 0 !important; text-decoration: none !important; color: inherit !important; background: transparent; border: none; }
-        .icon-grid-btn svg { display: block !important; margin: 0 !important; padding: 0 !important; }
-
-        .hover-scale { transition: transform 0.2s ease; }
-        .hover-scale:hover { transform: scale(1.1); }
-
-        .badge-pop { position: absolute; top: 0px; right: 0px; background-color: #FF3E00; color: white; font-size: 10px; font-weight: bold; border-radius: 50%; width: 18px; height: 18px; display: grid; place-items: center; box-shadow: 0px 2px 5px rgba(0,0,0,0.2); pointer-events: none; transform: translate(25%, -25%); }
-
-        /* DESKTOP NAV HIGHLIGHTS */
-        .nav-highlight { font-weight: 800 !important; }
-        .nav-highlight::after { background: #FF3E00 !important; height: 3px !important; bottom: -8px !important; }
-        .nav-highlight:hover { color: #FF3E00 !important; }
-
-        .mobile-backdrop, .mobile-sidebar-clean, .mobile-menu-btn { display: none !important; }
-
-        @media (max-width: 1024px) {
-          .desktop-only, .nav-links, .search-wrapper, .collections-btn, .auth-group { display: none !important; }
-          .nav-actions { width: auto !important; justify-content: flex-end; gap: 10px; }
-          .mobile-menu-btn { display: grid !important; cursor: pointer; margin-left: 5px; }
-
-          /* 1. BACKDROP */
-          .mobile-backdrop { display: block !important; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); z-index: 99998 !important; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-          .mobile-backdrop.open { opacity: 1; pointer-events: auto; }
-
-          /* 2. SIDEBAR CLEAN DRAWER - Black, White, Orange */
-          .mobile-sidebar-clean {
-            display: flex !important; position: fixed; top: 0; left: 0; 
-            width: 85%; max-width: 380px; height: 100dvh; 
-            background: #ffffff !important; /* Pure White Base */
-            color: #000000 !important;
-            z-index: 99999 !important; 
-            transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
-            font-family: 'Inter', sans-serif;
-          }
-          .mobile-sidebar-clean.open { transform: translateX(0); }
-
-          .sidebar-scroll-wrapper { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; -ms-overflow-style: none; scrollbar-width: none; }
-          .sidebar-scroll-wrapper::-webkit-scrollbar { display: none; }
-
-          /* HEADER - Close Button & Logo */
-          .clean-close-btn { 
-            border-radius: 0;
-            background: transparent;
-            border: 2px solid #000; 
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-          .clean-close-btn:active { background: #FF3E00; border-color: #FF3E00; color: #fff !important; }
-          .clean-close-btn:active svg { color: #fff !important; }
-          
-          .clean-logo { height: 32px !important; width: auto !important; object-fit: contain; margin-left: -5px; }
-
-          /* PROFILE SECTION */
-          .clean-avatar-ring {
-            width: 52px; height: 52px; border-radius: 50%;
-            border: 2px solid #000; /* Pure Black Ring */
-            padding: 3px;
-          }
-          .clean-avatar-inner {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: #f4f4f4; 
-          }
-          .clean-greeting { font-size: 16px; color: #000; text-transform: uppercase; letter-spacing: 0.5px;}
-          .clean-account-link { font-size: 13px; color: #888; text-decoration: underline; transition: color 0.2s;}
-          .clean-account-link:hover, .clean-account-link:active { color: #FF3E00; }
-
-          /* MAIN NAV - Bold & Massive */
-          .primary-highlight {
-            padding: 20px 20px !important; font-size: 20px !important; font-weight: 900 !important; color: #000 !important; text-decoration: none;
-            background: #fff; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; cursor: pointer;
-            letter-spacing: 1px; transition: all 0.2s ease;
-          }
-          .primary-highlight:active { background: #fafafa; color: #FF3E00 !important; padding-left: 25px !important; }
-          .primary-highlight:active svg { color: #FF3E00 !important; }
-          
-          /* Premium Collection Button - Solid Black with Orange text */
-          .clean-premium-btn {
-            background: #000 !important;
-            color: #FF3E00 !important; 
-            border: none !important;
-            padding: 20px 20px !important; font-size: 16px !important; font-weight: 900 !important;
-            text-transform: uppercase; letter-spacing: 1px;
-            transition: all 0.2s ease;
-          }
-          .clean-premium-btn:active { background: #FF3E00 !important; color: #000 !important; }
-          .clean-premium-btn:active svg { color: #000 !important; }
-
-          /* SECONDARY NAV */
-          .clean-sec-item {
-            padding: 14px 20px !important; font-size: 14px !important; font-weight: 700 !important; color: #000 !important; 
-            text-decoration: none; background: transparent; border: none; text-align: left; cursor: pointer; text-transform: uppercase;
-            transition: all 0.2s ease;
-          }
-          .clean-sec-item:active { color: #FF3E00 !important; background: #fafafa; }
-          .clean-sec-item:active .sec-icon { color: #FF3E00 !important; }
-
-          /* PROMO BANNER - Streetwear Orange */
-          .clean-promo-banner {
-            padding: 18px 20px;
-            background: #FF3E00; /* VIBRANT ORANGE */
-            border-radius: 0; color: #fff; 
-            box-shadow: 0 4px 15px rgba(255, 62, 0, 0.3);
-            border: 2px solid #000;
-          }
-          .clean-promo-text strong { font-size: 14px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
-          .clean-promo-text span { font-size: 11px; font-weight: 700; opacity: 0.9; text-transform: uppercase;}
-
-          :global(.overlay-split-body) { grid-template-columns: 1fr !important; gap: 40px !important; }
-          :global(.desktop-only-text) { display: none !important; }
-        }
-
-        @media (max-width: 600px) {
-          :global(.brand-logo) { height: 36px !important; width: auto !important; object-fit: contain !important; }
-          .mobile-sidebar-clean { max-width: 100%; }
-        }
-      `}</style>
     </>
   );
 }
