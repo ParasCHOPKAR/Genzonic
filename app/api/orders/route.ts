@@ -3,12 +3,6 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Order from "@/models/Order";
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_SECRET!,
-});
-
 // ==========================================
 // 🔥 RESTORED GET: FETCH ORDERS FOR PROFILE
 // ==========================================
@@ -41,6 +35,12 @@ export async function POST(req: Request) {
   try {
     await connectDB();
     
+    // 🔥 NEW FIX: Initialize Razorpay INSIDE the request so Vercel catches the Live Keys properly
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
+      key_secret: process.env.RAZORPAY_SECRET as string,
+    });
+
     const body = await req.json();
     const { userEmail, shippingInfo, orderItems, totalAmount } = body;
 
