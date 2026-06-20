@@ -123,7 +123,7 @@ export default function CheckoutPage() {
 
       // 2. Configure Razorpay Options
       const options = {
-        key: "rzp_test_SfR9dfwd9euBsW",
+       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: data.amount,
         currency: "INR",
         name: "GenZonic",
