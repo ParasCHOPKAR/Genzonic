@@ -1,258 +1,367 @@
-"use client";
+"use client"
 
-import React, { useRef } from "react";
-import Link from "next/link";
-import { 
-  LockKeyhole, 
-  RefreshCcw, 
-  Headset, 
-  PackageCheck,
-  Phone,
-  Mail,
-  MapPin,
-  ArrowRight
-} from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-
-// --- CUSTOM SVG SOCIAL ICONS ---
-const Facebook = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-  </svg>
-);
-
-const Instagram = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-  </svg>
-);
-
-const LinkedIn = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-  </svg>
-);
-
-const Youtube = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-  </svg>
-);
-
-// --- REUSABLE LINK COMPONENT ---
-const FooterLink = ({ href, text }: { href: string; text: string }) => (
-  <li>
-    <Link 
-      href={href} 
-      className="text-white/70 hover:text-white text-[13px] transition-colors duration-300 relative inline-block group"
-    >
-      {text}
-      <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#ff3e00] transition-all duration-300 group-hover:w-full"></span>
-    </Link>
-  </li>
-);
-
-// Register GSAP Plugin
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { useEffect, useRef } from "react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import Image from "next/image"
+import Link from "next/link"
+import { useTheme } from "@/app/context/ThemeContext"
+import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react"
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const footerRef = useRef<HTMLElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null)
+  const bigTextRef = useRef<HTMLHeadingElement>(null)
+  const logoRef = useRef<HTMLDivElement>(null)
 
-  // 👇 Using useGSAP safely scopes the animation
-  useGSAP(() => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: footerRef.current,
-        start: "top 85%",
-        toggleActions: "play none none reverse",
-      }
-    });
+  const { theme } = useTheme()
+  const darkMode = theme === "dark"
 
-    // 1. Trust Bar Items Reveal
-    tl.fromTo(".trust-indicator", 
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out" }
-    )
-    // 2. Main Footer Columns Fade In
-    .fromTo(".footer-column", 
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out" },
-      "-=0.2"
-    )
-    // 3. Bottom Copyright Line
-    .fromTo(".footer-bottom-bar",
-      { opacity: 0 },
-      { opacity: 1, duration: 0.6, ease: "power2.inOut" }
-    );
-  }, { scope: footerRef });
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      gsap.from(".footer-content-block", {
+        y: 80,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 85%"
+        }
+      })
+
+      gsap.fromTo(
+        bigTextRef.current,
+        { y: 120, scale: 0.85, opacity: 0.2 },
+        {
+          y: 0,
+          scale: 1,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: 1
+          }
+        }
+      )
+
+      gsap.to(logoRef.current, {
+        y: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        duration: 2.5
+      })
+    }, footerRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  const styles = {
+    footer: {
+      width: "100%",
+      background: darkMode ? "#0a0a0a" : "#ffffff",
+      color: darkMode ? "#ffffff" : "#000000",
+      padding: "180px 0 100px",
+      position: "relative" as const,
+      overflow: "hidden",
+      fontFamily: "Inter, sans-serif",
+      minHeight: "850px",
+      transition: "background 0.6s ease"
+    },
+    gradient: {
+      position: "absolute" as const,
+      inset: 0,
+      background: darkMode
+        ? "radial-gradient(circle at 50% 120%, rgba(255,255,255,0.06), transparent 60%)"
+        : "radial-gradient(circle at 50% 120%, rgba(0,0,0,0.06), transparent 60%)",
+      pointerEvents: "none" as const
+    },
+    grid: {
+      width: "100%",
+      maxWidth: "1400px",
+      margin: "0 auto",
+      display: "grid",
+      gridTemplateColumns: "1.2fr 1fr 1.2fr 1fr",
+      gap: "60px",
+      padding: "0 6%",
+      position: "relative" as const,
+      zIndex: 2
+    },
+    logoImage: {
+      width: "160px",
+      marginBottom: "22px",
+      transition: "all .4s ease"
+    },
+    desc: {
+      fontSize: "14px",
+      lineHeight: 1.7,
+      color: darkMode ? "#bbb" : "#555",
+      maxWidth: "320px",
+      marginBottom: "25px"
+    },
+    title: {
+      fontSize: "13px",
+      letterSpacing: "0.25em",
+      textTransform: "uppercase" as const,
+      color: darkMode ? "#777" : "#888",
+      marginBottom: "25px",
+      fontWeight: 800
+    },
+    link: {
+      display: "inline-block",
+      textDecoration: "none",
+      fontSize: "15px",
+      color: darkMode ? "#fff" : "#000",
+      marginBottom: "16px",
+      fontWeight: 600,
+      position: "relative" as const
+    },
+    contactRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      fontSize: "15px",
+      fontWeight: 500,
+      color: darkMode ? "#ddd" : "#444",
+      marginBottom: "16px"
+    },
+    bigContainer: {
+      width: "100%",
+      marginTop: "20px",
+      pointerEvents: "none" as const,
+      display: "flex",
+      justifyContent: "center",
+      position: "relative" as const,
+      zIndex: 1
+    },
+    bigText: {
+      fontSize: "17vw", 
+      fontWeight: 900,
+      lineHeight: "0.85",
+      letterSpacing: "-0.02em",
+      margin: 0,
+      color: darkMode
+        ? "rgba(255,255,255,0.04)"
+        : "rgba(0,0,0,0.05)",
+      textTransform: "uppercase" as const,
+      whiteSpace: "nowrap" as const
+    }
+  }
 
   return (
-    <footer ref={footerRef} className="bg-[#050505] text-white w-full border-t-[4px] border-[#ff3e00] relative z-50">
-      
-      {/* --- TOP TIER: TRUST BAR --- */}
-      <div className="border-b border-white/10">
-        <div className="max-w-[1400px] mx-auto px-6 py-8 md:py-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-4">
-            
-            <div className="trust-indicator flex items-start gap-4 opacity-0">
-              <div className="text-[#ff3e00] mt-1 shrink-0"><LockKeyhole size={28} strokeWidth={1.5} /></div>
-              <div>
-                <h4 className="font-bold text-sm uppercase tracking-wide mb-1">Secure Payment</h4>
-                <p className="text-white/60 text-xs leading-relaxed max-w-[200px]">100% secure Razorpay transactions.</p>
-              </div>
-            </div>
+    <footer ref={footerRef} style={styles.footer} className="footer-base">
+      <div style={styles.gradient}></div>
 
-            <div className="trust-indicator flex items-start gap-4 opacity-0">
-              <div className="text-[#ff3e00] mt-1 shrink-0"><RefreshCcw size={28} strokeWidth={1.5} /></div>
-              <div>
-                <h4 className="font-bold text-sm uppercase tracking-wide mb-1">Easy Returns</h4>
-                <p className="text-white/60 text-xs leading-relaxed max-w-[200px]">Hassle-free exchanges within 7 days.</p>
-              </div>
-            </div>
-
-            <div className="trust-indicator flex items-start gap-4 opacity-0">
-              <div className="text-[#ff3e00] mt-1 shrink-0"><Headset size={28} strokeWidth={1.5} /></div>
-              <div>
-                <h4 className="font-bold text-sm uppercase tracking-wide mb-1">Customer Support</h4>
-                <p className="text-white/60 text-xs leading-relaxed max-w-[200px]">We're here to assist you via email or phone.</p>
-              </div>
-            </div>
-
-            <div className="trust-indicator flex items-start gap-4 opacity-0">
-              <div className="text-[#ff3e00] mt-1 shrink-0"><PackageCheck size={28} strokeWidth={1.5} /></div>
-              <div>
-                <h4 className="font-bold text-sm uppercase tracking-wide mb-1">Premium Packaging</h4>
-                <p className="text-white/60 text-xs leading-relaxed max-w-[200px]">Custom utility box with every order.</p>
-              </div>
-            </div>
-
+      <div style={styles.grid} className="footer-grid">
+        {/* BLOCK 1: BRANDING & SOCIALS */}
+        <div className="footer-content-block">
+          <div ref={logoRef}>
+            <Image
+              src={darkMode ? "/bg-remove-white-okay.png" : "/bg-remove-black.png"}
+              alt="GenZonic"
+              width={170}
+              height={60}
+              style={styles.logoImage}
+            />
           </div>
-        </div>
-      </div>
-
-      {/* --- BOTTOM TIER: MAIN FOOTER --- */}
-      <div className="max-w-[1400px] mx-auto px-6 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+          <p style={styles.desc}>
+            Premium streetwear bridging the gap between high-fashion presentation and core culture. More than just apparel — it's an experience.
+          </p>
+          <div className="social-links">
+            <a href="https://www.instagram.com/genzonic.official" target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={20} /></a>
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook size={20} /></a>
+          </div>
           
-          {/* Column 1: About Us */}
-          <div className="footer-column lg:col-span-1 opacity-0">
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">About GenZonic</h4>
-            <p className="text-white/70 text-[13px] leading-relaxed mb-6">
-              Premium streetwear bridging the gap between high-fashion presentation and core culture. More than just apparel — it's an experience.
-            </p>
-            {/* Social Icons */}
-            <div className="flex items-center gap-4">
-              <a href="#" className="w-8 h-8 rounded-full bg-white text-[#050505] flex items-center justify-center hover:bg-[#ff3e00] hover:text-white transition-colors duration-300">
-                <Facebook />
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-white text-[#050505] flex items-center justify-center hover:bg-[#ff3e00] hover:text-white transition-colors duration-300">
-                <Instagram />
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-white text-[#050505] flex items-center justify-center hover:bg-[#ff3e00] hover:text-white transition-colors duration-300">
-                <LinkedIn />
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-white text-[#050505] flex items-center justify-center hover:bg-[#ff3e00] hover:text-white transition-colors duration-300">
-                <Youtube />
-              </a>
-            </div>
+          {/* Payment Trust Indicators */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "20px", background: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)", padding: "8px 12px", width: "max-content", borderRadius: "4px" }}>
+            <span style={{ fontSize: "10px", fontWeight: "bold", paddingRight: "6px", borderRight: "1px solid rgba(128,128,128,0.3)" }}>VISA</span>
+            <span style={{ fontSize: "10px", fontWeight: "bold", paddingRight: "6px", borderRight: "1px solid rgba(128,128,128,0.3)", color: "#ef4444" }}>MC</span>
+            <span style={{ fontSize: "10px", fontWeight: "bold", paddingRight: "6px", borderRight: "1px solid rgba(128,128,128,0.3)", color: "#00b4d8" }}>UPI</span>
+            <span style={{ fontSize: "10px", fontWeight: "bold", color: "#f97316" }}>RuPay</span>
           </div>
+        </div>
 
-          {/* Column 2: Legal & Policies (🔥 RAZORPAY REQUIRED) */}
-          <div className="footer-column lg:col-span-1 lg:pl-8 opacity-0">
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Legal & Policies</h4>
-            <ul className="space-y-3">
-              <FooterLink href="/about#terms" text="Terms & Conditions" />
-              <FooterLink href="/about#privacy" text="Privacy Policy" />
-              <FooterLink href="/about#shipping" text="Shipping & Delivery" />
-              <FooterLink href="/about#returns" text="Cancellation & Refunds" />
-              <FooterLink href="/contact" text="Contact Us" />
-            </ul>
+        {/* BLOCK 2: THE SHOP/VAULT */}
+        <div className="footer-content-block">
+          <h4 style={styles.title}>THE VAULT</h4>
+          <div><Link href="/shop/men" className="f-link" style={styles.link}>Men's Artifacts</Link></div>
+          <div><Link href="/shop/women" className="f-link" style={styles.link}>Women's Artifacts</Link></div>
+          <div><Link href="/shop/kids" className="f-link" style={styles.link}>Kid's Artifacts</Link></div>
+          <div><Link href="/about#about" className="f-link" style={styles.link}>About GenZonic</Link></div>
+        </div>
+
+        {/* BLOCK 3: CONTACT HQ */}
+        <div className="footer-content-block">
+          <h4 style={styles.title}>CONTACT HQ</h4>
+          <div style={styles.contactRow}>
+            <Mail size={18} opacity={0.7} />
+            <a href="mailto:support@genzonic.store" className="contact-hover">support@genzonic.store</a>
           </div>
-
-          {/* Column 3: Customer Service */}
-          <div className="footer-column lg:col-span-1 opacity-0">
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Customer Service</h4>
-            <ul className="space-y-3">
-              <FooterLink href="/profile" text="My Account" />
-              <FooterLink href="/profile" text="Order Tracking" />
-              <FooterLink href="/wishlist" text="Wishlist" />
-              <FooterLink href="/about#about" text="The Manifesto" />
-              <FooterLink href="/contact" text="Support Ticket" />
-            </ul>
+          <div style={styles.contactRow}>
+            <Phone size={18} opacity={0.7} />
+            <a href="tel:+918080363744" className="contact-hover">+91 8080363744</a>
           </div>
-
-          {/* Column 4: Contact Us */}
-          <div className="footer-column lg:col-span-1 opacity-0">
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Contact HQ</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3 text-white/70 text-[13px]">
-                <Phone size={16} className="shrink-0 mt-0.5 text-[#ff3e00]" />
-                <span>+91 8080363744</span>
-              </li>
-              <li className="flex items-start gap-3 text-white/70 text-[13px]">
-                <Mail size={16} className="shrink-0 mt-0.5 text-[#ff3e00]" />
-                <a href="mailto:support@genzonic.store" className="hover:text-white transition-colors">support@genzonic.store</a>
-              </li>
-              <li className="flex items-start gap-3 text-white/70 text-[13px] leading-relaxed">
-                <MapPin size={16} className="shrink-0 mt-0.5 text-[#ff3e00]" />
-                <span>Pune, Maharashtra,<br />India</span>
-              </li>
-            </ul>
+          <div style={{ ...styles.contactRow, alignItems: "flex-start" }}>
+            <MapPin size={18} opacity={0.7} style={{ marginTop: "4px" }} />
+            <span style={{ lineHeight: 1.5 }}>Pune, Maharashtra,<br/>India</span>
           </div>
-
-          {/* Column 5: Newsletter */}
-          <div className="footer-column lg:col-span-1 opacity-0">
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">The Vault</h4>
-            <p className="text-white/70 text-[13px] mb-4 leading-relaxed">
-              Subscribe to get secure access to exclusive drops, restocks & unreleased artifacts.
-            </p>
-            <form className="flex mb-6" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="w-full bg-white text-[#050505] px-4 py-2.5 text-[13px] outline-none placeholder:text-zinc-400"
-                required
-              />
-              <button 
-                type="submit" 
-                className="bg-[#ff3e00] text-white px-4 py-2.5 flex items-center justify-center hover:bg-[#e63800] transition-colors"
-                aria-label="Subscribe"
-              >
-                <ArrowRight size={18} strokeWidth={2} />
-              </button>
-            </form>
-            
-            {/* Payment Icons */}
-            <div className="flex items-center gap-2 bg-white px-2 py-1.5 w-max rounded-sm">
-              <span className="text-[#050505] text-[10px] font-bold px-1 border-r border-zinc-200">VISA</span>
-              <span className="text-red-500 text-[10px] font-bold px-1 border-r border-zinc-200">MC</span>
-              <span className="text-[#00b4d8] text-[10px] font-bold px-1 border-r border-zinc-200">UPI</span>
-              <span className="text-orange-500 text-[10px] font-bold px-1">RuPay</span>
-            </div>
+          <div style={{ marginTop: "20px" }}>
+            <Link href="/contact" className="f-link" style={styles.link}>Open Support Ticket</Link>
           </div>
+        </div>
 
+        {/* BLOCK 4: LEGAL & POLICIES (🔥 RAZORPAY REQUIRED) */}
+        <div className="footer-content-block">
+          <h4 style={styles.title}>LEGAL & POLICIES</h4>
+          <div><Link href="/about#privacy" className="f-link" style={styles.link}>Privacy Policy</Link></div>
+          <div><Link href="/about#terms" className="f-link" style={styles.link}>Terms & Conditions</Link></div>
+          <div><Link href="/about#shipping" className="f-link" style={styles.link}>Shipping & Delivery</Link></div>
+          <div><Link href="/about#returns" className="f-link" style={styles.link}>Cancellation & Refunds</Link></div>
         </div>
       </div>
 
-      {/* --- COPYRIGHT BAR --- */}
-      <div className="footer-bottom-bar bg-[#111111] py-4 opacity-0">
-        <div className="max-w-[1400px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-2">
-          <p className="text-white/50 text-[11px] md:text-[12px] tracking-wide">
-            &copy; {currentYear} GenZonic. All Rights Reserved.
-          </p>
-          <p className="text-white/50 text-[11px] md:text-[12px] tracking-wide">
-            Developed By <span className="text-[#ff3e00] font-bold">DW Innovation PVT LTD</span>
-          </p>
-        </div>
+      {/* BOTTOM BAR: COPYRIGHT & DEVELOPER */}
+      <div className="footer-bottom">
+        <p>© {new Date().getFullYear()} GENZONIC. ALL RIGHTS RESERVED.</p>
+        <p>DEVELOPED BY <span className="highlight" style={{ color: "#ff3e00" }}>DW INNOVATION PVT LTD</span></p>
       </div>
 
+      {/* BIG BACKGROUND TEXT */}
+      <div style={styles.bigContainer}>
+        <h1 ref={bigTextRef} style={styles.bigText} className="big-bg-text">
+          GENZONIC
+        </h1>
+      </div>
+
+      <style jsx>{`
+      /* Link Hover Animations */
+      .f-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 0%;
+        height: 2px;
+        background: ${darkMode ? "#fff" : "#000"};
+        transition: width .35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .f-link:hover::after {
+        width: 100%;
+      }
+
+      .f-link:hover {
+        transform: translateX(6px);
+        color: #ff3e00 !important;
+        transition: transform .3s ease, color .3s ease;
+      }
+
+      /* Social Icons */
+      .social-links {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+      }
+
+      .social-links a {
+        color: ${darkMode ? "#888" : "#666"};
+        transition: 0.3s ease;
+      }
+
+      .social-links a:hover {
+        color: ${darkMode ? "#fff" : "#000"};
+        transform: translateY(-3px);
+      }
+
+      /* Contact Hover */
+      .contact-hover {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .contact-hover:hover {
+        color: #ff3e00;
+      }
+
+      /* Bottom Bar */
+      .footer-bottom {
+        width: 100%;
+        max-width: 1400px;
+        margin: 80px auto 0;
+        padding: 30px 6% 0;
+        border-top: 1px solid rgba(128,128,128,0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: ${darkMode ? "#666" : "#888"};
+        position: relative;
+        z-index: 2;
+      }
+
+      .highlight {
+        font-weight: 900;
+      }
+
+      /* 🔥 TABLET RESPONSIVE OVERRIDES 🔥 */
+      @media (max-width: 900px) {
+        .footer-base {
+          padding: 120px 0 80px !important;
+          min-height: auto !important;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr 1fr !important;
+          gap: 50px !important;
+        }
+
+        .footer-content-block:first-child {
+          grid-column: span 2;
+        }
+
+        .big-bg-text {
+          font-size: 16vw !important; 
+        }
+      }
+
+      /* 🔥 MOBILE RESPONSIVE OVERRIDES 🔥 */
+      @media (max-width: 600px) {
+        .footer-base {
+          padding: 80px 0 40px !important;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr !important;
+          gap: 40px !important;
+        }
+
+        .footer-content-block:first-child {
+          grid-column: span 1 !important;
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          gap: 15px;
+          text-align: center;
+          margin-top: 50px;
+          padding-top: 20px;
+        }
+
+        /* Perfectly scaled mobile background text */
+        .big-bg-text {
+          font-size: 13vw !important; 
+          margin-top: 40px !important;
+        }
+      }
+      `}</style>
     </footer>
-  );
+  )
 }
