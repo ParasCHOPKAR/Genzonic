@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import gsap from "gsap"
 import { useTheme } from "@/app/context/ThemeContext"
 
@@ -147,13 +148,23 @@ export default function Hero() {
         GenZonic
       </div>  
 
-      {/* LEFT SIDE: Brand Intro */}
+      {/* LEFT SIDE: Brand Intro & CTAs */}
       <div className="editorial-side left-side">
         <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
         <h2 className="editorial-title reveal-text">THE NEW <br className="desktop-br"/> STANDARD</h2>
         <p className="editorial-desc reveal-text">
           Experience our signature silhouettes. <span className="hide-mobile">Hover over</span><span className="hide-desktop">Tap</span> the subject to cycle through the available premium colorways.
         </p>
+
+        {/* 🔥 NEW DUAL CTA BUTTONS 🔥 */}
+        <div className="cta-group reveal-text">
+          <Link href="/premium-collection" className="modern-cta primary-cta">
+            SHOP PREMIUM
+          </Link>
+          <Link href="/mens" className="modern-cta secondary-cta">
+            SHOP MEN'S
+          </Link>
+        </div>
       </div>
 
       {/* CENTER CHARACTER (HOVERABLE / CLICKABLE) */}
@@ -183,26 +194,6 @@ export default function Hero() {
           </div>
           <span className="tap-text"><span className="hide-mobile">HOVER</span><span className="hide-desktop">TAP</span> TO CYCLE</span>
         </div>
-      </div>
-
-      {/* RIGHT SIDE: Premium Vault & Promo */}
-      <div className="editorial-side right-side">
-        <div className="tech-label reveal-text hide-mobile">THE ULTIMATE EXPERIENCE</div>
-        
-        <div className="tier-block reveal-text">
-          <h3>PREMIUM VAULT</h3>
-          <p>
-            GenZonic Core Garment <br/>
-            <strong>5 Exclusive Artifacts</strong> <br/>
-            Structured Vault Box
-          </p>
-        </div>
-
-        <div className="promo-pill reveal-text">
-          GET EXTRA 10% OFF YOUR FIRST ORDER
-        </div>
-
-        <button className="modern-cta reveal-text">SHOP COLLECTION</button>
       </div>
 
       {/* SCROLL HINT */}
@@ -272,10 +263,11 @@ export default function Hero() {
           -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
         }
 
-        /* --- EDITORIAL SECTIONS (DESKTOP) --- */
+        /* --- EDITORIAL SECTION --- */
         .editorial-side {
-          z-index: 11;
-          width: 360px;
+          z-index: 12;
+          width: auto;
+          max-width: 500px;
           display: flex;
           flex-direction: column;
         }
@@ -283,36 +275,65 @@ export default function Hero() {
           align-items: flex-start;
           text-align: left;
         }
-        .right-side {
-          align-items: flex-end;
-          text-align: right;
-        }
 
         .tech-label { font-size: 12px; letter-spacing: 4px; font-weight: 900; opacity: 0.6; margin-bottom: 25px; text-transform: uppercase; }
         .editorial-title { font-size: clamp(32px, 4vw, 42px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em; }
-        .editorial-desc { font-size: 14px; line-height: 1.6; opacity: 0.7; font-weight: 500; }
+        .editorial-desc { font-size: 14px; line-height: 1.6; opacity: 0.7; font-weight: 500; margin-bottom: 30px; }
 
-        .tier-block { text-align: right; margin-bottom: 10px; }
-        .tier-block h3 { font-size: 18px; font-weight: 900; margin-bottom: 12px; letter-spacing: 1px; color: #ff3e00; }
-        .tier-block p { font-size: 14px; opacity: 0.9; line-height: 1.8; margin: 0; font-weight: 500; }
-        .tier-block strong { color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; }
-
-        .promo-pill { margin-top: 20px; margin-bottom: 40px; display: inline-block; padding: 12px 20px; border: 2px solid #ff3e00; color: #ff3e00; background: rgba(255, 62, 0, 0.1); font-size: 11px; font-weight: 900; letter-spacing: 1px; border-radius: 4px; box-shadow: 0 4px 20px rgba(255, 62, 0, 0.2); }
+        /* --- CTA BUTTONS --- */
+        .cta-group {
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+        }
         
-        .modern-cta { background: ${darkMode ? "#fff" : "#000"}; color: ${darkMode ? "#000" : "#fff"}; border: 1px solid ${darkMode ? "#fff" : "#000"}; padding: 22px 50px; font-weight: 900; font-size: 12px; letter-spacing: 5px; cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .modern-cta:hover { background: transparent; color: ${darkMode ? "#fff" : "#000"}; }
+        .modern-cta {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 18px 36px;
+          font-weight: 900;
+          font-size: 12px;
+          letter-spacing: 3px;
+          cursor: pointer;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          text-transform: uppercase;
+        }
+
+        .primary-cta {
+          background: linear-gradient(135deg, #FF6B00 0%, #008080 100%);
+          color: white;
+          border: none;
+          box-shadow: 0 10px 30px rgba(255, 107, 0, 0.2);
+        }
+        
+        .primary-cta:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 15px 35px rgba(255, 107, 0, 0.3);
+        }
+
+        .secondary-cta {
+          background: transparent;
+          color: ${darkMode ? "#fff" : "#000"};
+          border: 1px solid ${darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)"};
+        }
+
+        .secondary-cta:hover {
+          border-color: ${darkMode ? "#fff" : "#000"};
+          transform: translateY(-3px);
+        }
 
         /* --- CHARACTER & INTERACTION --- */
         .character-container {
           position: absolute;
-          top: 18%;      /* ⚡ REDUCED: More space from the top */
-          bottom: 20%;   /* ⚡ REDUCED: More space from the bottom */
+          top: 18%;      
+          bottom: 20%;   
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           justify-content: center;
           align-items: center;
-          width: 30vw;   /* ⚡ REDUCED: Tighter width forces the image to scale down */
+          width: 30vw;   
           z-index: 10;
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
@@ -350,26 +371,24 @@ export default function Hero() {
 
         /* ================= 🔥 RESPONSIVE MOBILE FIX 🔥 ================= */
         @media (max-width: 1024px) {
-          /* Change to a stacked column layout so everything shows */
           .hero-section {
             height: auto;
-            min-height: 100dvh; /* Ensures it fills screen but can scroll if needed */
+            min-height: 100dvh; 
             flex-direction: column;
             justify-content: space-evenly;
-            padding-top: 120px; /* Clears the mobile navbar */
+            padding-top: 120px; 
             padding-bottom: 40px;
           }
 
-          /* Force the side panels to act like normal, centered blocks */
           .editorial-side {
             position: relative !important;
             width: 100% !important;
+            max-width: 100% !important;
             align-items: center !important;
             text-align: center !important;
-            padding: 0 10%;
+            padding: 0 5%;
           }
           
-          /* Order the stacking: Top Text -> Monkey -> Bottom Text */
           .left-side { order: 1; margin-bottom: 20px; }
           .character-container { 
             order: 2; 
@@ -379,39 +398,31 @@ export default function Hero() {
             left: auto !important; 
             transform: none !important;
             width: 100% !important; 
-            height: 45vh !important; /* Explicit height for the container on mobile */
+            height: 45vh !important; 
             margin: 20px 0;
           }
-          .right-side { order: 3; }
 
-          /* Center the text elements that were right-aligned on desktop */
-          .tier-block { text-align: center !important; }
+          .cta-group { justify-content: center; width: 100%; }
+          .modern-cta { width: 100%; max-width: 320px; padding: 18px 20px; }
           .desktop-br { display: none; }
           
-          /* Scale elements down to fit the phone screen */
           .hero-image { 
             height: 100% !important; 
             width: 100% !important; 
             max-width: 100% !important; 
-            object-position: center !important; /* Resets the anchor for mobile */
+            object-position: center !important; 
           }
           .bg-watermark { top: 40% !important; font-size: 28vw !important; }
-          .scroll-hint-modern { display: none !important; } /* Hide to save space */
+          .scroll-hint-modern { display: none !important; } 
           
-          /* Ensure CTA button spans nicely */
-          .modern-cta { width: 100%; max-width: 320px; padding: 18px 20px; }
-
-          /* Handle Helpers */
           .hide-desktop { display: inline; }
           .hide-mobile { display: none; }
         }
 
-        /* Smaller phone tweaks */
         @media (max-width: 600px) {
           .character-container { height: 40vh !important; }
           .editorial-title { font-size: clamp(28px, 8vw, 36px) !important; margin-bottom: 10px; }
           .editorial-desc { font-size: 13px !important; }
-          .promo-pill { margin-bottom: 25px !important; }
         }
       `}</style>
     </section>
