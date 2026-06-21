@@ -124,16 +124,10 @@ export default function Hero() {
       }}
     >
       
-      {/* Cinematic Noise Overlay */}
       <div className="noise-overlay" />
-
-      {/* Modern Ambient Glow */}
       <div ref={glowRef} className="ambient-glow" />
-
-      {/* Subtle Cyber Grid */}
       <div className="cyber-grid" />
 
-      {/* Brand Watermark */}
       <div 
         ref={watermarkRef} 
         className="bg-watermark" 
@@ -143,7 +137,7 @@ export default function Hero() {
       </div>  
 
       {/* =========================================
-          LEFT SIDE: Brand Intro & Active Premium CTA 
+          LEFT SIDE: Brand Intro & Premium CTA 
           ========================================= */}
       <div className="editorial-side left-side">
         <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
@@ -152,15 +146,11 @@ export default function Hero() {
           Experience our signature silhouettes. <span className="hide-mobile">Hover over</span><span className="hide-desktop">Tap</span> the subject to cycle through the available premium colorways.
         </p>
 
-        {/* Liquid Capsule CTA Button */}
-        <div className="btn-ambient-container reveal-text">
-          <Link href="/premium-collection" className="liquid-capsule-btn">
-            <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V18H19V19Z" />
-            </svg>
+        {/* 🔥 EXACT MATCH: Navbar Solid Block Button 🔥 */}
+        <div className="reveal-text">
+          <Link href="/premium-collection" className="solid-block-btn">
             SHOP PREMIUM
           </Link>
-          <div className="btn-glow-shadow" />
         </div>
       </div>
 
@@ -184,7 +174,6 @@ export default function Hero() {
           className="hero-image"
         />
 
-        {/* REFINED ARROW INDICATOR */}
         <div className="tap-indicator">
           <div className="arrow-wrapper">
              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -196,7 +185,7 @@ export default function Hero() {
       </div>
 
       {/* =========================================
-          RIGHT SIDE: Technical Content & Active Men's CTA 
+          RIGHT SIDE: Technical Content & Men's CTA 
           ========================================= */}
       <div className="editorial-side right-side">
         <div className="tech-label reveal-text hide-mobile">ENGINEERED AESTHETICS</div>
@@ -212,17 +201,11 @@ export default function Hero() {
           <p className="bold-statement"><strong>Built for the bold.</strong></p>
         </div>
 
-        {/* Liquid Capsule CTA Button */}
-        <div className="btn-ambient-container reveal-text">
-          <Link href="/mens" className="liquid-capsule-btn">
-            <svg className="btn-icon text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="10" cy="14" r="5" />
-              <line x1="13.5" y1="10.5" x2="21" y2="3" />
-              <polyline points="16 3 21 3 21 8" />
-            </svg>
+        {/* This button automatically hides on mobile! */}
+        <div className="reveal-text hide-mobile-btn">
+          <Link href="/shop/men" className="solid-block-btn">
             SHOP MEN'S
           </Link>
-          <div className="btn-glow-shadow" />
         </div>
       </div>
 
@@ -258,7 +241,6 @@ export default function Hero() {
           text-transform: uppercase;
         }
 
-        /* --- MODERN BACKGROUND ELEMENTS --- */
         .noise-overlay {
           position: absolute;
           inset: 0;
@@ -322,98 +304,29 @@ export default function Hero() {
         .bold-statement { font-size: 16px; color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
         /* =========================================================
-           🔥 EXACT MATCH: LIQUID 3D CAPSULE BUTTON UI FROM image_02a96b.jpg 🔥
+           🔥 EXACT MATCH: SOLID BLACK NAVBAR BUTTON 🔥
            ========================================================= */
-        .btn-ambient-container {
-          position: relative;
-          display: inline-block;
-          width: auto;
-        }
-
-        .liquid-capsule-btn {
-          position: relative;
+        .solid-block-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 12px;
-          /* Dark fluid capsule gradients with highlight mapping */
-          background: linear-gradient(180deg, #2b2b2b 0%, #171717 45%, #0c0c0c 100%);
-          color: #dfdfdf;
-          padding: 14px 38px;
-          border-radius: 40px; 
-          font-weight: 700;
-          font-size: 12.5px;
-          letter-spacing: 1px;
+          background: ${darkMode ? "#ffffff" : "#000000"};
+          color: ${darkMode ? "#000000" : "#ffffff"};
+          padding: 16px 36px;
+          border-radius: 4px; /* Slight rounding to match navbar */
+          font-weight: 800;
+          font-size: 13px;
+          letter-spacing: 2px;
           text-transform: uppercase;
           text-decoration: none;
           z-index: 2;
-          
-          /* Precise top bevel light border reflection */
-          border-top: 1.5px solid rgba(255, 255, 255, 0.18);
-          border-left: 1px solid rgba(255, 255, 255, 0.08);
-          border-right: 1px solid rgba(0, 0, 0, 0.6);
-          border-bottom: 2px solid rgba(0, 0, 0, 0.8);
-          
-          /* Native smooth outer button box boundaries */
-          box-shadow: 
-            inset 0 1px 0px rgba(255, 255, 255, 0.1),
-            0 4px 10px rgba(0, 0, 0, 0.4);
-            
-          transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+          border: 1px solid ${darkMode ? "#ffffff" : "#000000"};
+          transition: all 0.3s ease;
         }
 
-        .btn-icon {
-          width: 16px;
-          height: 16px;
-          flex-shrink: 0;
-          transition: transform 0.3s ease;
-        }
-
-        /* Dynamic 3D fluid gloss drop shadow under capsule padding base */
-        .btn-glow-shadow {
-          position: absolute;
-          bottom: -8px;
-          left: 5%;
-          width: 90%;
-          height: 20px;
-          background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, transparent 75%);
-          filter: blur(5px);
-          z-index: 1;
-          pointer-events: none;
-          transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        /* Fluid Hover Physics */
-        .liquid-capsule-btn:hover {
-          transform: translateY(-2px);
-          color: #ffffff;
-          background: linear-gradient(180deg, #353535 0%, #1c1c1c 45%, #0f0f0f 100%);
-          border-top-color: rgba(255, 255, 255, 0.25);
-          box-shadow: 
-            inset 0 1px 0px rgba(255, 255, 255, 0.15),
-            0 8px 20px rgba(0, 0, 0, 0.6);
-        }
-
-        .liquid-capsule-btn:hover .btn-icon {
-          transform: scale(1.1);
-        }
-
-        .btn-ambient-container:hover .btn-glow-shadow {
-          transform: scaleX(1.1) scaleY(1.3);
-          opacity: 0.8;
-          filter: blur(6px);
-        }
-
-        .liquid-capsule-btn:active {
-          transform: translateY(1px);
-          box-shadow: 
-            inset 0 2px 4px rgba(0, 0, 0, 0.8),
-            0 2px 4px rgba(0, 0, 0, 0.4);
-        }
-
-        .btn-ambient-container:active .btn-glow-shadow {
-          transform: scale(0.9);
-          opacity: 0.4;
+        .solid-block-btn:hover {
+          background: transparent;
+          color: ${darkMode ? "#ffffff" : "#000000"};
         }
 
         /* --- CHARACTER & INTERACTION --- */
@@ -462,7 +375,7 @@ export default function Hero() {
         /* --- DESKTOP/MOBILE VISIBILITY HELPERS --- */
         .hide-desktop { display: none; }
 
-        /* ================= 🔥 RESPONSIVE SYSTEM FOR ALL DEVICES 🔥 ================= */
+        /* ================= 🔥 PERFECTED MOBILE VIEW 🔥 ================= */
         @media (max-width: 1024px) {
           .hero-section {
             height: auto;
@@ -482,6 +395,7 @@ export default function Hero() {
             padding: 0 5%;
           }
           
+          /* Flow: Text -> CTA Button -> Model Image -> Specs Text */
           .left-side { order: 1; margin-bottom: 10px; }
           
           .character-container { 
@@ -492,14 +406,17 @@ export default function Hero() {
             left: auto !important; 
             transform: none !important;
             width: 100% !important; 
-            height: 40vh !important; 
-            margin: 20px 0;
+            height: 42vh !important; 
+            margin: 20px 0 0 0;
           }
           
           .right-side { order: 3; }
 
-          .btn-ambient-container { width: 100%; max-width: 320px; }
-          .liquid-capsule-btn { width: 100%; padding: 16px 20px; }
+          /* Button strictly controlled for mobile */
+          .solid-block-btn { width: 100%; max-width: 320px; padding: 18px 20px; }
+          
+          /* Hides the "Shop Men's" button entirely on mobile as requested */
+          .hide-mobile-btn { display: none !important; }
           .desktop-br { display: none; }
           
           .hero-image { 
@@ -518,9 +435,9 @@ export default function Hero() {
         }
 
         @media (max-width: 600px) {
-          .character-container { height: 35vh !important; margin: 10px 0;}
+          .character-container { height: 35vh !important; margin: 15px 0 0 0;}
           .editorial-title { font-size: clamp(28px, 8vw, 36px) !important; margin-bottom: 10px; }
-          .editorial-desc { font-size: 13px !important; margin-bottom: 20px;}
+          .editorial-desc { font-size: 13px !important; margin-bottom: 25px;} /* Space before the button */
           .tier-block { margin-bottom: 25px; }
         }
       `}</style>
