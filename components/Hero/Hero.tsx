@@ -148,7 +148,9 @@ export default function Hero() {
         GenZonic
       </div>  
 
-      {/* LEFT SIDE: Brand Intro & CTAs */}
+      {/* =========================================
+          LEFT SIDE: Brand Intro & Premium CTA 
+          ========================================= */}
       <div className="editorial-side left-side">
         <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
         <h2 className="editorial-title reveal-text">THE NEW <br className="desktop-br"/> STANDARD</h2>
@@ -156,23 +158,19 @@ export default function Hero() {
           Experience our signature silhouettes. <span className="hide-mobile">Hover over</span><span className="hide-desktop">Tap</span> the subject to cycle through the available premium colorways.
         </p>
 
-        {/* 🔥 NEW DUAL CTA BUTTONS 🔥 */}
-        <div className="cta-group reveal-text">
-          <Link href="/premium-collection" className="modern-cta primary-cta">
-            SHOP PREMIUM
-          </Link>
-          <Link href="/mens" className="modern-cta secondary-cta">
-            SHOP MEN'S
-          </Link>
-        </div>
+        <Link href="/premium-collection" className="modern-cta primary-cta reveal-text">
+          SHOP PREMIUM
+        </Link>
       </div>
 
-      {/* CENTER CHARACTER (HOVERABLE / CLICKABLE) */}
+      {/* =========================================
+          CENTER CHARACTER (HOVERABLE / CLICKABLE) 
+          ========================================= */}
       <div 
         className="character-container" 
         ref={charRef}
         onMouseEnter={handleImageHover} 
-        onClick={handleImageHover} // 🔥 Mobile Tap Support
+        onClick={handleImageHover} 
       >
         <div ref={pulseRef} className="click-pulse" />
 
@@ -194,6 +192,26 @@ export default function Hero() {
           </div>
           <span className="tap-text"><span className="hide-mobile">HOVER</span><span className="hide-desktop">TAP</span> TO CYCLE</span>
         </div>
+      </div>
+
+      {/* =========================================
+          RIGHT SIDE: Technical Content & Men's CTA 
+          ========================================= */}
+      <div className="editorial-side right-side">
+        <div className="tech-label reveal-text hide-mobile">ENGINEERED AESTHETICS</div>
+        
+        <div className="tier-block reveal-text">
+          <h3>STREETWEAR <br/> REDEFINED</h3>
+          <p>
+            Heavyweight 240GSM Cotton <br/>
+            Signature Drop-Shoulder Fit <br/>
+            <strong>Built for the bold.</strong>
+          </p>
+        </div>
+
+        <Link href="/mens" className="modern-cta secondary-cta reveal-text">
+          SHOP MEN'S
+        </Link>
       </div>
 
       {/* SCROLL HINT */}
@@ -263,43 +281,49 @@ export default function Hero() {
           -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
         }
 
-        /* --- EDITORIAL SECTION --- */
+        /* --- EDITORIAL SECTIONS (DESKTOP) --- */
         .editorial-side {
           z-index: 12;
-          width: auto;
-          max-width: 500px;
+          width: 320px;
           display: flex;
           flex-direction: column;
         }
+        
         .left-side {
           align-items: flex-start;
           text-align: left;
+        }
+
+        .right-side {
+          align-items: flex-end;
+          text-align: right;
         }
 
         .tech-label { font-size: 12px; letter-spacing: 4px; font-weight: 900; opacity: 0.6; margin-bottom: 25px; text-transform: uppercase; }
         .editorial-title { font-size: clamp(32px, 4vw, 42px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em; }
         .editorial-desc { font-size: 14px; line-height: 1.6; opacity: 0.7; font-weight: 500; margin-bottom: 30px; }
 
+        .tier-block { margin-bottom: 30px; }
+        .tier-block h3 { font-size: clamp(24px, 2.5vw, 28px); font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -0.02em; }
+        .tier-block p { font-size: 14px; opacity: 0.8; line-height: 1.8; margin: 0; font-weight: 500; }
+        .tier-block strong { color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; }
+
         /* --- CTA BUTTONS --- */
-        .cta-group {
-          display: flex;
-          gap: 15px;
-          flex-wrap: wrap;
-        }
-        
         .modern-cta {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          padding: 18px 36px;
+          padding: 18px 40px;
           font-weight: 900;
           font-size: 12px;
           letter-spacing: 3px;
           cursor: pointer;
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           text-transform: uppercase;
+          text-decoration: none;
         }
 
+        /* The Exact Orange-to-Teal Brand Gradient */
         .primary-cta {
           background: linear-gradient(135deg, #FF6B00 0%, #008080 100%);
           color: white;
@@ -312,13 +336,17 @@ export default function Hero() {
           box-shadow: 0 15px 35px rgba(255, 107, 0, 0.3);
         }
 
+        /* High Contrast Secondary Button */
         .secondary-cta {
-          background: transparent;
-          color: ${darkMode ? "#fff" : "#000"};
-          border: 1px solid ${darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)"};
+          background: ${darkMode ? "#fff" : "#000"};
+          color: ${darkMode ? "#000" : "#fff"};
+          border: 1px solid transparent;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .secondary-cta:hover {
+          background: transparent;
+          color: ${darkMode ? "#fff" : "#000"};
           border-color: ${darkMode ? "#fff" : "#000"};
           transform: translateY(-3px);
         }
@@ -326,14 +354,14 @@ export default function Hero() {
         /* --- CHARACTER & INTERACTION --- */
         .character-container {
           position: absolute;
-          top: 18%;      
-          bottom: 20%;   
+          top: 15%;      
+          bottom: 15%;   
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           justify-content: center;
           align-items: center;
-          width: 30vw;   
+          width: 35vw;   
           z-index: 10;
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
@@ -361,7 +389,7 @@ export default function Hero() {
         @keyframes arrowBounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
 
         /* --- SCROLL HINT --- */
-        .scroll-hint-modern { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 15px; opacity: 0.6; z-index: 10; }
+        .scroll-hint-modern { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 15px; opacity: 0.6; z-index: 10; }
         .scroll-hint-modern span { font-size: 10px; letter-spacing: 3px; font-weight: 800; }
         .scroll-hint-modern .line { width: 1px; height: 40px; background: currentColor; animation: pulseLine 2s infinite cubic-bezier(0.65, 0, 0.35, 1); }
         @keyframes pulseLine { 0%, 100% { transform: scaleY(1); transform-origin: bottom; opacity: 1; } 50% { transform: scaleY(0.2); transform-origin: bottom; opacity: 0.3; } }
@@ -375,21 +403,22 @@ export default function Hero() {
             height: auto;
             min-height: 100dvh; 
             flex-direction: column;
-            justify-content: space-evenly;
-            padding-top: 120px; 
+            justify-content: flex-start;
+            padding-top: 100px; 
             padding-bottom: 40px;
           }
 
+          /* Stack both editorial blocks centrally */
           .editorial-side {
             position: relative !important;
             width: 100% !important;
-            max-width: 100% !important;
             align-items: center !important;
             text-align: center !important;
             padding: 0 5%;
           }
           
-          .left-side { order: 1; margin-bottom: 20px; }
+          /* Flow: Left Text -> Image -> Right Text */
+          .left-side { order: 1; margin-bottom: 10px; }
           .character-container { 
             order: 2; 
             position: relative !important; 
@@ -398,11 +427,11 @@ export default function Hero() {
             left: auto !important; 
             transform: none !important;
             width: 100% !important; 
-            height: 45vh !important; 
+            height: 40vh !important; 
             margin: 20px 0;
           }
+          .right-side { order: 3; }
 
-          .cta-group { justify-content: center; width: 100%; }
           .modern-cta { width: 100%; max-width: 320px; padding: 18px 20px; }
           .desktop-br { display: none; }
           
@@ -420,9 +449,10 @@ export default function Hero() {
         }
 
         @media (max-width: 600px) {
-          .character-container { height: 40vh !important; }
+          .character-container { height: 35vh !important; margin: 10px 0;}
           .editorial-title { font-size: clamp(28px, 8vw, 36px) !important; margin-bottom: 10px; }
-          .editorial-desc { font-size: 13px !important; }
+          .editorial-desc { font-size: 13px !important; margin-bottom: 20px;}
+          .tier-block { margin-bottom: 20px; }
         }
       `}</style>
     </section>
