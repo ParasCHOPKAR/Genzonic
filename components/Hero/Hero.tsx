@@ -46,7 +46,6 @@ export default function Hero() {
   const activeImages = darkMode ? images.dark : images.light
   const currentImage = activeImages[currentIndex % activeImages.length]
 
-  // 🔥 Triggered on hover (Desktop) and click (Mobile)
   const handleImageHover = () => {
     const tl = gsap.timeline()
 
@@ -71,14 +70,12 @@ export default function Hero() {
     const ctx = gsap.context(() => {            
       const tl = gsap.timeline()
 
-      // Initial Entrance Animations
       tl.from(".cyber-grid", { opacity: 0, duration: 2, ease: "power2.inOut" })
         .from(".ambient-glow", { opacity: 0, scale: 0.5, duration: 3, ease: "power2.out" }, "-=1.5")
         .from(watermarkRef.current, { opacity: 0, scale: 0.85, duration: 2.5, ease: "expo.out" }, "-=2")
         .from(".reveal-text", { y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=2")
         .from(charRef.current, { scale: 1.1, filter: "blur(20px)", opacity: 0, y: 60, duration: 2, ease: "expo.out" }, "-=1.8")
 
-      // Continuous Breathing Pulse for Character
       gsap.to(pulseRef.current, {
         scale: 2.2,
         opacity: 0,
@@ -87,7 +84,6 @@ export default function Hero() {
         ease: "sine.out"
       })
 
-      // Ambient Glow Breathing
       gsap.to(glowRef.current, {
         scale: 1.1,
         opacity: 0.8,
@@ -97,7 +93,6 @@ export default function Hero() {
         ease: "sine.inOut"
       })
 
-      // Continuous Slow Float for Character
       gsap.to(charRef.current, {
         y: "-=15",
         duration: 4,
@@ -106,7 +101,6 @@ export default function Hero() {
         ease: "sine.inOut"
       })
 
-      // Ultra-slow continuous scaling for the background watermark
       gsap.to(watermarkRef.current, {
         scale: 1.05,
         duration: 20,
@@ -149,7 +143,7 @@ export default function Hero() {
       </div>  
 
       {/* =========================================
-          LEFT SIDE: Brand Intro & Premium CTA 
+          LEFT SIDE: Brand Intro & Active Premium CTA 
           ========================================= */}
       <div className="editorial-side left-side">
         <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
@@ -158,14 +152,16 @@ export default function Hero() {
           Experience our signature silhouettes. <span className="hide-mobile">Hover over</span><span className="hide-desktop">Tap</span> the subject to cycle through the available premium colorways.
         </p>
 
-        {/* 🔥 NEW PREMIUM PILL BUTTON 🔥 */}
-        <Link href="/premium-collection" className="glass-pill-btn reveal-text">
-          {/* Crown SVG */}
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V18H19V19Z" />
-          </svg>
-          SHOP PREMIUM
-        </Link>
+        {/* Liquid Capsule CTA Button */}
+        <div className="btn-ambient-container reveal-text">
+          <Link href="/premium-collection" className="liquid-capsule-btn">
+            <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V18H19V19Z" />
+            </svg>
+            SHOP PREMIUM
+          </Link>
+          <div className="btn-glow-shadow" />
+        </div>
       </div>
 
       {/* =========================================
@@ -200,7 +196,7 @@ export default function Hero() {
       </div>
 
       {/* =========================================
-          RIGHT SIDE: Technical Content & Men's CTA 
+          RIGHT SIDE: Technical Content & Active Men's CTA 
           ========================================= */}
       <div className="editorial-side right-side">
         <div className="tech-label reveal-text hide-mobile">ENGINEERED AESTHETICS</div>
@@ -216,16 +212,18 @@ export default function Hero() {
           <p className="bold-statement"><strong>Built for the bold.</strong></p>
         </div>
 
-        {/* 🔥 NEW MEN'S PILL BUTTON 🔥 */}
-        <Link href="/mens" className="glass-pill-btn reveal-text">
-          {/* Male Icon SVG */}
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="10" cy="14" r="5" />
-            <line x1="13.5" y1="10.5" x2="21" y2="3" />
-            <polyline points="16 3 21 3 21 8" />
-          </svg>
-          SHOP MEN'S
-        </Link>
+        {/* Liquid Capsule CTA Button */}
+        <div className="btn-ambient-container reveal-text">
+          <Link href="/mens" className="liquid-capsule-btn">
+            <svg className="btn-icon text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="10" cy="14" r="5" />
+              <line x1="13.5" y1="10.5" x2="21" y2="3" />
+              <polyline points="16 3 21 3 21 8" />
+            </svg>
+            SHOP MEN'S
+          </Link>
+          <div className="btn-glow-shadow" />
+        </div>
       </div>
 
       {/* SCROLL HINT */}
@@ -319,51 +317,103 @@ export default function Hero() {
 
         .tier-block { margin-bottom: 30px; }
         .tier-block h3 { font-size: clamp(24px, 2.5vw, 28px); font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -0.02em; }
-        
-        /* New Expanded Spec List */
         .spec-list { list-style: none; padding: 0; margin: 0 0 15px 0; font-size: 14px; opacity: 0.85; line-height: 1.8; font-weight: 500; }
         .spec-list li { margin-bottom: 4px; }
         .bold-statement { font-size: 16px; color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* =========================================
-           🔥 THE NEW GLASS PILL BUTTON DESIGN 🔥
-           ========================================= */
-        .glass-pill-btn {
+        /* =========================================================
+           🔥 EXACT MATCH: LIQUID 3D CAPSULE BUTTON UI FROM image_02a96b.jpg 🔥
+           ========================================================= */
+        .btn-ambient-container {
+          position: relative;
+          display: inline-block;
+          width: auto;
+        }
+
+        .liquid-capsule-btn {
+          position: relative;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 12px;
-          /* Matte dark gradient */
-          background: linear-gradient(to bottom, #3a3a3a 0%, #141414 100%);
-          color: #eaeaea;
-          padding: 16px 36px;
-          border-radius: 9999px; /* Perfect pill shape */
+          /* Dark fluid capsule gradients with highlight mapping */
+          background: linear-gradient(180deg, #2b2b2b 0%, #171717 45%, #0c0c0c 100%);
+          color: #dfdfdf;
+          padding: 14px 38px;
+          border-radius: 40px; 
           font-weight: 700;
-          font-size: 13px;
-          letter-spacing: 1.5px;
+          font-size: 12.5px;
+          letter-spacing: 1px;
           text-transform: uppercase;
-          /* Combining top inner highlight and soft outer drop shadow */
-          box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.15), 0 15px 35px rgba(0, 0, 0, 0.25);
-          border: 1px solid #0a0a0a;
-          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
           text-decoration: none;
+          z-index: 2;
+          
+          /* Precise top bevel light border reflection */
+          border-top: 1.5px solid rgba(255, 255, 255, 0.18);
+          border-left: 1px solid rgba(255, 255, 255, 0.08);
+          border-right: 1px solid rgba(0, 0, 0, 0.6);
+          border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+          
+          /* Native smooth outer button box boundaries */
+          box-shadow: 
+            inset 0 1px 0px rgba(255, 255, 255, 0.1),
+            0 4px 10px rgba(0, 0, 0, 0.4);
+            
+          transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .glass-pill-btn svg {
-          width: 18px;
-          height: 18px;
+        .btn-icon {
+          width: 16px;
+          height: 16px;
           flex-shrink: 0;
+          transition: transform 0.3s ease;
         }
 
-        .glass-pill-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.25), 0 20px 40px rgba(0, 0, 0, 0.35);
+        /* Dynamic 3D fluid gloss drop shadow under capsule padding base */
+        .btn-glow-shadow {
+          position: absolute;
+          bottom: -8px;
+          left: 5%;
+          width: 90%;
+          height: 20px;
+          background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, transparent 75%);
+          filter: blur(5px);
+          z-index: 1;
+          pointer-events: none;
+          transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Fluid Hover Physics */
+        .liquid-capsule-btn:hover {
+          transform: translateY(-2px);
           color: #ffffff;
+          background: linear-gradient(180deg, #353535 0%, #1c1c1c 45%, #0f0f0f 100%);
+          border-top-color: rgba(255, 255, 255, 0.25);
+          box-shadow: 
+            inset 0 1px 0px rgba(255, 255, 255, 0.15),
+            0 8px 20px rgba(0, 0, 0, 0.6);
         }
 
-        .glass-pill-btn:active {
+        .liquid-capsule-btn:hover .btn-icon {
+          transform: scale(1.1);
+        }
+
+        .btn-ambient-container:hover .btn-glow-shadow {
+          transform: scaleX(1.1) scaleY(1.3);
+          opacity: 0.8;
+          filter: blur(6px);
+        }
+
+        .liquid-capsule-btn:active {
           transform: translateY(1px);
-          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.2);
+          box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.8),
+            0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-ambient-container:active .btn-glow-shadow {
+          transform: scale(0.9);
+          opacity: 0.4;
         }
 
         /* --- CHARACTER & INTERACTION --- */
@@ -412,7 +462,7 @@ export default function Hero() {
         /* --- DESKTOP/MOBILE VISIBILITY HELPERS --- */
         .hide-desktop { display: none; }
 
-        /* ================= 🔥 RESPONSIVE MOBILE FIX 🔥 ================= */
+        /* ================= 🔥 RESPONSIVE SYSTEM FOR ALL DEVICES 🔥 ================= */
         @media (max-width: 1024px) {
           .hero-section {
             height: auto;
@@ -423,17 +473,17 @@ export default function Hero() {
             padding-bottom: 40px;
           }
 
-          /* Stack both editorial blocks centrally */
           .editorial-side {
             position: relative !important;
             width: 100% !important;
+            max-width: 100% !important;
             align-items: center !important;
             text-align: center !important;
             padding: 0 5%;
           }
           
-          /* Flow: Left Text -> Image -> Right Text */
           .left-side { order: 1; margin-bottom: 10px; }
+          
           .character-container { 
             order: 2; 
             position: relative !important; 
@@ -445,9 +495,11 @@ export default function Hero() {
             height: 40vh !important; 
             margin: 20px 0;
           }
+          
           .right-side { order: 3; }
 
-          .glass-pill-btn { width: 100%; max-width: 320px; padding: 18px 20px; }
+          .btn-ambient-container { width: 100%; max-width: 320px; }
+          .liquid-capsule-btn { width: 100%; padding: 16px 20px; }
           .desktop-br { display: none; }
           
           .hero-image { 
@@ -457,9 +509,7 @@ export default function Hero() {
             object-position: center !important; 
           }
           
-          /* Make spec list centered for mobile */
           .spec-list { display: flex; flex-direction: column; align-items: center; }
-
           .bg-watermark { top: 40% !important; font-size: 28vw !important; }
           .scroll-hint-modern { display: none !important; } 
           
