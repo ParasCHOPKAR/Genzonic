@@ -140,16 +140,21 @@ export default function Hero() {
           LEFT SIDE: Brand Intro & Premium CTA 
           ========================================= */}
       <div className="editorial-side left-side">
-        <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
+        <div className="tech-label reveal-text hide-mobile-text">SERIES_01 // CORE COLLECTION</div>
         <h2 className="editorial-title reveal-text">THE NEW <br className="desktop-br"/> STANDARD</h2>
-        <p className="editorial-desc reveal-text">
-          Experience our signature silhouettes. <span className="hide-mobile">Hover over</span><span className="hide-desktop">Tap</span> the subject to cycle through the available premium colorways.
+        
+        {/* Hidden on mobile to keep focus pure and clean */}
+        <p className="editorial-desc reveal-text hide-mobile-text">
+          Experience our signature silhouettes. Hover over the subject to cycle through the available premium colorways.
         </p>
 
         {/* 🔥 EXACT MATCH: Navbar Solid Block Button 🔥 */}
-        <div className="reveal-text">
+        <div className="reveal-text cta-wrapper">
           <Link href="/premium-collection" className="solid-block-btn">
             SHOP PREMIUM
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: '4px' }}>
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </Link>
         </div>
       </div>
@@ -201,10 +206,14 @@ export default function Hero() {
           <p className="bold-statement"><strong>Built for the bold.</strong></p>
         </div>
 
-        {/* This button automatically hides on mobile! */}
+        {/* This button automatically hides entirely on mobile! */}
         <div className="reveal-text hide-mobile-btn">
+          {/* Linked perfectly to your /shop/men route */}
           <Link href="/shop/men" className="solid-block-btn">
             SHOP MEN'S
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: '4px' }}>
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </Link>
         </div>
       </div>
@@ -312,21 +321,26 @@ export default function Hero() {
           justify-content: center;
           background: ${darkMode ? "#ffffff" : "#000000"};
           color: ${darkMode ? "#000000" : "#ffffff"};
-          padding: 16px 36px;
-          border-radius: 4px; /* Slight rounding to match navbar */
+          padding: 16px 32px;
+          border-radius: 4px; /* Exact subtle rounding from your navbar */
           font-weight: 800;
           font-size: 13px;
           letter-spacing: 2px;
           text-transform: uppercase;
           text-decoration: none;
           z-index: 2;
-          border: 1px solid ${darkMode ? "#ffffff" : "#000000"};
-          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .solid-block-btn:hover {
-          background: transparent;
-          color: ${darkMode ? "#ffffff" : "#000000"};
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .solid-block-btn:active {
+          transform: translateY(1px);
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         /* --- CHARACTER & INTERACTION --- */
@@ -395,9 +409,10 @@ export default function Hero() {
             padding: 0 5%;
           }
           
-          /* Flow: Text -> CTA Button -> Model Image -> Specs Text */
-          .left-side { order: 1; margin-bottom: 10px; }
+          /* Ensures Title is on top, then button */
+          .left-side { order: 1; margin-bottom: 0; }
           
+          /* Forces model to sit neatly below the button, fixing overlap! */
           .character-container { 
             order: 2; 
             position: relative !important; 
@@ -407,16 +422,18 @@ export default function Hero() {
             transform: none !important;
             width: 100% !important; 
             height: 42vh !important; 
-            margin: 20px 0 0 0;
+            margin: 30px 0 20px 0; /* Add explicit top margin to separate from button */
           }
           
           .right-side { order: 3; }
 
-          /* Button strictly controlled for mobile */
-          .solid-block-btn { width: 100%; max-width: 320px; padding: 18px 20px; }
+          /* Button styling explicitly for mobile to span nicely */
+          .cta-wrapper { width: 100%; display: flex; justify-content: center; margin-top: 15px; }
+          .solid-block-btn { width: 100%; max-width: 280px; padding: 18px 20px; }
           
-          /* Hides the "Shop Men's" button entirely on mobile as requested */
+          /* Hides text & secondary buttons to clear clutter */
           .hide-mobile-btn { display: none !important; }
+          .hide-mobile-text { display: none !important; }
           .desktop-br { display: none; }
           
           .hero-image { 
@@ -435,9 +452,8 @@ export default function Hero() {
         }
 
         @media (max-width: 600px) {
-          .character-container { height: 35vh !important; margin: 15px 0 0 0;}
-          .editorial-title { font-size: clamp(28px, 8vw, 36px) !important; margin-bottom: 10px; }
-          .editorial-desc { font-size: 13px !important; margin-bottom: 25px;} /* Space before the button */
+          .character-container { height: 38vh !important; margin: 30px 0 20px 0; }
+          .editorial-title { font-size: clamp(34px, 10vw, 42px) !important; margin-bottom: 5px; }
           .tier-block { margin-bottom: 25px; }
         }
       `}</style>
