@@ -114,6 +114,10 @@ export default function Hero() {
     return () => ctx.revert()
   }, [darkMode])
 
+  // 🔥 BULLETPROOF TAILWIND BUTTON STYLES 🔥
+  // We define this here so Next.js guarantees the black box renders flawlessly
+  const solidButtonClasses = "inline-flex items-center justify-center bg-black text-white dark:bg-white dark:text-black px-8 py-4 rounded shadow-lg font-extrabold text-[13px] tracking-widest uppercase transition-transform duration-300 hover:-translate-y-1 active:translate-y-0 border border-black dark:border-white";
+
   return (
     <section 
       className="hero-section" 
@@ -149,10 +153,10 @@ export default function Hero() {
         </p>
 
         {/* Desktop Premium CTA (Hidden on Mobile) */}
-        <div className="reveal-text cta-wrapper hide-mobile">
-          <Link href="/premium-collection" className="solid-block-btn">
+        <div className="reveal-text hide-mobile mt-4">
+          <Link href="/premium-collection" className={solidButtonClasses}>
             SHOP PREMIUM
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: '6px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
@@ -190,15 +194,15 @@ export default function Hero() {
       </div>
 
       {/* =========================================
-          RIGHT SIDE: Technical Content & Men's CTA 
+          RIGHT SIDE: Technical Content & Mobile CTA 
           ========================================= */}
       <div className="editorial-side right-side">
         <div className="tech-label reveal-text hide-mobile">ENGINEERED AESTHETICS</div>
         
         <div className="tier-block reveal-text">
-          <h3 className="mobile-center-title">STREETWEAR <br className="hide-mobile" /> REDEFINED</h3>
+          <h3 className="mobile-bottom-title">STREETWEAR <br className="hide-mobile" /> REDEFINED</h3>
           
-          {/* List & Text hidden on mobile! */}
+          {/* List & Text completely hidden on mobile! */}
           <ul className="spec-list hide-mobile">
             <li>Heavyweight 240GSM Cotton</li>
             <li>Signature Drop-Shoulder Fit</li>
@@ -209,20 +213,21 @@ export default function Hero() {
         </div>
 
         {/* Desktop Men's CTA (Hidden on Mobile) */}
-        <div className="reveal-text hide-mobile">
-          <Link href="/shop/men" className="solid-block-btn">
+        <div className="reveal-text hide-mobile mt-4">
+          <Link href="/shop/men" className={solidButtonClasses}>
             SHOP MEN'S
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: '6px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
 
-        {/* 🔥 MOBILE ONLY CTA 🔥 (Placed exactly below STREETWEAR REDEFINED) */}
+        {/* 🔥 MOBILE ONLY CTA 🔥 
+            (Placed exactly below STREETWEAR REDEFINED) */}
         <div className="reveal-text hide-desktop mobile-cta-wrapper">
-          <Link href="/premium-collection" className="solid-block-btn">
+          <Link href="/premium-collection" className={`${solidButtonClasses} w-full max-w-[280px]`}>
             SHOP PREMIUM
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: '6px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
@@ -315,47 +320,13 @@ export default function Hero() {
 
         .tech-label { font-size: 12px; letter-spacing: 4px; font-weight: 900; opacity: 0.6; margin-bottom: 25px; text-transform: uppercase; }
         .editorial-title { font-size: clamp(32px, 4vw, 42px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em; }
-        .editorial-desc { font-size: 14px; line-height: 1.6; opacity: 0.7; font-weight: 500; margin-bottom: 30px; }
+        .editorial-desc { font-size: 14px; line-height: 1.6; opacity: 0.7; font-weight: 500; margin-bottom: 20px; }
 
-        .tier-block { margin-bottom: 30px; }
+        .tier-block { margin-bottom: 10px; }
         .tier-block h3 { font-size: clamp(24px, 2.5vw, 28px); font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -0.02em; }
         .spec-list { list-style: none; padding: 0; margin: 0 0 15px 0; font-size: 14px; opacity: 0.85; line-height: 1.8; font-weight: 500; }
         .spec-list li { margin-bottom: 4px; }
         .bold-statement { font-size: 16px; color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* =========================================================
-           🔥 EXACT MATCH: SOLID BLACK NAVBAR BOX CTA 🔥
-           ========================================================= */
-        .solid-block-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          background: ${darkMode ? "#ffffff" : "#000000"};
-          color: ${darkMode ? "#000000" : "#ffffff"};
-          padding: 16px 36px;
-          border-radius: 6px; /* Smooth corner to exactly match navbar */
-          font-weight: 800;
-          font-size: 13px;
-          letter-spacing: 2px;
-          text-transform: uppercase;
-          text-decoration: none;
-          z-index: 2;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-          transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-          border: 1px solid ${darkMode ? "#ffffff" : "#000000"};
-        }
-
-        .solid-block-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-          background: transparent;
-          color: ${darkMode ? "#ffffff" : "#000000"};
-        }
-
-        .solid-block-btn:active {
-          transform: translateY(1px);
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
 
         /* --- CHARACTER & INTERACTION --- */
         .character-container {
@@ -410,7 +381,7 @@ export default function Hero() {
             min-height: 100dvh; 
             flex-direction: column;
             justify-content: flex-start;
-            padding-top: 100px; 
+            padding-top: 110px; 
             padding-bottom: 40px;
           }
 
@@ -435,8 +406,8 @@ export default function Hero() {
             left: auto !important; 
             transform: none !important;
             width: 100% !important; 
-            height: 45vh !important; 
-            margin: 20px 0 10px 0; 
+            height: 48vh !important; 
+            margin: 15px 0 10px 0; 
           }
           
           /* Flow 3: Bottom Headline & Single Button */
@@ -444,12 +415,11 @@ export default function Hero() {
 
           /* Button styling to span cleanly below text */
           .mobile-cta-wrapper { width: 100%; display: flex; justify-content: center; margin-top: 20px; }
-          .solid-block-btn { width: 100%; max-width: 320px; padding: 18px 20px; }
           
           /* Hide all text and secondary buttons */
           .hide-mobile { display: none !important; }
           .desktop-br { display: none; }
-          .hide-desktop { display: flex !important; } /* Ensures the mobile button shows! */
+          .hide-desktop { display: flex !important; } 
           
           .hero-image { 
             height: 100% !important; 
@@ -462,9 +432,9 @@ export default function Hero() {
         }
 
         @media (max-width: 600px) {
-          .character-container { height: 42vh !important; margin: 15px 0 15px 0; }
-          .editorial-title { font-size: clamp(34px, 10vw, 42px) !important; margin-bottom: 0; }
-          .mobile-center-title { font-size: clamp(28px, 8vw, 36px) !important; margin-bottom: 0; }
+          .character-container { height: 42vh !important; margin: 10px 0; }
+          .editorial-title { font-size: clamp(36px, 11vw, 44px) !important; margin-bottom: 0; line-height: 1.1; }
+          .mobile-bottom-title { font-size: clamp(28px, 9vw, 38px) !important; margin-bottom: 0; line-height: 1.1; }
           .tier-block { margin-bottom: 0; }
         }
       `}</style>
