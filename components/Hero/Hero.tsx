@@ -114,10 +114,6 @@ export default function Hero() {
     return () => ctx.revert()
   }, [darkMode])
 
-  // 🔥 BULLETPROOF TAILWIND BUTTON STYLES 🔥
-  // We define this here so Next.js guarantees the black box renders flawlessly
-  const solidButtonClasses = "inline-flex items-center justify-center bg-black text-white dark:bg-white dark:text-black px-8 py-4 rounded shadow-lg font-extrabold text-[13px] tracking-widest uppercase transition-transform duration-300 hover:-translate-y-1 active:translate-y-0 border border-black dark:border-white";
-
   return (
     <section 
       className="hero-section" 
@@ -153,11 +149,11 @@ export default function Hero() {
         </p>
 
         {/* Desktop Premium CTA (Hidden on Mobile) */}
-        <div className="reveal-text hide-mobile mt-4">
-          <Link href="/premium-collection" className={solidButtonClasses}>
+        <div className="reveal-text hide-mobile mt-5">
+          <Link href="/premium-collection" className="premium-orange-btn">
             SHOP PREMIUM
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -213,11 +209,11 @@ export default function Hero() {
         </div>
 
         {/* Desktop Men's CTA (Hidden on Mobile) */}
-        <div className="reveal-text hide-mobile mt-4">
-          <Link href="/shop/men" className={solidButtonClasses}>
+        <div className="reveal-text hide-mobile mt-5">
+          <Link href="/shop/men" className="premium-orange-btn secondary-btn">
             SHOP MEN'S
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -225,10 +221,10 @@ export default function Hero() {
         {/* 🔥 MOBILE ONLY CTA 🔥 
             (Placed exactly below STREETWEAR REDEFINED) */}
         <div className="reveal-text hide-desktop mobile-cta-wrapper">
-          <Link href="/premium-collection" className={`${solidButtonClasses} w-full max-w-[280px]`}>
+          <Link href="/premium-collection" className="premium-orange-btn mobile-full-btn">
             SHOP PREMIUM
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -240,6 +236,9 @@ export default function Hero() {
         <div className="line"></div>
       </div>
 
+      {/* =========================================
+          BULLETPROOF CSS STYLING
+          ========================================= */}
       <style jsx>{`
         /* --- LAYOUT FUNDAMENTALS --- */
         .hero-section {
@@ -308,25 +307,72 @@ export default function Hero() {
           flex-direction: column;
         }
         
-        .left-side {
-          align-items: flex-start;
-          text-align: left;
-        }
-
-        .right-side {
-          align-items: flex-end;
-          text-align: right;
-        }
+        .left-side { align-items: flex-start; text-align: left; }
+        .right-side { align-items: flex-end; text-align: right; }
 
         .tech-label { font-size: 12px; letter-spacing: 4px; font-weight: 900; opacity: 0.6; margin-bottom: 25px; text-transform: uppercase; }
-        .editorial-title { font-size: clamp(32px, 4vw, 42px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em; }
-        .editorial-desc { font-size: 14px; line-height: 1.6; opacity: 0.7; font-weight: 500; margin-bottom: 20px; }
+        .editorial-title { font-size: clamp(36px, 4vw, 48px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em; text-transform: uppercase; }
+        .editorial-desc { font-size: 15px; line-height: 1.6; opacity: 0.7; font-weight: 500; margin-bottom: 20px; }
 
         .tier-block { margin-bottom: 10px; }
-        .tier-block h3 { font-size: clamp(24px, 2.5vw, 28px); font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -0.02em; }
+        .tier-block h3 { font-size: clamp(26px, 2.5vw, 32px); font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -0.02em; text-transform: uppercase; }
         .spec-list { list-style: none; padding: 0; margin: 0 0 15px 0; font-size: 14px; opacity: 0.85; line-height: 1.8; font-weight: 500; }
         .spec-list li { margin-bottom: 4px; }
         .bold-statement { font-size: 16px; color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* =========================================================
+           🔥 BULLETPROOF CUSTOM BUTTON CSS (ORANGE BOX) 🔥
+           ========================================================= */
+        .premium-orange-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          background-color: #FF4500; /* Vivid Professional Orange */
+          color: #ffffff !important;
+          padding: 20px 42px; /* Large click area */
+          border-radius: 4px; /* Slight modern rounding */
+          font-family: inherit;
+          font-weight: 900;
+          font-size: 14px; /* Bigger text */
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          text-decoration: none;
+          box-shadow: 0 10px 25px rgba(255, 69, 0, 0.35); /* Orange glowing shadow */
+          border: 1px solid #FF4500;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          cursor: pointer;
+          outline: none;
+        }
+
+        .premium-orange-btn:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 15px 35px rgba(255, 69, 0, 0.5);
+          background-color: #E63E00; /* Slightly darker orange on hover */
+          border-color: #E63E00;
+        }
+
+        .premium-orange-btn:active {
+          transform: translateY(1px);
+          box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+        }
+
+        /* Secondary Button Style for Men's CTA (Black/White contrast) */
+        .secondary-btn {
+          background-color: ${darkMode ? "#ffffff" : "#000000"};
+          color: ${darkMode ? "#000000" : "#ffffff"} !important;
+          border-color: ${darkMode ? "#ffffff" : "#000000"};
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .secondary-btn:hover {
+          background-color: transparent;
+          color: ${darkMode ? "#ffffff" : "#000000"} !important;
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Helpers */
+        .mt-4 { margin-top: 1rem; }
+        .mt-5 { margin-top: 1.5rem; }
 
         /* --- CHARACTER & INTERACTION --- */
         .character-container {
@@ -372,7 +418,7 @@ export default function Hero() {
         @keyframes pulseLine { 0%, 100% { transform: scaleY(1); transform-origin: bottom; opacity: 1; } 50% { transform: scaleY(0.2); transform-origin: bottom; opacity: 0.3; } }
 
         /* --- DESKTOP/MOBILE VISIBILITY HELPERS --- */
-        .hide-desktop { display: none; }
+        .hide-desktop { display: none !important; }
 
         /* ================= 🔥 PERFECTED CLEAN MOBILE VIEW 🔥 ================= */
         @media (max-width: 1024px) {
@@ -382,7 +428,7 @@ export default function Hero() {
             flex-direction: column;
             justify-content: flex-start;
             padding-top: 110px; 
-            padding-bottom: 40px;
+            padding-bottom: 50px;
           }
 
           .editorial-side {
@@ -406,19 +452,29 @@ export default function Hero() {
             left: auto !important; 
             transform: none !important;
             width: 100% !important; 
-            height: 48vh !important; 
-            margin: 15px 0 10px 0; 
+            height: 45vh !important; 
+            margin: 20px 0 15px 0; 
           }
           
           /* Flow 3: Bottom Headline & Single Button */
           .right-side { order: 3; }
 
           /* Button styling to span cleanly below text */
-          .mobile-cta-wrapper { width: 100%; display: flex; justify-content: center; margin-top: 20px; }
+          .mobile-cta-wrapper { 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            margin-top: 25px; 
+          }
+          .mobile-full-btn { 
+            width: 100%; 
+            max-width: 320px; 
+            padding: 22px 20px; /* Thicker touch area for mobile */
+          }
           
           /* Hide all text and secondary buttons */
           .hide-mobile { display: none !important; }
-          .desktop-br { display: none; }
+          .desktop-br { display: none !important; }
           .hide-desktop { display: flex !important; } 
           
           .hero-image { 
@@ -432,9 +488,9 @@ export default function Hero() {
         }
 
         @media (max-width: 600px) {
-          .character-container { height: 42vh !important; margin: 10px 0; }
+          .character-container { height: 42vh !important; margin: 15px 0; }
           .editorial-title { font-size: clamp(36px, 11vw, 44px) !important; margin-bottom: 0; line-height: 1.1; }
-          .mobile-bottom-title { font-size: clamp(28px, 9vw, 38px) !important; margin-bottom: 0; line-height: 1.1; }
+          .mobile-bottom-title { font-size: clamp(30px, 10vw, 40px) !important; margin-bottom: 0; line-height: 1.1; }
           .tier-block { margin-bottom: 0; }
         }
       `}</style>
