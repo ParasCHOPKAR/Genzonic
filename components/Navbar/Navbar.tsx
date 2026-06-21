@@ -191,14 +191,7 @@ export default function Navbar() {
             </div>
 
             {/* COLLECTION BUTTON */}
-            <button
-              className="collections-btn premium-pop-btn desktop-only"
-              onClick={() => setCategoryOpen(true)}
-              style={{ display: "flex", alignItems: "center", height: "40px", boxSizing: "border-box" }}
-            >
-              PREMIUM COLLECTION <ChevronDown size={16} style={{ marginLeft: '6px' }} />
-            </button>
-
+ 
             {/* WISHLIST BUTTON */}
             <Link href="/wishlist" className="icon-grid-btn hover-scale" style={{ position: "relative" }}>
               <Heart size={24} strokeWidth={1.5} />
