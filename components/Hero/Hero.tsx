@@ -130,13 +130,13 @@ export default function Hero() {
       }}
     >
       
-      {/* 1. Cinematic Noise Overlay */}
+      {/* Cinematic Noise Overlay */}
       <div className="noise-overlay" />
 
-      {/* 2. Modern Ambient Glow */}
+      {/* Modern Ambient Glow */}
       <div ref={glowRef} className="ambient-glow" />
 
-      {/* 3. Subtle Cyber Grid */}
+      {/* Subtle Cyber Grid */}
       <div className="cyber-grid" />
 
       {/* Brand Watermark */}
@@ -158,7 +158,12 @@ export default function Hero() {
           Experience our signature silhouettes. <span className="hide-mobile">Hover over</span><span className="hide-desktop">Tap</span> the subject to cycle through the available premium colorways.
         </p>
 
-        <Link href="/premium-collection" className="modern-cta primary-cta reveal-text">
+        {/* 🔥 NEW PREMIUM PILL BUTTON 🔥 */}
+        <Link href="/premium-collection" className="glass-pill-btn reveal-text">
+          {/* Crown SVG */}
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V18H19V19Z" />
+          </svg>
           SHOP PREMIUM
         </Link>
       </div>
@@ -202,14 +207,23 @@ export default function Hero() {
         
         <div className="tier-block reveal-text">
           <h3>STREETWEAR <br/> REDEFINED</h3>
-          <p>
-            Heavyweight 240GSM Cotton <br/>
-            Signature Drop-Shoulder Fit <br/>
-            <strong>Built for the bold.</strong>
-          </p>
+          <ul className="spec-list">
+            <li>Heavyweight 240GSM Cotton</li>
+            <li>Signature Drop-Shoulder Fit</li>
+            <li>High-Density Puff Print</li>
+            <li>Pre-shrunk & Bio-washed</li>
+          </ul>
+          <p className="bold-statement"><strong>Built for the bold.</strong></p>
         </div>
 
-        <Link href="/mens" className="modern-cta secondary-cta reveal-text">
+        {/* 🔥 NEW MEN'S PILL BUTTON 🔥 */}
+        <Link href="/mens" className="glass-pill-btn reveal-text">
+          {/* Male Icon SVG */}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="10" cy="14" r="5" />
+            <line x1="13.5" y1="10.5" x2="21" y2="3" />
+            <polyline points="16 3 21 3 21 8" />
+          </svg>
           SHOP MEN'S
         </Link>
       </div>
@@ -305,50 +319,51 @@ export default function Hero() {
 
         .tier-block { margin-bottom: 30px; }
         .tier-block h3 { font-size: clamp(24px, 2.5vw, 28px); font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -0.02em; }
-        .tier-block p { font-size: 14px; opacity: 0.8; line-height: 1.8; margin: 0; font-weight: 500; }
-        .tier-block strong { color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; }
+        
+        /* New Expanded Spec List */
+        .spec-list { list-style: none; padding: 0; margin: 0 0 15px 0; font-size: 14px; opacity: 0.85; line-height: 1.8; font-weight: 500; }
+        .spec-list li { margin-bottom: 4px; }
+        .bold-statement { font-size: 16px; color: ${darkMode ? '#fff' : '#000'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- CTA BUTTONS --- */
-        .modern-cta {
+        /* =========================================
+           🔥 THE NEW GLASS PILL BUTTON DESIGN 🔥
+           ========================================= */
+        .glass-pill-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          padding: 18px 40px;
-          font-weight: 900;
-          font-size: 12px;
-          letter-spacing: 3px;
-          cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          gap: 12px;
+          /* Matte dark gradient */
+          background: linear-gradient(to bottom, #3a3a3a 0%, #141414 100%);
+          color: #eaeaea;
+          padding: 16px 36px;
+          border-radius: 9999px; /* Perfect pill shape */
+          font-weight: 700;
+          font-size: 13px;
+          letter-spacing: 1.5px;
           text-transform: uppercase;
+          /* Combining top inner highlight and soft outer drop shadow */
+          box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.15), 0 15px 35px rgba(0, 0, 0, 0.25);
+          border: 1px solid #0a0a0a;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
           text-decoration: none;
         }
 
-        /* The Exact Orange-to-Teal Brand Gradient */
-        .primary-cta {
-          background: linear-gradient(135deg, #FF6B00 0%, #008080 100%);
-          color: white;
-          border: none;
-          box-shadow: 0 10px 30px rgba(255, 107, 0, 0.2);
-        }
-        
-        .primary-cta:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 15px 35px rgba(255, 107, 0, 0.3);
+        .glass-pill-btn svg {
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
         }
 
-        /* High Contrast Secondary Button */
-        .secondary-cta {
-          background: ${darkMode ? "#fff" : "#000"};
-          color: ${darkMode ? "#000" : "#fff"};
-          border: 1px solid transparent;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .glass-pill-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.25), 0 20px 40px rgba(0, 0, 0, 0.35);
+          color: #ffffff;
         }
 
-        .secondary-cta:hover {
-          background: transparent;
-          color: ${darkMode ? "#fff" : "#000"};
-          border-color: ${darkMode ? "#fff" : "#000"};
-          transform: translateY(-3px);
+        .glass-pill-btn:active {
+          transform: translateY(1px);
+          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         /* --- CHARACTER & INTERACTION --- */
@@ -432,7 +447,7 @@ export default function Hero() {
           }
           .right-side { order: 3; }
 
-          .modern-cta { width: 100%; max-width: 320px; padding: 18px 20px; }
+          .glass-pill-btn { width: 100%; max-width: 320px; padding: 18px 20px; }
           .desktop-br { display: none; }
           
           .hero-image { 
@@ -441,6 +456,10 @@ export default function Hero() {
             max-width: 100% !important; 
             object-position: center !important; 
           }
+          
+          /* Make spec list centered for mobile */
+          .spec-list { display: flex; flex-direction: column; align-items: center; }
+
           .bg-watermark { top: 40% !important; font-size: 28vw !important; }
           .scroll-hint-modern { display: none !important; } 
           
@@ -452,7 +471,7 @@ export default function Hero() {
           .character-container { height: 35vh !important; margin: 10px 0;}
           .editorial-title { font-size: clamp(28px, 8vw, 36px) !important; margin-bottom: 10px; }
           .editorial-desc { font-size: 13px !important; margin-bottom: 20px;}
-          .tier-block { margin-bottom: 20px; }
+          .tier-block { margin-bottom: 25px; }
         }
       `}</style>
     </section>
