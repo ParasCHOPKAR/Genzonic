@@ -26,7 +26,8 @@ import {
   Info,
   Mail,
   Gift,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Loader2
 } from "lucide-react";
 import "./Navbar.css";
 
@@ -62,9 +63,14 @@ export default function Navbar() {
   // HYDRATION FIX STATE
   const [mounted, setMounted] = useState(false);
 
-  // 🔥 NEW: VAULT FETCH STATES
+  // VAULT FETCH STATES
   const [premiumProducts, setPremiumProducts] = useState<any[]>([]);
   const [isLoadingPremium, setIsLoadingPremium] = useState(false);
+
+  // 🔥 NEW: LIVE SEARCH STATES
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   /* =========================
      EFFECTS
@@ -92,7 +98,7 @@ export default function Navbar() {
     };
   }, [categoryOpen, mobileMenuOpen]);
 
-  // 🔥 UPDATED: FETCH ALL FEATURED PRODUCTS (UNLIMITED)
+  // FETCH ALL FEATURED PRODUCTS (UNLIMITED)
   useEffect(() => {
     if (categoryOpen && premiumProducts.length === 0) {
       setIsLoadingPremium(true);
@@ -107,6 +113,39 @@ export default function Navbar() {
         .finally(() => setIsLoadingPremium(false));
     }
   }, [categoryOpen, premiumProducts.length]);
+
+  // 🔥 NEW: LIVE SEARCH DEBOUNCE EFFECT
+  useEffect(() => {
+    if (searchQuery.trim().length === 0) {
+      setSearchResults([]);
+      return;
+    }
+
+    // Debounce to wait 300ms after user stops typing before fetching
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/products`);
+        const data = await res.json();
+        const productsArray = data.products || data || [];
+        
+        // Filter products matching the query (case insensitive)
+        const results = productsArray.filter((p: any) => 
+          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.category?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        
+        // Limit to top 5 results for the dropdown
+        setSearchResults(results.slice(0, 5));
+      } catch (err) {
+        console.error("Search error:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300); 
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
 
   /* =========================
      MATH & PARSERS
@@ -175,19 +214,89 @@ export default function Navbar() {
           {/* ===== RIGHT SIDE ACTIONS ===== */}
           <div className="nav-actions grid-layout">
 
-            {/* SEARCH */}
-            <div className={`search-wrapper desktop-only ${searchOpen ? "active" : ""}`} style={{ display: 'flex', alignItems: 'center' }}>
+            {/* 🔥 UPDATED: LIVE SEARCH WRAPPER 🔥 */}
+            <div className={`search-wrapper desktop-only ${searchOpen ? "active" : ""}`} style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
               <input
                 type="text"
-                placeholder="SEARCH"
+                placeholder="SEARCH ARTIFACTS..."
                 className="search-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
                 className="icon-grid-btn"
-                onClick={() => setSearchOpen(!searchOpen)}
+                onClick={() => {
+                  setSearchOpen(!searchOpen);
+                  if (searchOpen) setSearchQuery(""); // Clear on close
+                }}
               >
                 {searchOpen ? <X size={22} /> : <Search size={22} />}
               </button>
+
+              {/* LIVE SEARCH DROPDOWN MODAL */}
+              {searchOpen && searchQuery.length > 0 && (
+                <div 
+                  className="search-dropdown-modal"
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 15px)",
+                    right: 0,
+                    width: "320px",
+                    backgroundColor: theme === "dark" ? "#111" : "#fff",
+                    border: `1px solid ${theme === "dark" ? "#333" : "#eaeaea"}`,
+                    borderRadius: "8px",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+                    overflow: "hidden",
+                    zIndex: 100
+                  }}
+                >
+                  {isSearching ? (
+                    <div style={{ padding: "20px", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", color: "#888", fontSize: "12px", fontWeight: "bold", letterSpacing: "1px" }}>
+                      <Loader2 size={16} className="animate-spin text-[#FF3E00]" /> SEARCHING...
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", maxHeight: "350px", overflowY: "auto" }}>
+                      {searchResults.map((prod) => (
+                        <Link 
+                          key={prod._id} 
+                          href={`/product/${prod.slug}`}
+                          onClick={() => {
+                            setSearchOpen(false);
+                            setSearchQuery("");
+                          }}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "15px",
+                            padding: "12px 15px",
+                            borderBottom: `1px solid ${theme === "dark" ? "#222" : "#f5f5f5"}`,
+                            textDecoration: "none",
+                            transition: "background 0.2s"
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = theme === "dark" ? "#1a1a1a" : "#fafafa"}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                        >
+                          <div style={{ width: "40px", height: "40px", position: "relative", backgroundColor: "#f5f5f5", borderRadius: "4px", overflow: "hidden", flexShrink: 0 }}>
+                            <Image src={prod.image || prod.images?.[0] || "/placeholder.png"} alt={prod.name} fill style={{ objectFit: "contain", padding: "2px" }} />
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column" }}>
+                            <span style={{ color: theme === "dark" ? "#fff" : "#000", fontSize: "12px", fontWeight: 800, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "220px" }}>
+                              {prod.name}
+                            </span>
+                            <span style={{ color: "#FF3E00", fontSize: "11px", fontWeight: 900, marginTop: "2px" }}>
+                              ₹{prod.price}
+                            </span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ padding: "20px", textAlign: "center", color: "#888", fontSize: "11px", fontWeight: "bold", letterSpacing: "1px", textTransform: "uppercase" }}>
+                      NO ARTIFACTS FOUND
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* COLLECTION BUTTON */}
@@ -409,7 +518,6 @@ export default function Navbar() {
           .hide-scroll-vault::-webkit-scrollbar { display: none; }
         `}} />
 
-        {/* 🔥 UPDATED: FULL WIDTH SCROLLABLE BODY WITH SMALLER GRID 🔥 */}
         <div className="hide-scroll-vault" style={{ padding: "40px 20px", height: "calc(100vh - 100px)", overflowY: "auto", width: "100%", scrollbarWidth: "none", msOverflowStyle: "none" }}>
           <div className="showcase-intro reveal-item" style={{ '--i': 1, marginBottom: "40px", textAlign: "center", maxWidth: "800px", marginInline: "auto" } as React.CSSProperties}>
             <h3 style={{ margin: "0 0 10px 0", fontSize: "32px", fontWeight: 900, letterSpacing: "2px", textTransform: "uppercase" }}>THE VAULT</h3>

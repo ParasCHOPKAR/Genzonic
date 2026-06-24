@@ -157,7 +157,7 @@ export default function CategoryShopPage({ params }: { params: Promise<{ categor
 
       {products.length === 0 ? (
         <div className="empty-state">
-          <h2>NO ARTIFACTS COMING SOON</h2>
+          <h2>ARTIFACTS COMING SOON</h2>
           <Link href="/" className="btn-return">RETURN TO BASE <ArrowRight size={14} /></Link>
         </div>
       ) : (
