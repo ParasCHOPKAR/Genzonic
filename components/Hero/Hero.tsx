@@ -344,8 +344,8 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 78%; /* Reduced from 85% to give headroom */
-          max-width: 500px; /* Reduced from 700px to ensure the image fully fits */
+          height: 68%; /* 🔥 Reduced drastically to ensure full visibility below navbar */
+          max-width: 420px; /* 🔥 Tightly scaled to ensure it stays in frame */
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -470,7 +470,7 @@ export default function Hero() {
           .mobile-bg-img {
             object-fit: cover !important;
             object-position: center !important;
-            transform: scale(1.35); /* Increased size for mobile background models */
+            transform: scale(1.35); /* 🔥 Increased size for mobile background models */
           }
           
           .gorilla-layer {
