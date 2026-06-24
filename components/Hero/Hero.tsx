@@ -10,15 +10,17 @@ export default function Hero() {
   const heroRef = useRef(null)
   const charRef = useRef(null)
   const bgRef = useRef(null)
-  const textRef = useRef(null)
+  const pulseRef = useRef(null)
+  const watermarkRef = useRef(null)
+  const glowRef = useRef(null)
   const { theme } = useTheme()
   const darkMode = theme === "dark"
 
   // --------------------------------------------------------
   // ⚠️ UPDATE THESE PATHS WITH YOUR ACTUAL BACKGROUND IMAGES
   // --------------------------------------------------------
-  const desktopBgImage = "/hero/desktop-bg.png" // e.g., "/hero/models-bg-desktop.jpg"
-  const mobileBgImage = "/hero/my_primium-photo-mobile-view.png"   // e.g., "/hero/models-bg-mobile.jpg"
+  const desktopBgImage = "/hero/desktop-bg.png" 
+  const mobileBgImage = "/hero/my_primium-photo-mobile-view.png"
 
   const images = {
     dark: [
@@ -34,7 +36,7 @@ export default function Hero() {
       "/hero/winee-tshirt-gorila-removebg-preview.png",
     ],
     light: [
-      "/hero/mustard-tshirt-gorila-removebg-preview.png", // Using Mustard first based on your new mockup
+      "/hero/mustard-tshirt-gorila-removebg-preview.png",
       "/hero/black-tshirt-gorilaa-removebg-preview.png",
       "/hero/white-tshirt-gorila-removebg-preview.png",
       "/hero/beige-tshirt-gorila-removebg-preview.png",
@@ -75,19 +77,29 @@ export default function Hero() {
     const ctx = gsap.context(() => {            
       const tl = gsap.timeline()
 
-      // Initial Entrance Animations
-      tl.from(".main-title-text", { y: -30, opacity: 0, duration: 1.5, ease: "power4.out" })
-        .from(bgRef.current, { opacity: 0, scale: 1.05, duration: 2, ease: "power2.out" }, "-=1")
+      // Unified Entrance Animations for Desktop & Mobile
+      tl.from(".cyber-grid", { opacity: 0, duration: 2, ease: "power2.inOut" })
+        .from(".main-title-text", { y: -30, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1.5")
+        .from(bgRef.current, { opacity: 0, scale: 1.05, duration: 2, ease: "power2.out" }, "-=1.5")
         .from(charRef.current, { y: 50, scale: 1.1, opacity: 0, filter: "blur(20px)", duration: 1.5, ease: "expo.out" }, "-=1.5")
+        .from(".reveal-text", { y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1")
         .from(".bottom-content", { y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" }, "-=1")
 
-      // Continuous Floating Animation for the Gorilla
+      // Continuous Floating Animation ONLY for the Gorilla
       gsap.to(charRef.current, {
         y: "-=15",
         duration: 4,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut"
+      })
+      
+      gsap.to(pulseRef.current, {
+        scale: 2.2,
+        opacity: 0,
+        duration: 2.5,
+        repeat: -1,
+        ease: "sine.out"
       })
 
     }, heroRef)
@@ -105,54 +117,76 @@ export default function Hero() {
       }}
     >
       
-      {/* Subtle Noise Texture */}
+      {/* Background Ambience */}
       <div className="noise-overlay" />
+      <div ref={glowRef} className="ambient-glow" />
+      <div className="cyber-grid" />
+      <div ref={watermarkRef} className="bg-watermark" style={{ color: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)" }}>
+        GenZonic
+      </div>  
 
       {/* =========================================
-          TOP: TITLE
+          DESKTOP ONLY: LEFT EDITORIAL
           ========================================= */}
-      <div className="top-title-container z-20 relative">
+      <div className="editorial-side left-side hide-mobile">
+        <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
+        <h2 className="editorial-title reveal-text">THE NEW <br/> STANDARD</h2>
+        <p className="editorial-desc reveal-text">
+          Experience our signature silhouettes. Hover over the subject to cycle through the available premium colorways.
+        </p>
+
+        <div className="reveal-text mt-5">
+          <Link href="/premium-collection" className="premium-orange-btn">
+            SHOP PREMIUM
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        </div>
+      </div>
+
+      {/* =========================================
+          MOBILE ONLY: TOP TITLE
+          ========================================= */}
+      <div className="top-title-container z-20 relative hide-desktop">
         <h1 className="main-title-text">
           THE NEW<br/>STANDARD
         </h1>
       </div>
 
       {/* =========================================
-          MIDDLE: VISUAL COMPOSITION (BG MODELS + GORILLA)
+          CENTER: VISUAL COMPOSITION (BG MODELS + GORILLA)
+          Used seamlessly by both Mobile and Desktop
           ========================================= */}
-      <div className="visuals-container z-10 relative">
+      <div className="visuals-container z-10">
         
         {/* Layer 1: Static Background Models */}
         <div ref={bgRef} className="bg-models-layer absolute inset-0 w-full h-full">
-          {/* Desktop Background Image */}
-          <div className="desktop-bg absolute inset-0 w-full h-full">
-            <Image 
-              src={desktopBgImage} 
-              alt="GenZonic Models Background" 
-              fill 
-              className="object-contain object-bottom"
-              priority
-            />
-          </div>
-          {/* Mobile Background Image */}
-          <div className="mobile-bg absolute inset-0 w-full h-full">
-            <Image 
-              src={mobileBgImage} 
-              alt="GenZonic Models Background" 
-              fill 
-              className="object-cover sm:object-contain object-bottom"
-              priority
-            />
-          </div>
+          <Image 
+            src={desktopBgImage} 
+            alt="Desktop Models Background" 
+            fill 
+            className="hide-mobile object-contain object-bottom"
+            priority
+          />
+          <Image 
+            src={mobileBgImage} 
+            alt="Mobile Models Background" 
+            fill 
+            className="hide-desktop object-contain object-bottom"
+            priority
+          />
         </div>
 
         {/* Layer 2: Interactive 3D Gorilla */}
         <div 
-          className="gorilla-layer relative w-full h-full flex justify-center items-end"
+          className="gorilla-layer"
           ref={charRef}
           onMouseEnter={handleImageHover} 
           onClick={handleImageHover} 
         >
+          <div ref={pulseRef} className="click-pulse" />
+          
           <Image 
             src={currentImage} 
             alt="GenZonic Subject"
@@ -162,8 +196,7 @@ export default function Hero() {
             className="hero-gorilla-image"
           />
 
-          {/* Center Interactive Indicator */}
-          <div className="tap-indicator absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+          <div className="tap-indicator">
             <div className="arrow-wrapper">
                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke={darkMode ? "#ffffff" : "#000000"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -177,9 +210,35 @@ export default function Hero() {
       </div>
 
       {/* =========================================
-          BOTTOM: CONTENT & CTA
+          DESKTOP ONLY: RIGHT EDITORIAL
           ========================================= */}
-      <div className="bottom-content-container z-20 relative flex flex-col items-center gap-4 pb-8">
+      <div className="editorial-side right-side hide-mobile">
+        <div className="tech-label reveal-text">ENGINEERED AESTHETICS</div>
+        <div className="tier-block reveal-text">
+          <h3>STREETWEAR <br/> REDEFINED</h3>
+          <ul className="spec-list">
+            <li>Heavyweight 240GSM Cotton</li>
+            <li>Signature Drop-Shoulder Fit</li>
+            <li>High-Density Puff Print</li>
+            <li>Pre-shrunk & Bio-washed</li>
+          </ul>
+          <p className="bold-statement"><strong>Built for the bold.</strong></p>
+        </div>
+
+        <div className="reveal-text mt-5">
+          <Link href="/shop/men" className="premium-orange-btn secondary-btn">
+            SHOP MEN'S
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        </div>
+      </div>
+
+      {/* =========================================
+          MOBILE ONLY: BOTTOM CONTENT & CTA
+          ========================================= */}
+      <div className="bottom-content-container z-20 relative flex flex-col items-center gap-4 pb-8 hide-desktop">
         <h3 className="bottom-content subtitle-text">STREETWEAR REDEFINED</h3>
         
         <Link href="/premium-collection" className="bottom-content solid-black-btn">
@@ -196,15 +255,27 @@ export default function Hero() {
       <style jsx>{`
         /* --- LAYOUT FUNDAMENTALS --- */
         .hero-section {
-          width: 100%;
-          min-height: 100vh; /* Changed from fixed 100vh to min-height to prevent crunching */
+          height: 100vh;
           display: flex;
-          flex-direction: column;
           align-items: center;
           justify-content: space-between;
           position: relative;
           overflow: hidden;
-          padding-top: 100px; /* Space for navbar */
+          padding: 0 5%;
+        }
+
+        .bg-watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: clamp(100px, 24vw, 400px);
+          font-weight: 900;
+          letter-spacing: -0.04em;
+          white-space: nowrap;
+          z-index: 1;
+          pointer-events: none;
+          text-transform: uppercase;
         }
 
         .noise-overlay {
@@ -212,78 +283,149 @@ export default function Hero() {
           inset: 0;
           z-index: 1;
           pointer-events: none;
-          opacity: ${darkMode ? "0.03" : "0.04"};
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- TYPOGRAPHY --- */
-        .top-title-container {
-          text-align: center;
-          margin-top: 2vh;
+        .ambient-glow {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 70vw;
+          height: 70vw;
+          background: radial-gradient(circle, ${darkMode ? "rgba(255, 62, 0, 0.12)" : "rgba(255, 62, 0, 0.08)"} 0%, transparent 50%);
+          z-index: 0;
+          pointer-events: none;
         }
 
-        .main-title-text {
-          font-size: clamp(48px, 10vw, 100px); /* Massive responsive text */
-          font-weight: 900;
-          line-height: 1;
-          letter-spacing: -0.04em;
-          text-transform: uppercase;
-          color: ${darkMode ? "#ffffff" : "#000000"};
+        .cyber-grid {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          background-size: 100px 100px;
+          background-image: 
+            linear-gradient(to right, ${darkMode ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)"} 1px, transparent 1px),
+            linear-gradient(to bottom, ${darkMode ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)"} 1px, transparent 1px);
+          mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+          -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
         }
 
-        .subtitle-text {
-          font-size: clamp(16px, 4vw, 20px);
-          font-weight: 900;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-        }
-
-        /* --- VISUALS CONTAINER --- */
-        .visuals-container {
-          flex-grow: 1;
-          width: 100%;
-          max-width: 1600px;
-          position: relative;
+        /* --- DESKTOP EDITORIAL SECTIONS --- */
+        .editorial-side {
+          z-index: 12;
+          width: 320px;
           display: flex;
-          justify-content: center;
-          align-items: flex-end; /* Align characters to bottom */
-          min-height: 50vh; /* Guarantee space for characters */
+          flex-direction: column;
+        }
+        
+        .left-side { align-items: flex-start; text-align: left; }
+        .right-side { align-items: flex-end; text-align: right; }
+
+        .tech-label { font-size: 12px; letter-spacing: 4px; font-weight: 900; opacity: 0.6; margin-bottom: 25px; text-transform: uppercase; }
+        .editorial-title { font-size: clamp(36px, 4vw, 48px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em; text-transform: uppercase; }
+        .editorial-desc { font-size: 15px; line-height: 1.6; opacity: 0.7; font-weight: 500; margin-bottom: 20px; }
+
+        .tier-block { margin-bottom: 10px; }
+        .tier-block h3 { font-size: clamp(26px, 2.5vw, 32px); font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -0.02em; text-transform: uppercase; }
+        .spec-list { list-style: none; padding: 0; margin: 0 0 15px 0; font-size: 14px; opacity: 0.85; line-height: 1.8; font-weight: 500; }
+        .spec-list li { margin-bottom: 4px; }
+        .bold-statement { font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- VISUALS CONTAINER (DESKTOP & MOBILE) --- */
+        .visuals-container {
+          position: absolute;
+          inset: 0;
+          pointer-events: none; /* Crucial: Allows clicking on left/right text on desktop */
+          z-index: 10;
         }
 
         .bg-models-layer {
-          pointer-events: none; /* Let clicks pass through to gorilla */
+          pointer-events: none; 
+          z-index: 1;
         }
 
         .gorilla-layer {
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
+          height: 85%; /* Ensures the gorilla doesn't hit the very top of the screen */
+          max-width: 700px;
+          display: flex;
+          justify-content: center;
+          align-items: flex-end;
+          pointer-events: auto; /* Re-enable clicks for the Gorilla */
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
+          z-index: 5;
         }
 
         .hero-gorilla-image {
           width: 100%;
           height: 100%;
-          max-width: 800px; /* Control max width on massive screens */
           object-fit: contain;
-          object-position: bottom; /* Anchor to bottom */
+          object-position: bottom; 
           transition: filter 0.3s ease;
         }
 
+        .click-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 1px solid ${darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}; border-radius: 50%; pointer-events: none; }
+
         .tap-indicator {
+          position: absolute; 
+          top: 50%; 
+          left: 50%; 
+          transform: translate(-50%, -50%); 
+          display: flex; 
+          flex-direction: column; 
+          align-items: center; 
           pointer-events: none;
           opacity: 0.6;
           transition: opacity 0.3s ease;
         }
-        .gorilla-layer:hover .tap-indicator {
-          opacity: 1;
-        }
+        .gorilla-layer:hover .tap-indicator { opacity: 1; }
         .arrow-wrapper { animation: arrowSlide 2s infinite ease-in-out; }
         @keyframes arrowSlide { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
 
-        /* --- BOTTOM CONTENT & BUTTON --- */
-        .bottom-content-container {
-          width: 100%;
-          padding: 0 5%;
-          margin-top: 2vh;
+        /* --- BUTTONS --- */
+        .premium-orange-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          background-color: #FF4500; 
+          color: #ffffff !important;
+          padding: 20px 42px; 
+          border-radius: 4px; 
+          font-weight: 900;
+          font-size: 14px; 
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          text-decoration: none;
+          box-shadow: 0 10px 25px rgba(255, 69, 0, 0.35); 
+          border: 1px solid #FF4500;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          cursor: pointer;
+        }
+
+        .premium-orange-btn:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 15px 35px rgba(255, 69, 0, 0.5);
+          background-color: #E63E00; 
+          border-color: #E63E00;
+        }
+
+        .secondary-btn {
+          background-color: ${darkMode ? "#ffffff" : "#000000"};
+          color: ${darkMode ? "#000000" : "#ffffff"} !important;
+          border-color: ${darkMode ? "#ffffff" : "#000000"};
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .secondary-btn:hover {
+          background-color: transparent;
+          color: ${darkMode ? "#ffffff" : "#000000"} !important;
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         }
 
         .solid-black-btn {
@@ -302,46 +444,87 @@ export default function Hero() {
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           box-shadow: 0 10px 25px rgba(0,0,0,0.15);
           width: 100%;
-          max-width: 380px; /* Constrain on desktop, fill on mobile */
+          max-width: 380px; 
         }
 
-        .solid-black-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        .solid-black-btn:active { transform: translateY(1px); }
+
+        .mt-5 { margin-top: 1.5rem; }
+
+        /* --- MOBILE TYPOGRAPHY --- */
+        .top-title-container {
+          text-align: center;
+        }
+        .main-title-text {
+          font-size: clamp(48px, 12vw, 80px); 
+          font-weight: 900;
+          line-height: 1;
+          letter-spacing: -0.04em;
+          text-transform: uppercase;
+        }
+        .subtitle-text {
+          font-size: clamp(16px, 5vw, 22px);
+          font-weight: 900;
+          letter-spacing: 1px;
+          text-transform: uppercase;
         }
 
-        .solid-black-btn:active {
-          transform: translateY(1px);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+        /* --- RESPONSIVE TOGGLES & MOBILE LAYOUT --- */
+        .hide-desktop { display: none !important; }
+        .hide-mobile { display: flex; } /* Standard for desktop sides */
 
-        /* --- RESPONSIVE DESKTOP/MOBILE DISPLAY --- */
-        .hide-desktop { display: none; }
-        .desktop-bg { display: block; }
-        .mobile-bg { display: none; }
-
-        @media (max-width: 768px) {
-          .hide-desktop { display: inline; }
-          .hide-mobile { display: none; }
+        @media (max-width: 1024px) {
+          .hide-desktop { display: flex !important; }
+          .hide-mobile { display: none !important; }
           
-          .desktop-bg { display: none; }
-          .mobile-bg { display: block; }
+          .top-title-container.hide-desktop { display: block !important; } 
           
           .hero-section {
-            padding-top: 90px;
+            height: auto;
+            min-height: 100dvh;
+            flex-direction: column;
+            justify-content: center; 
+            gap: 2rem; 
+            padding-top: 100px; 
+            padding-bottom: 50px;
           }
 
           .visuals-container {
-            min-height: 45vh; /* Adjust for mobile screens */
+            position: relative; /* Reverts from absolute to fit in the flex column */
+            width: 100%;
+            height: 45vh; 
+            min-height: 350px; 
+          }
+          
+          .gorilla-layer {
+            height: 100%; /* Fill the new relative container */
           }
 
           .hero-gorilla-image {
-            transform: scale(1.05); /* Slight zoom on mobile */
+            transform: scale(1.05); 
           }
           
-          .solid-black-btn {
-            padding: 16px 20px;
-            font-size: 13px;
+          .bottom-content-container { 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+          }
+          
+          .solid-black-btn { 
+            width: 100%; 
+            max-width: 320px; 
+            padding: 20px 20px; 
+          }
+          
+          .bg-watermark { top: 40% !important; font-size: 28vw !important; }
+        }
+
+        @media (max-width: 600px) {
+          .main-title-text { padding: 0 10px; }
+          .subtitle-text { margin-bottom: 10px; padding: 0 10px; }
+          .visuals-container { 
+            height: 38vh !important; 
+            min-height: 320px; 
           }
         }
       `}</style>
