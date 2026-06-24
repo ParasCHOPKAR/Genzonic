@@ -1,378 +1,279 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Loader2, UploadCloud, Save } from "lucide-react";
+import { useState, useEffect } from "react"
+import { useRouter, useParams } from "next/navigation"
+import Image from "next/image"
+import { ArrowLeft, UploadCloud, X, Save, Loader2 } from "lucide-react"
 
-export default function EditProductPage() {
-  const { id } = useParams();
-  const router = useRouter();
-  
-  const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  
-  const [form, setForm] = useState({
+export default function EditProduct() {
+  const router = useRouter()
+  const params = useParams()
+  const productId = params.id
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState("")
+
+  // Form State
+  const [formData, setFormData] = useState({
     name: "",
     price: "",
-    category: "men", 
+    category: "MEN",
     color: "",
-    size: "S",
     stock: "",
     description: "",
-    image: "",
-    featured: false // 🔥 Added featured to state
-  });
+    isPremium: false,
+    sizes: [] as string[],
+  })
+
+  // Image State
+  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [newImages, setNewImages] = useState<File[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+
+  const availableSizes = ["S", "M", "L", "XL", "XXL"]
 
   // Fetch Existing Product Data
   useEffect(() => {
-    if (!id) return;
-    
-    fetch(`/api/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.product) {
-          setForm({
-            name: data.product.name || "",
-            price: data.product.price || "",
-            category: data.product.category || "men",
-            color: data.product.color || "",
-            size: data.product.size || "S",
-            stock: data.product.stock || "",
-            description: data.product.description || "",
-            image: data.product.image || "",
-            featured: data.product.featured || false, // 🔥 Fetch existing featured status
-          });
-        }
-      })
-      .catch((err) => console.error("Failed to fetch product", err))
-      .finally(() => setFetching(false));
-  }, [id]);
-
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  // Image Upload Logic
-  const handleImageUpload = async (e: any) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onloadend = async () => {
+    const fetchProduct = async () => {
       try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: reader.result }),
-        });
-        const data = await res.json();
-        
-        if (data.url) {
-          setForm({ ...form, image: data.url });
+        const res = await fetch(`/api/admin/products/${productId}`)
+        const data = await res.json()
+
+        if (data.success) {
+          const p = data.product
+          setFormData({
+            name: p.name,
+            price: p.price.toString(),
+            category: p.category,
+            color: p.color || "",
+            stock: p.stock.toString(),
+            description: p.description || "",
+            isPremium: p.isPremium || false,
+            sizes: p.sizes || [],
+          })
+          setExistingImages(p.images || [])
         } else {
-          alert("Upload failed: No URL returned.");
+          setError("Failed to load product.")
         }
       } catch (err) {
-        console.error(err);
-        alert("Image upload failed.");
+        setError("An error occurred while fetching.")
       } finally {
-        setUploadingImage(false);
+        setIsLoading(false)
       }
-    };
-  };
+    }
 
-  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+    if (productId) fetchProduct()
+  }, [productId])
+
+  const handleSizeToggle = (size: string) => {
+    setFormData(prev => ({
+      ...prev,
+      sizes: prev.sizes.includes(size)
+        ? prev.sizes.filter(s => s !== size)
+        : [...prev.sizes, size]
+    }))
+  }
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files)
+      setNewImages(prev => [...prev, ...filesArray])
+      
+      // Create local preview URLs for the new files
+      const newUrls = filesArray.map(file => URL.createObjectURL(file))
+      setPreviewUrls(prev => [...prev, ...newUrls])
+    }
+  }
+
+  const removeNewImage = (index: number) => {
+    setNewImages(prev => prev.filter((_, i) => i !== index))
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const removeExistingImage = (index: number) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSaving(true)
+    setError("")
 
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      // Using FormData to handle both text and files
+      const submitData = new FormData()
+      submitData.append("name", formData.name)
+      submitData.append("price", formData.price)
+      submitData.append("category", formData.category)
+      submitData.append("color", formData.color)
+      submitData.append("stock", formData.stock)
+      submitData.append("description", formData.description)
+      submitData.append("isPremium", formData.isPremium.toString())
+      submitData.append("sizes", JSON.stringify(formData.sizes))
+      submitData.append("existingImages", JSON.stringify(existingImages))
+
+      newImages.forEach(file => {
+        submitData.append("newImages", file)
+      })
+
+      const res = await fetch(`/api/admin/products/${productId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          price: Number(form.price),
-          stock: Number(form.stock)
-        }),
-      });
+        body: submitData,
+      })
 
-      if (response.ok) {
-        alert("✅ Artifact updated successfully!");
-        router.push("/admin/products"); 
+      const result = await res.json()
+
+      if (result.success) {
+        router.push("/admin/products")
+        router.refresh()
       } else {
-        const errorData = await response.json();
-        alert(`Failed to update: ${errorData.message}`);
+        setError(result.message || "Failed to update product")
       }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong during update.");
+    } catch (err) {
+      setError("Server error during update")
     } finally {
-      setLoading(false);
+      setIsSaving(false)
     }
-  };
+  }
 
-  if (fetching) {
-    return (
-      <div className="loading-wrapper">
-        <Loader2 className="spin" size={32} />
-        <p>DECRYPTING ARTIFACT DATA...</p>
-      </div>
-    );
+  if (isLoading) {
+    return <div className="flex h-[60vh] items-center justify-center"><Loader2 className="animate-spin text-[#FF3E00]" size={40} /></div>
   }
 
   return (
-    <div className="admin-wrapper">
-      <div className="admin-card">
-        
-        <div className="admin-header">
-          <h2 className="title">UPDATE ARTIFACT</h2>
-          <p className="subtitle">Modify existing inventory data. ID: {id}</p>
+    <div className="p-6 max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <button onClick={() => router.back()} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <ArrowLeft size={20} className="text-gray-900 dark:text-white" />
+          </button>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white uppercase">Edit Artifact</h1>
+            <p className="text-gray-500 text-sm mt-1">Update inventory, descriptions, and media.</p>
+          </div>
         </div>
+      </div>
 
-        <form onSubmit={handleUpdate} className="admin-form">
+      {error && <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-md border border-red-200 font-semibold">{error}</div>}
 
-          <div className="form-grid">
-            <div className="input-group">
-              <label>Product Name</label>
-              <input name="name" type="text" value={form.name} onChange={handleChange} required />
-            </div>
-
-            <div className="input-group">
-              <label>Price (₹)</label>
-              <input name="price" type="number" value={form.price} onChange={handleChange} required />
-            </div>
-
-            <div className="input-group">
-              <label>Category (Target Audience)</label>
-              <select name="category" value={form.category} onChange={handleChange} required>
-                <option value="men">MENS COLLECTION</option>
-                <option value="women">WOMENS COLLECTION</option>
-                <option value="kids">KIDS COLLECTION</option>
-              </select>
-            </div>
-            
-            <div className="input-group">
-              <label>Color</label>
-              <input name="color" type="text" value={form.color} onChange={handleChange} required />
-            </div>
-            
-            <div className="input-group">
-              <label>Size</label>
-              <select name="size" value={form.size} onChange={handleChange} required>
-                <option value="S">Small (S)</option>
-                <option value="M">Medium (M)</option>
-                <option value="L">Large (L)</option>
-                <option value="XL">Extra Large (XL)</option>
-                <option value="XXL">Double XL (XXL)</option>
-              </select>
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl p-8 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* Left Column: Details */}
+          <div className="space-y-6">
+            <div>
+              <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Product Name</label>
+              <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white font-medium" />
             </div>
 
-            <div className="input-group">
-              <label>Stock Quantity</label>
-              <input name="stock" type="number" value={form.stock} onChange={handleChange} required />
-            </div>
-          </div>
-
-          <div className="input-group full-width">
-            <label>Product Image</label>
-            <div className="upload-container">
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={handleImageUpload} 
-                className="file-input" 
-                id="file-upload"
-              />
-              <label htmlFor="file-upload" className={`upload-box ${form.image ? 'success' : ''}`}>
-                {uploadingImage ? (
-                  <><Loader2 className="spin" size={20} /> REPLACING IMAGE...</>
-                ) : (
-                  <><UploadCloud size={20} /> CLICK TO REPLACE IMAGE</>
-                )}
-              </label>
-            </div>
-            {form.image && (
-              <div className="image-preview">
-                <img src={form.image} alt="Preview" />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Price (₹)</label>
+                <input type="number" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white font-mono" />
               </div>
-            )}
-          </div>
+              <div>
+                <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Stock Quantity</label>
+                <input type="number" required value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white font-mono" />
+              </div>
+            </div>
 
-          <div className="input-group full-width">
-            <label>Description / Lore</label>
-            <textarea name="description" rows={4} value={form.description} onChange={handleChange} required />
-          </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Category</label>
+                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white font-semibold">
+                  <option value="MEN">MEN</option>
+                  <option value="WOMEN">WOMEN</option>
+                  <option value="KIDS">KIDS</option>
+                  <option value="ACCESSORIES">ACCESSORIES</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Color</label>
+                <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white font-medium" />
+              </div>
+            </div>
 
-          {/* 🔥 PREMIUM VAULT CHECKBOX 🔥 */}
-          <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "5px", marginBottom: "15px" }}>
-            <input 
-              type="checkbox" 
-              id="featured" 
-              checked={form.featured} 
-              onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-              style={{ width: "20px", height: "20px", accentColor: "#FF3E00", cursor: "pointer" }}
-            />
-            <label htmlFor="featured" style={{ fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", color: "#64748b", cursor: "pointer" }}>
-              Add to Premium Vault (Featured)
+            <div>
+              <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Available Sizes</label>
+              <div className="flex gap-3">
+                {availableSizes.map(size => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => handleSizeToggle(size)}
+                    className={`w-12 h-12 rounded-md font-bold text-sm border-2 transition-all ${formData.sizes.includes(size) ? 'bg-[#FF3E00] border-[#FF3E00] text-white' : 'bg-transparent border-gray-200 dark:border-gray-800 text-gray-500 hover:border-gray-400'}`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Description</label>
+              <textarea rows={4} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white font-medium resize-none" />
+            </div>
+
+            <label className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-800 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors">
+              <input type="checkbox" checked={formData.isPremium} onChange={e => setFormData({...formData, isPremium: e.target.checked})} className="w-5 h-5 accent-[#FF3E00]" />
+              <span className="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-sm">Add to Premium Vault (Featured)</span>
             </label>
           </div>
 
-          <button type="submit" disabled={loading || uploadingImage} className="submit-button">
-            {loading ? <Loader2 className="spin" size={18} /> : <><Save size={18} /> SAVE CHANGES</>}
+          {/* Right Column: Images */}
+          <div>
+            <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Product Images</label>
+            
+            {/* Image Upload Box */}
+            <div className="relative border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-gray-50 dark:bg-[#1a1a1a] hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors mb-6 group">
+              <input type="file" multiple accept="image/*" onChange={handleImageSelect} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+              <UploadCloud size={40} className="text-gray-400 group-hover:text-[#FF3E00] transition-colors mb-3" />
+              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">Click or drag images to upload</p>
+              <p className="text-xs text-gray-500 mt-1">PNG, JPG, WEBP up to 5MB</p>
+            </div>
+
+            {/* Image Previews */}
+            <div className="grid grid-cols-3 gap-4">
+              {/* Existing Images */}
+              {existingImages.map((url, index) => (
+                <div key={`existing-${index}`} className="relative aspect-square rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden bg-white">
+                  <Image src={url} alt="Existing" fill className="object-cover" />
+                  <button type="button" onClick={() => removeExistingImage(index)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
+                    <X size={14} />
+                  </button>
+                  <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] font-bold text-center py-1">CURRENT</span>
+                </div>
+              ))}
+              
+              {/* New Images */}
+              {previewUrls.map((url, index) => (
+                <div key={`new-${index}`} className="relative aspect-square rounded-lg border-2 border-[#FF3E00] overflow-hidden bg-white">
+                  <Image src={url} alt="New Preview" fill className="object-cover" />
+                  <button type="button" onClick={() => removeNewImage(index)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
+                    <X size={14} />
+                  </button>
+                  <span className="absolute bottom-0 left-0 right-0 bg-[#FF3E00] text-white text-[10px] font-bold text-center py-1">NEW</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Submit Button */}
+        <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800 flex justify-end">
+          <button 
+            type="submit" 
+            disabled={isSaving}
+            className="flex items-center gap-2 px-8 py-3 bg-[#FF3E00] hover:bg-[#E63E00] text-white rounded-md font-black uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-orange-500/20"
+          >
+            {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+            {isSaving ? "Updating Artifact..." : "Update Artifact"}
           </button>
-
-        </form>
-      </div>
-
-      <style jsx>{`
-        .loading-wrapper {
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          color: #94a3b8;
-          font-size: 12px;
-          letter-spacing: 2px;
-          gap: 15px;
-          font-family: 'Inter', sans-serif;
-        }
-
-        .admin-wrapper {
-          padding: 40px;
-          color: #e2e8f0;
-          font-family: 'Inter', sans-serif;
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .admin-card {
-          background: #0f172a;
-          border: 1px solid #1e293b;
-          border-radius: 12px;
-          padding: 40px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .admin-header {
-          margin-bottom: 40px;
-          border-bottom: 1px solid #1e293b;
-          padding-bottom: 20px;
-        }
-
-        .title {
-          font-size: 24px;
-          font-weight: 900;
-          letter-spacing: 1px;
-          color: #f8fafc;
-          margin: 0 0 8px 0;
-        }
-
-        .subtitle {
-          font-size: 13px;
-          color: #94a3b8;
-          margin: 0;
-          font-family: monospace;
-        }
-
-        .admin-form { display: flex; flex-direction: column; gap: 25px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .full-width { grid-column: 1 / -1; }
-
-        label {
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 1px;
-          color: #94a3b8;
-          text-transform: uppercase;
-        }
-
-        input[type="text"], input[type="number"], select, textarea {
-          padding: 14px 16px;
-          background: #020617;
-          border: 1px solid #1e293b;
-          color: #f8fafc;
-          font-size: 14px;
-          border-radius: 6px;
-          transition: all 0.3s ease;
-          outline: none;
-        }
-
-        input:focus, select:focus, textarea:focus {
-          border-color: #ff3e00;
-          box-shadow: 0 0 0 2px rgba(255, 62, 0, 0.2);
-        }
-
-        select option { background: #0f172a; color: white; }
-
-        .upload-container { position: relative; width: 100%; }
-        .file-input { display: none; }
-
-        .upload-box {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          padding: 20px;
-          background: #020617;
-          border: 1px dashed #334155;
-          border-radius: 6px;
-          color: #94a3b8;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 1px;
-          cursor: pointer;
-          transition: 0.3s;
-        }
-
-        .upload-box:hover { border-color: #ff3e00; color: #ff3e00; }
-        .upload-box.success { border-color: #50e3c2; color: #50e3c2; border-style: solid; }
-
-        .image-preview {
-          margin-top: 15px;
-          width: 100px;
-          height: 120px;
-          border-radius: 6px;
-          overflow: hidden;
-          border: 1px solid #1e293b;
-        }
-
-        .image-preview img { width: 100%; height: 100%; object-fit: cover; }
-
-        .submit-button {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          padding: 18px;
-          background: #ff3e00;
-          color: white;
-          border: none;
-          font-size: 14px;
-          font-weight: 800;
-          letter-spacing: 2px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: 0.3s;
-          margin-top: 10px;
-        }
-
-        .submit-button:hover:not(:disabled) { background: #e63800; transform: translateY(-2px); }
-        .submit-button:disabled { opacity: 0.5; cursor: not-allowed; background: #334155; }
-
-        .spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        @media (max-width: 768px) {
-          .form-grid { grid-template-columns: 1fr; }
-          .admin-card { padding: 20px; }
-        }
-      `}</style>
+        </div>
+      </form>
     </div>
-  );
+  )
 }
