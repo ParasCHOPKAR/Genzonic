@@ -2,23 +2,14 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product"; 
 
-// Helper function to handle image uploads
-async function uploadImageToStorage(file: File) {
-  // NOTE: Implement your actual image upload logic here
-  return `/uploads/${file.name}`; 
-}
-
 // GET: Fetch a single product for the edit form
 export async function GET(
   req: Request, 
-  { params }: { params: Promise<{ id: string }> } // FIX 1: params is now a Promise
+  { params }: { params: Promise<{ id: string }> } 
 ) {
   try {
     await connectDB();
-    
-    // FIX 2: Await the params before using them
     const resolvedParams = await params;
-    
     const product = await Product.findById(resolvedParams.id);
 
     if (!product) {
@@ -32,52 +23,39 @@ export async function GET(
   }
 }
 
-// PUT: Update the product and handle images
+// PUT: Update product via standard JSON (Fixes Image Upload bugs)
 export async function PUT(
   req: Request, 
-  { params }: { params: Promise<{ id: string }> } // FIX 3: params is now a Promise
+  { params }: { params: Promise<{ id: string }> } 
 ) {
   try {
     await connectDB();
-    
-    // FIX 4: Await the params before using them
     const resolvedParams = await params;
     
-    // Parse the incoming FormData
-    const formData = await req.formData();
+    // Parse the clean JSON body sent from the new frontend
+    const body = await req.json();
     
-    // Extract text fields
-    const name = formData.get("name") as string;
-    const price = Number(formData.get("price"));
-    const category = formData.get("category") as string;
-    const color = formData.get("color") as string;
-    const stock = Number(formData.get("stock"));
-    const description = formData.get("description") as string;
-    const isPremium = formData.get("isPremium") === "true";
-    const sizes = JSON.parse(formData.get("sizes") as string);
-    const existingImages = JSON.parse(formData.get("existingImages") as string);
+    const { 
+      name, price, category, color, stock, 
+      description, isPremium, sizes, 
+      existingImages, newImages 
+    } = body;
 
-    // Handle new image files
-    const newImageFiles = formData.getAll("newImages") as File[];
-    const uploadedImageUrls: string[] = [];
-
-    for (const file of newImageFiles) {
-      const url = await uploadImageToStorage(file);
-      uploadedImageUrls.push(url);
-    }
-
-    // Combine old images kept by user + newly uploaded images
-    const finalImagesArray = [...existingImages, ...uploadedImageUrls];
+    // Optional: If you use Cloudinary, you would upload the base64 strings here.
+    // E.g., const uploadedUrls = await Promise.all(newImages.map(img => cloudinary.uploader.upload(img)))
+    // For now, we will save the raw base64 strings directly to the DB so they render instantly.
+    
+    const finalImagesArray = [...(existingImages || []), ...(newImages || [])];
 
     // Update MongoDB
     const updatedProduct = await Product.findByIdAndUpdate(
-      resolvedParams.id, // Use resolvedParams here
+      resolvedParams.id, 
       {
         name,
-        price,
+        price: Number(price),
         category,
         color,
-        stock,
+        stock: Number(stock),
         description,
         isPremium,
         sizes,
