@@ -137,7 +137,7 @@ export default function Hero() {
           <Link href="/premium-collection" className="solid-black-btn">
             SHOP PREMIUM
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -163,12 +163,12 @@ export default function Hero() {
             src={mobileBgImage} 
             alt="Mobile Models Background" 
             fill 
-            className="object-contain object-bottom"
+            className="mobile-bg-img"
             priority
           />
         </div>
 
-        {/* Layer 2: Interactive 3D Gorilla (Visible on Both) */}
+        {/* Layer 2: Interactive 3D Gorilla (Visible on Both Desktop & Mobile) */}
         <div 
           className="gorilla-layer"
           ref={charRef}
@@ -186,14 +186,15 @@ export default function Hero() {
             className="hero-gorilla-image"
           />
 
-          <div className="tap-indicator">
+          {/* This text overlay is now completely hidden on mobile! */}
+          <div className="tap-indicator hide-mobile">
             <div className="arrow-wrapper">
                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke={darkMode ? "#ffffff" : "#000000"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                </svg>
             </div>
             <span className="tap-text text-[10px] font-black tracking-[3px] mt-1 text-center" style={{color: darkMode ? "#ffffff" : "#000000"}}>
-              <span className="hide-mobile">HOVER</span><span className="hide-desktop">TAP</span><br/>TO CYCLE
+              HOVER TO CYCLE
             </span>
           </div>
         </div>
@@ -219,7 +220,7 @@ export default function Hero() {
           <Link href="/shop/men" className="solid-black-btn secondary-btn">
             SHOP MEN'S
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -460,8 +461,15 @@ export default function Hero() {
           .visuals-container {
             position: relative; /* Reverts from absolute to fit in the flex column */
             width: 100%;
-            height: 45vh; 
-            min-height: 350px; 
+            height: 48vh; 
+            min-height: 380px; 
+          }
+
+          /* Increase the Mobile Background Image Size */
+          .mobile-bg-img {
+            object-fit: cover !important;
+            object-position: center !important;
+            transform: scale(1.15); /* Significantly increases the background size */
           }
           
           .gorilla-layer {
@@ -491,7 +499,7 @@ export default function Hero() {
           .main-title-text { padding: 0 10px; }
           .subtitle-text { margin-bottom: 10px; padding: 0 10px; }
           .visuals-container { 
-            height: 38vh !important; 
+            height: 40vh !important; 
             min-height: 320px; 
           }
         }
