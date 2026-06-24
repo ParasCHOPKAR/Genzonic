@@ -343,7 +343,7 @@ export default function Navbar() {
               }}
               style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}
             >
-              <span>PREMIUM VAULT</span> <Crown size={20} strokeWidth={2} color="#FF3E00" style={{ display: "block", flexShrink: 0 }} />
+              <span>PREMIUM COLLECTION</span> <Crown size={20} strokeWidth={2} color="#FF3E00" style={{ display: "block", flexShrink: 0 }} />
             </button>
           </div>
 
