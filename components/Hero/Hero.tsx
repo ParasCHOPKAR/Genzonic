@@ -76,14 +76,12 @@ export default function Hero() {
     const ctx = gsap.context(() => {            
       const tl = gsap.timeline()
 
-      // Unified Entrance Animations for Desktop & Mobile
       tl.from(".cyber-grid", { opacity: 0, duration: 2, ease: "power2.inOut" })
         .from(".main-title-text, .editorial-title", { y: -30, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1.5")
         .from(bgRef.current, { opacity: 0, scale: 1.05, duration: 2, ease: "power2.out" }, "-=1.5")
         .from(charRef.current, { y: 50, scale: 1.1, opacity: 0, filter: "blur(20px)", duration: 1.5, ease: "expo.out" }, "-=1.5")
         .from(".reveal-text, .bottom-content", { y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1")
 
-      // Continuous Floating Animation for the Gorilla
       gsap.to(charRef.current, {
         y: "-=15",
         duration: 4,
@@ -110,12 +108,12 @@ export default function Hero() {
       className="hero-section" 
       ref={heroRef}
       style={{
-        background: darkMode ? "#0a0a0a" : "#fdfdfd", 
+        background: darkMode ? "#0a0a0a" : "#f5f5f5", 
         color: darkMode ? "#ffffff" : "#000000",
       }}
     >
       
-      {/* Background Ambience (Desktop & Mobile) */}
+      {/* Background Ambience */}
       <div className="noise-overlay" />
       <div ref={glowRef} className="ambient-glow" />
       <div className="cyber-grid" />
@@ -137,7 +135,7 @@ export default function Hero() {
           <Link href="/premium-collection" className="solid-black-btn">
             SHOP PREMIUM
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -157,7 +155,7 @@ export default function Hero() {
           ========================================= */}
       <div className="visuals-container z-10">
         
-        {/* Layer 1: Mobile Background Models (Hidden on Desktop) */}
+        {/* Layer 1: Mobile Background Models */}
         <div ref={bgRef} className="bg-models-layer absolute inset-0 w-full h-full hide-desktop">
           <Image 
             src={mobileBgImage} 
@@ -168,7 +166,7 @@ export default function Hero() {
           />
         </div>
 
-        {/* Layer 2: Interactive 3D Gorilla (Visible on Both Desktop & Mobile) */}
+        {/* Layer 2: Interactive 3D Gorilla */}
         <div 
           className="gorilla-layer"
           ref={charRef}
@@ -186,15 +184,16 @@ export default function Hero() {
             className="hero-gorilla-image"
           />
 
-          {/* This text overlay is strictly hidden on mobile! */}
-          <div className="tap-indicator hide-mobile">
+          {/* Text overlay matched to mockup */}
+          <div className="tap-indicator">
             <div className="arrow-wrapper">
-               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke={darkMode ? "#ffffff" : "#000000"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke={darkMode ? "#ffffff" : "#000000"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                </svg>
             </div>
-            <span className="tap-text text-[10px] font-black tracking-[3px] mt-1 text-center" style={{color: darkMode ? "#ffffff" : "#000000"}}>
-              HOVER TO CYCLE
+            <span className="tap-text text-[10px] font-black tracking-[4px] mt-2 text-center" style={{color: darkMode ? "#ffffff" : "#000000"}}>
+              <span className="hide-mobile">HOVER TO CYCLE</span>
+              <span className="hide-desktop">TAP<br/>TO CYCLE</span>
             </span>
           </div>
         </div>
@@ -220,7 +219,7 @@ export default function Hero() {
           <Link href="/shop/men" className="solid-black-btn secondary-btn">
             SHOP MEN'S
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -229,13 +228,13 @@ export default function Hero() {
       {/* =========================================
           MOBILE ONLY: BOTTOM CONTENT & CTA
           ========================================= */}
-      <div className="bottom-content-container z-20 relative flex flex-col items-center gap-4 pb-8 hide-desktop">
-        <h3 className="bottom-content subtitle-text">STREETWEAR REDEFINED</h3>
+      <div className="bottom-content-container z-20 relative flex flex-col items-center gap-4 pb-6 hide-desktop">
+        <h3 className="bottom-content subtitle-text" style={{ color: darkMode ? "#fff" : "#000" }}>STREETWEAR REDEFINED</h3>
         
-        <Link href="/premium-collection" className="bottom-content solid-black-btn">
+        <Link href="/premium-collection" className="bottom-content solid-black-btn w-full">
           SHOP PREMIUM
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </Link>
       </div>
@@ -328,7 +327,7 @@ export default function Hero() {
         .visuals-container {
           position: absolute;
           inset: 0;
-          pointer-events: none; /* Allows clicking on left/right text on desktop */
+          pointer-events: none;
           z-index: 10;
         }
 
@@ -337,19 +336,18 @@ export default function Hero() {
           z-index: 1;
         }
 
-        /* --- DESKTOP GORILLA REDUCED SIZE --- */
         .gorilla-layer {
           position: absolute;
           bottom: 0;
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 68%; /* 🔥 Reduced drastically to ensure full visibility below navbar */
-          max-width: 420px; /* 🔥 Tightly scaled to ensure it stays in frame */
+          height: 68%; 
+          max-width: 420px; 
           display: flex;
           justify-content: center;
           align-items: flex-end;
-          pointer-events: auto; /* Re-enable clicks for the Gorilla */
+          pointer-events: auto; 
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
           z-index: 5;
@@ -367,14 +365,14 @@ export default function Hero() {
 
         .tap-indicator {
           position: absolute; 
-          top: 50%; 
+          top: 52%; 
           left: 50%; 
           transform: translate(-50%, -50%); 
           display: flex; 
           flex-direction: column; 
           align-items: center; 
           pointer-events: none;
-          opacity: 0.6;
+          opacity: 0.85;
           transition: opacity 0.3s ease;
         }
         .gorilla-layer:hover .tap-indicator { opacity: 1; }
@@ -389,21 +387,14 @@ export default function Hero() {
           background: ${darkMode ? "#ffffff" : "#000000"};
           color: ${darkMode ? "#000000" : "#ffffff"};
           padding: 18px 48px;
-          border-radius: 4px;
           font-weight: 900;
           font-size: 14px;
           letter-spacing: 2px;
           text-transform: uppercase;
           text-decoration: none;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
-          box-shadow: 0 10px 25px rgba(0,0,0,0.15);
           width: 100%;
           max-width: 380px; 
-        }
-
-        .solid-black-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 15px 35px rgba(0,0,0,0.25);
         }
 
         .solid-black-btn:active { transform: translateY(1px); }
@@ -413,6 +404,7 @@ export default function Hero() {
           color: ${darkMode ? "#ffffff" : "#000000"};
           border: 2px solid ${darkMode ? "#ffffff" : "#000000"};
           box-shadow: none;
+          border-radius: 4px;
         }
         .secondary-btn:hover {
           background-color: ${darkMode ? "#ffffff" : "#000000"};
@@ -424,16 +416,17 @@ export default function Hero() {
         /* --- MOBILE TYPOGRAPHY --- */
         .top-title-container {
           text-align: center;
+          margin-bottom: -15px; /* Pulls title closer to Gorilla */
         }
         .main-title-text {
-          font-size: clamp(48px, 12vw, 80px); 
+          font-size: clamp(52px, 15vw, 90px); /* Larger title matching mockup */
           font-weight: 900;
-          line-height: 1;
-          letter-spacing: -0.04em;
+          line-height: 0.95;
+          letter-spacing: -0.05em;
           text-transform: uppercase;
         }
         .subtitle-text {
-          font-size: clamp(16px, 5vw, 22px);
+          font-size: clamp(16px, 4vw, 20px);
           font-weight: 900;
           letter-spacing: 1px;
           text-transform: uppercase;
@@ -441,7 +434,7 @@ export default function Hero() {
 
         /* --- RESPONSIVE TOGGLES & MOBILE LAYOUT --- */
         .hide-desktop { display: none !important; }
-        .hide-mobile { display: flex; } /* Standard for desktop sides */
+        .hide-mobile { display: flex; } 
 
         @media (max-width: 1024px) {
           .hide-desktop { display: flex !important; }
@@ -453,33 +446,33 @@ export default function Hero() {
             height: auto;
             min-height: 100dvh;
             flex-direction: column;
-            justify-content: center; 
-            gap: 2rem; 
+            justify-content: space-between; 
             padding-top: 100px; 
-            padding-bottom: 50px;
+            padding-bottom: 30px;
           }
 
           .visuals-container {
-            position: relative; /* Reverts from absolute to fit in the flex column */
+            position: relative; 
             width: 100%;
-            height: 48vh; 
-            min-height: 380px; 
+            flex-grow: 1;
+            min-height: 55vh; 
+            margin: 20px 0;
           }
 
-          /* --- INCREASED MOBILE BACKGROUND SCALE --- */
+          /* --- EXACT MOBILE BACKGROUND FIT --- */
           .mobile-bg-img {
             object-fit: cover !important;
-            object-position: center !important;
-            transform: scale(1.35); /* 🔥 Increased size for mobile background models */
+            object-position: center top !important; 
+            transform: scale(1.4) translateY(2%); /* Scaled & nudged to sit correctly behind shoulders */
           }
           
           .gorilla-layer {
-            height: 100%; /* Fill the new relative container */
-            max-width: 450px; /* Keep mobile scale appropriate */
+            height: 100%; 
+            max-width: 500px; /* Slightly wider bound for mobile gorilla */
           }
 
           .hero-gorilla-image {
-            transform: scale(1.1); /* Kept slight zoom on mobile to stand out */
+            transform: scale(1.15); /* 🔥 Zoomed exactly like mockup */
             transform-origin: bottom center;
           }
           
@@ -492,18 +485,17 @@ export default function Hero() {
           .solid-black-btn { 
             width: 100%; 
             max-width: 320px; 
-            padding: 20px 20px; 
+            padding: 16px 20px; 
+            font-size: 13px;
+            border-radius: 0; /* Sharp edges like mockup */
           }
-          
-          .bg-watermark { top: 40% !important; font-size: 28vw !important; }
         }
 
         @media (max-width: 600px) {
           .main-title-text { padding: 0 10px; }
-          .subtitle-text { margin-bottom: 10px; padding: 0 10px; }
+          .subtitle-text { margin-bottom: 5px; padding: 0 10px; }
           .visuals-container { 
-            height: 40vh !important; 
-            min-height: 320px; 
+            min-height: 48vh; 
           }
         }
       `}</style>
