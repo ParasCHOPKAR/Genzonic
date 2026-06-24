@@ -228,7 +228,7 @@ export default function Footer() {
       {/* BOTTOM BAR: COPYRIGHT & DEVELOPER */}
       <div className="footer-bottom">
         <p>© {new Date().getFullYear()} GENZONIC. ALL RIGHTS RESERVED.</p>
-        <p>DEVELOPED BY <span className="highlight" style={{ color: "#ff3e00" }}>DW INNOVATION PVT LTD</span></p>
+        <p>DEVELOPED BY <span className="highlight" style={{ color: "#ff3e00" }}>Paras Chopkar</span></p>
       </div>
 
       {/* BIG BACKGROUND TEXT */}
