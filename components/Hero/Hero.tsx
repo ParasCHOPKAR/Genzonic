@@ -204,7 +204,7 @@ export default function Hero() {
           
           {/* List & Text completely hidden on mobile! */}
           <ul className="spec-list hide-mobile">
-            <li>Heavyweight 240GSM Cotton</li>
+  
             <li>Signature Drop-Shoulder Fit</li>
             <li>High-Density Puff Print</li>
             <li>Pre-shrunk & Bio-washed</li>
