@@ -17,9 +17,8 @@ export default function Hero() {
   const darkMode = theme === "dark"
 
   // --------------------------------------------------------
-  // ⚠️ UPDATE THESE PATHS WITH YOUR ACTUAL BACKGROUND IMAGES
+  // ⚠️ MOBILE ONLY BACKGROUND IMAGE
   // --------------------------------------------------------
-  const desktopBgImage = "/hero/desktop-bg.png" 
   const mobileBgImage = "/hero/my_primium-photo-mobile-view.png"
 
   const images = {
@@ -79,13 +78,12 @@ export default function Hero() {
 
       // Unified Entrance Animations for Desktop & Mobile
       tl.from(".cyber-grid", { opacity: 0, duration: 2, ease: "power2.inOut" })
-        .from(".main-title-text", { y: -30, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1.5")
+        .from(".main-title-text, .editorial-title", { y: -30, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1.5")
         .from(bgRef.current, { opacity: 0, scale: 1.05, duration: 2, ease: "power2.out" }, "-=1.5")
         .from(charRef.current, { y: 50, scale: 1.1, opacity: 0, filter: "blur(20px)", duration: 1.5, ease: "expo.out" }, "-=1.5")
-        .from(".reveal-text", { y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1")
-        .from(".bottom-content", { y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" }, "-=1")
+        .from(".reveal-text, .bottom-content", { y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1")
 
-      // Continuous Floating Animation ONLY for the Gorilla
+      // Continuous Floating Animation for the Gorilla
       gsap.to(charRef.current, {
         y: "-=15",
         duration: 4,
@@ -112,12 +110,12 @@ export default function Hero() {
       className="hero-section" 
       ref={heroRef}
       style={{
-        background: darkMode ? "#0a0a0a" : "#f9f9f9", 
+        background: darkMode ? "#0a0a0a" : "#fdfdfd", 
         color: darkMode ? "#ffffff" : "#000000",
       }}
     >
       
-      {/* Background Ambience */}
+      {/* Background Ambience (Desktop & Mobile) */}
       <div className="noise-overlay" />
       <div ref={glowRef} className="ambient-glow" />
       <div className="cyber-grid" />
@@ -136,10 +134,10 @@ export default function Hero() {
         </p>
 
         <div className="reveal-text mt-5">
-          <Link href="/premium-collection" className="premium-orange-btn">
+          <Link href="/premium-collection" className="solid-black-btn">
             SHOP PREMIUM
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
@@ -155,37 +153,29 @@ export default function Hero() {
       </div>
 
       {/* =========================================
-          CENTER: VISUAL COMPOSITION (BG MODELS + GORILLA)
-          Used seamlessly by both Mobile and Desktop
+          CENTER: VISUAL COMPOSITION
           ========================================= */}
       <div className="visuals-container z-10">
         
-        {/* Layer 1: Static Background Models */}
-        <div ref={bgRef} className="bg-models-layer absolute inset-0 w-full h-full">
-          <Image 
-            src={desktopBgImage} 
-            alt="Desktop Models Background" 
-            fill 
-            className="hide-mobile object-contain object-bottom"
-            priority
-          />
+        {/* Layer 1: Mobile Background Models (Hidden on Desktop) */}
+        <div ref={bgRef} className="bg-models-layer absolute inset-0 w-full h-full hide-desktop">
           <Image 
             src={mobileBgImage} 
             alt="Mobile Models Background" 
             fill 
-            className="hide-desktop object-contain object-bottom"
+            className="object-contain object-bottom"
             priority
           />
         </div>
 
-        {/* Layer 2: Interactive 3D Gorilla */}
+        {/* Layer 2: Interactive 3D Gorilla (Visible on Both) */}
         <div 
           className="gorilla-layer"
           ref={charRef}
           onMouseEnter={handleImageHover} 
           onClick={handleImageHover} 
         >
-          <div ref={pulseRef} className="click-pulse" />
+          <div ref={pulseRef} className="click-pulse hide-mobile" />
           
           <Image 
             src={currentImage} 
@@ -226,7 +216,7 @@ export default function Hero() {
         </div>
 
         <div className="reveal-text mt-5">
-          <Link href="/shop/men" className="premium-orange-btn secondary-btn">
+          <Link href="/shop/men" className="solid-black-btn secondary-btn">
             SHOP MEN'S
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
               <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -283,6 +273,7 @@ export default function Hero() {
           inset: 0;
           z-index: 1;
           pointer-events: none;
+          opacity: ${darkMode ? "0.03" : "0.04"};
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -336,7 +327,7 @@ export default function Hero() {
         .visuals-container {
           position: absolute;
           inset: 0;
-          pointer-events: none; /* Crucial: Allows clicking on left/right text on desktop */
+          pointer-events: none; /* Allows clicking on left/right text on desktop */
           z-index: 10;
         }
 
@@ -351,7 +342,7 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 85%; /* Ensures the gorilla doesn't hit the very top of the screen */
+          height: 85%; /* Ensures the gorilla doesn't hit the top of the screen */
           max-width: 700px;
           display: flex;
           justify-content: center;
@@ -389,45 +380,6 @@ export default function Hero() {
         @keyframes arrowSlide { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
 
         /* --- BUTTONS --- */
-        .premium-orange-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          background-color: #FF4500; 
-          color: #ffffff !important;
-          padding: 20px 42px; 
-          border-radius: 4px; 
-          font-weight: 900;
-          font-size: 14px; 
-          letter-spacing: 3px;
-          text-transform: uppercase;
-          text-decoration: none;
-          box-shadow: 0 10px 25px rgba(255, 69, 0, 0.35); 
-          border: 1px solid #FF4500;
-          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-          cursor: pointer;
-        }
-
-        .premium-orange-btn:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 15px 35px rgba(255, 69, 0, 0.5);
-          background-color: #E63E00; 
-          border-color: #E63E00;
-        }
-
-        .secondary-btn {
-          background-color: ${darkMode ? "#ffffff" : "#000000"};
-          color: ${darkMode ? "#000000" : "#ffffff"} !important;
-          border-color: ${darkMode ? "#ffffff" : "#000000"};
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        .secondary-btn:hover {
-          background-color: transparent;
-          color: ${darkMode ? "#ffffff" : "#000000"} !important;
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-
         .solid-black-btn {
           display: inline-flex;
           align-items: center;
@@ -447,7 +399,23 @@ export default function Hero() {
           max-width: 380px; 
         }
 
+        .solid-black-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+
         .solid-black-btn:active { transform: translateY(1px); }
+
+        .secondary-btn {
+          background-color: transparent;
+          color: ${darkMode ? "#ffffff" : "#000000"};
+          border: 2px solid ${darkMode ? "#ffffff" : "#000000"};
+          box-shadow: none;
+        }
+        .secondary-btn:hover {
+          background-color: ${darkMode ? "#ffffff" : "#000000"};
+          color: ${darkMode ? "#000000" : "#ffffff"} !important;
+        }
 
         .mt-5 { margin-top: 1.5rem; }
 
