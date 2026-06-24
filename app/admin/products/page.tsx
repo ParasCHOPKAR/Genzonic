@@ -1,220 +1,217 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { Edit, Trash2, Plus, Loader2 } from "lucide-react"
 
-export default function AdminProductsList() {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+// Define the interface based on your MongoDB model
+interface Product {
+  _id: string
+  name: string
+  category: string
+  price: number
+  stock: number
+  images: string[]
+}
 
+export default function AdminProducts() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+
+  // Fetch all products on load
   useEffect(() => {
-    // Fetch all products from the API
-    fetch("/api/admin/products")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setProducts(data.products);
-        }
-        setIsLoading(false);
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/admin/products")
+      const data = await res.json()
+      
+      if (data.success) {
+        setProducts(data.products || [])
+      } else {
+        setError("Failed to load artifacts.")
+      }
+    } catch (err) {
+      setError("An error occurred while fetching data.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Handle Product Deletion
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this artifact?")) return
+
+    setIsDeleting(id)
+    try {
+      const res = await fetch(`/api/admin/products/${id}`, {
+        method: "DELETE"
       })
-      .catch((err) => {
-        console.error(err);
-        setIsLoading(false);
-      });
-  }, []);
+      const data = await res.json()
+
+      if (data.success) {
+        // Remove the deleted product from the UI
+        setProducts(prev => prev.filter(product => product._id !== id))
+      } else {
+        alert(data.message || "Failed to delete product.")
+      }
+    } catch (err) {
+      alert("An error occurred while deleting.")
+    } finally {
+      setIsDeleting(null)
+    }
+  }
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <Loader2 className="spin" size={32} />
-        <p>LOADING INVENTORY...</p>
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="animate-spin text-[#FF3E00]" size={40} />
       </div>
-    );
+    )
   }
 
   return (
-    <div className="admin-wrapper">
-      <div className="admin-header">
+    <div className="p-6 md:p-10 w-full max-w-7xl mx-auto bg-white min-h-screen">
+      
+      {/* HEADER SECTION - Fixed Invisible Text Issue */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
         <div>
-          <h1 className="title">INVENTORY ARCHIVE</h1>
-          <p className="subtitle">Manage all active GenZonic artifacts.</p>
+          {/* Explicitly forcing text-black so it never vanishes on a white background */}
+          <h1 className="text-3xl md:text-4xl font-black text-black uppercase tracking-tight inline-block bg-blue-500/10 px-2 py-1">
+            INVENTORY ARCHIVE
+          </h1>
+          <p className="text-gray-500 font-medium mt-2 text-sm">
+            Manage all active GenZonic artifacts.
+          </p>
         </div>
-        <Link href="/admin/products/add" className="add-btn">
-          <Plus size={18} /> ADD NEW ARTIFACT
+
+        {/* Fixed Invisible "Add New Artifact" button */}
+        <Link 
+          href="/admin/products/add" 
+          className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-[#FF3E00] transition-colors uppercase tracking-wider"
+        >
+          <Plus size={18} strokeWidth={3} /> ADD NEW ARTIFACT
         </Link>
       </div>
 
-      <div className="table-container">
-        <table className="products-table">
-          <thead>
-            <tr>
-              <th>IMAGE</th>
-              <th>NAME</th>
-              <th>CATEGORY</th>
-              <th>PRICE</th>
-              <th>STOCK</th>
-              <th>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="empty-state">No artifacts found in the archive.</td>
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md border border-red-200 font-bold">
+          {error}
+        </div>
+      )}
+
+      {/* TABLE SECTION - Matched to your dark blue/black aesthetic */}
+      <div className="bg-[#0f172a] rounded-xl overflow-hidden shadow-xl border border-slate-800">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            
+            {/* Table Headers */}
+            <thead>
+              <tr className="border-b border-slate-800 bg-[#0f172a]">
+                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Image</th>
+                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Name</th>
+                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Category</th>
+                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Price</th>
+                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Stock</th>
+                <th className="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
-            ) : (
-              products.map((product: any) => (
-                <tr key={product._id}>
-                  <td>
-                    <div className="img-box">
-                      <Image 
-                        src={product.image || "/fallback.png"} 
-                        alt={product.name} 
-                        fill 
-                        style={{ objectFit: 'cover' }} 
-                      />
-                    </div>
-                  </td>
-                  <td className="bold">{product.name}</td>
-                  <td className="uppercase">{product.category}</td>
-                  <td>₹{product.price}</td>
-                  <td>{product.stock}</td>
-                  <td>
-                    <div className="action-buttons">
-                      {/* Link to the Edit page we fixed earlier! */}
-                      <Link href={`/admin/products/edit/${product._id}`} className="edit-btn">
-                        <Edit size={16} />
-                      </Link>
-                      <button className="delete-btn">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+            </thead>
+            
+            {/* Table Body */}
+            <tbody className="divide-y divide-slate-800">
+              {products.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium">
+                    No artifacts found in the archive.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                products.map((product) => (
+                  <tr key={product._id} className="hover:bg-slate-800/50 transition-colors">
+                    
+                    {/* Product Image */}
+                    <td className="px-6 py-4">
+                      <div className="h-14 w-14 rounded-md bg-white overflow-hidden relative border border-slate-700">
+                        {product.images && product.images.length > 0 ? (
+                          <Image 
+                            src={product.images[0]} 
+                            alt={product.name} 
+                            fill 
+                            className="object-contain p-1"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300 text-[10px]">No Img</div>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Product Name */}
+                    <td className="px-6 py-4">
+                      <span className="font-bold text-white text-sm">
+                        {product.name}
+                      </span>
+                    </td>
+
+                    {/* Category */}
+                    <td className="px-6 py-4">
+                      <span className="text-slate-300 font-semibold text-sm uppercase tracking-wider text-[#60a5fa]">
+                        {product.category}
+                      </span>
+                    </td>
+
+                    {/* Price */}
+                    <td className="px-6 py-4">
+                      <span className="text-white font-mono font-bold text-sm">
+                        ₹{product.price.toLocaleString('en-IN')}
+                      </span>
+                    </td>
+
+                    {/* Stock */}
+                    <td className="px-6 py-4">
+                      <span className="text-white font-mono font-bold text-sm">
+                        {product.stock}
+                      </span>
+                    </td>
+
+                    {/* Actions (Edit / Delete) */}
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-3">
+                        <Link 
+                          href={`/admin/products/edit/${product._id}`}
+                          className="p-2 text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded-md transition-all"
+                          title="Edit Artifact"
+                        >
+                          <Edit size={16} />
+                        </Link>
+                        
+                        <button 
+                          onClick={() => handleDelete(product._id)}
+                          disabled={isDeleting === product._id}
+                          className="p-2 text-slate-400 hover:text-red-500 border border-slate-700 hover:border-red-500/50 rounded-md transition-all disabled:opacity-50"
+                          title="Delete Artifact"
+                        >
+                          {isDeleting === product._id ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <Trash2 size={16} />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                    
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <style jsx>{`
-        .admin-wrapper {
-          padding: 40px;
-          color: #e2e8f0;
-          font-family: 'Inter', sans-serif;
-        }
-
-        .loading-state {
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          color: #94a3b8;
-          font-size: 12px;
-          letter-spacing: 2px;
-          gap: 15px;
-        }
-
-        .spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .admin-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          margin-bottom: 30px;
-        }
-
-        .title {
-          font-size: 24px;
-          font-weight: 900;
-          letter-spacing: 1px;
-          color: #f8fafc;
-          margin: 0 0 5px 0;
-        }
-
-        .subtitle { font-size: 13px; color: #94a3b8; margin: 0; }
-
-        .add-btn {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: #ff3e00;
-          color: white;
-          padding: 12px 20px;
-          border-radius: 6px;
-          text-decoration: none;
-          font-size: 12px;
-          font-weight: 800;
-          letter-spacing: 1px;
-          transition: 0.3s;
-        }
-
-        .add-btn:hover { background: #e63800; transform: translateY(-2px); }
-
-        .table-container {
-          background: #0f172a;
-          border: 1px solid #1e293b;
-          border-radius: 12px;
-          overflow: hidden;
-        }
-
-        .products-table {
-          width: 100%;
-          border-collapse: collapse;
-          text-align: left;
-        }
-
-        .products-table th {
-          background: #020617;
-          padding: 20px;
-          font-size: 11px;
-          font-weight: 800;
-          letter-spacing: 1px;
-          color: #94a3b8;
-          border-bottom: 1px solid #1e293b;
-        }
-
-        .products-table td {
-          padding: 15px 20px;
-          border-bottom: 1px solid #1e293b;
-          font-size: 14px;
-        }
-
-        .img-box {
-          position: relative;
-          width: 40px;
-          height: 50px;
-          border-radius: 4px;
-          overflow: hidden;
-          background: #1e293b;
-        }
-
-        .bold { font-weight: 700; color: #f8fafc; }
-        .uppercase { text-transform: uppercase; font-size: 12px; color: #94a3b8; }
-
-        .action-buttons {
-          display: flex;
-          gap: 10px;
-        }
-
-        .edit-btn, .delete-btn {
-          background: transparent;
-          border: 1px solid #334155;
-          padding: 8px;
-          border-radius: 4px;
-          color: #94a3b8;
-          cursor: pointer;
-          transition: 0.2s;
-        }
-
-        .edit-btn:hover { color: #50e3c2; border-color: #50e3c2; }
-        .delete-btn:hover { color: #ff3333; border-color: #ff3333; }
-        
-        .empty-state { text-align: center; padding: 40px !important; color: #94a3b8; }
-      `}</style>
     </div>
-  );
+  )
 }
