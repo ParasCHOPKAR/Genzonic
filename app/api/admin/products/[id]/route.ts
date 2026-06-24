@@ -1,25 +1,25 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import Product from "@/models/Product"; // Adjust this import based on your actual Product model path
+import Product from "@/models/Product"; 
 
-// Helper function to handle image uploads to Cloudinary/AWS
-// If you are storing base64 strings or linking external URLs, adjust this logic.
+// Helper function to handle image uploads
 async function uploadImageToStorage(file: File) {
-  // NOTE: Implement your actual image upload logic here (e.g., Cloudinary)
-  // For now, if you rely on external URLs or local storage, handle it accordingly.
-  // Example dummy return:
-  // const buffer = await file.arrayBuffer();
-  // const uploadResult = await uploadToCloudinary(buffer);
-  // return uploadResult.secure_url;
-  
-  return `/uploads/${file.name}`; // Placeholder return
+  // NOTE: Implement your actual image upload logic here
+  return `/uploads/${file.name}`; 
 }
 
 // GET: Fetch a single product for the edit form
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: Request, 
+  { params }: { params: Promise<{ id: string }> } // FIX 1: params is now a Promise
+) {
   try {
     await connectDB();
-    const product = await Product.findById(params.id);
+    
+    // FIX 2: Await the params before using them
+    const resolvedParams = await params;
+    
+    const product = await Product.findById(resolvedParams.id);
 
     if (!product) {
       return NextResponse.json({ success: false, message: "Product not found" }, { status: 404 });
@@ -33,9 +33,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // PUT: Update the product and handle images
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: Request, 
+  { params }: { params: Promise<{ id: string }> } // FIX 3: params is now a Promise
+) {
   try {
     await connectDB();
+    
+    // FIX 4: Await the params before using them
+    const resolvedParams = await params;
     
     // Parse the incoming FormData
     const formData = await req.formData();
@@ -56,7 +62,6 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const uploadedImageUrls: string[] = [];
 
     for (const file of newImageFiles) {
-      // Pass the file to your upload provider (Cloudinary, S3, etc.)
       const url = await uploadImageToStorage(file);
       uploadedImageUrls.push(url);
     }
@@ -66,7 +71,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     // Update MongoDB
     const updatedProduct = await Product.findByIdAndUpdate(
-      params.id,
+      resolvedParams.id, // Use resolvedParams here
       {
         name,
         price,
@@ -76,7 +81,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         description,
         isPremium,
         sizes,
-        images: finalImagesArray, // Update image array
+        images: finalImagesArray, 
       },
       { new: true, runValidators: true }
     );
