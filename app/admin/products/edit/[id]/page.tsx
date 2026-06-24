@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
-import { ArrowLeft, UploadCloud, X, Save, Loader2, Image as ImageIcon } from "lucide-react"
+import { ArrowLeft, X, Loader2 } from "lucide-react"
 
 export default function EditProduct() {
   const router = useRouter()
@@ -138,154 +138,176 @@ export default function EditProduct() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-4 md:p-8">
-      {/* Header */}
+    <div className="w-full max-w-5xl p-6 md:p-10">
+      
+      {/* Header aligned with your clean design */}
       <div className="flex items-center gap-4 mb-8">
-        <button onClick={() => router.back()} className="p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
-          <ArrowLeft size={20} className="text-gray-900" />
+        <button onClick={() => router.back()} className="hover:opacity-70 transition-opacity">
+          <ArrowLeft size={24} className="text-gray-900 dark:text-white" />
         </button>
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900 uppercase">Edit Artifact</h1>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-gray-900 dark:text-white uppercase">Edit Artifact</h1>
           <p className="text-gray-500 text-sm mt-1">Update inventory, descriptions, and media.</p>
         </div>
       </div>
 
       {error && <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg border border-red-200 font-bold">{error}</div>}
 
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 md:p-10 shadow-sm">
+      <form onSubmit={handleSubmit} className="space-y-6">
         
-        {/* We use a wide Grid layout here so it isn't squished */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
-          
-          {/* =====================================
-              LEFT COLUMN: Product Details (Span 7)
-              ===================================== */}
-          <div className="xl:col-span-7 space-y-8">
-            
-            {/* Name */}
-            <div>
-              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Product Name</label>
-              <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF3E00] focus:ring-1 focus:ring-[#FF3E00] text-gray-900 font-bold text-lg transition-all" />
-            </div>
-
-            {/* Price & Stock */}
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Price (₹)</label>
-                <input type="number" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF3E00] focus:ring-1 focus:ring-[#FF3E00] text-gray-900 font-mono text-lg transition-all" />
-              </div>
-              <div>
-                <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Stock Quantity</label>
-                <input type="number" required value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF3E00] focus:ring-1 focus:ring-[#FF3E00] text-gray-900 font-mono text-lg transition-all" />
-              </div>
-            </div>
-
-            {/* Category & Color */}
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Category</label>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF3E00] focus:ring-1 focus:ring-[#FF3E00] text-gray-900 font-bold transition-all">
-                  <option value="MEN">MEN</option>
-                  <option value="WOMEN">WOMEN</option>
-                  <option value="KIDS">KIDS</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Color</label>
-                <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF3E00] focus:ring-1 focus:ring-[#FF3E00] text-gray-900 font-bold transition-all" />
-              </div>
-            </div>
-
-            {/* Sizes */}
-            <div>
-              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">Available Sizes</label>
-              <div className="flex flex-wrap gap-4">
-                {availableSizes.map(size => (
-                  <button
-                    key={size}
-                    type="button"
-                    onClick={() => handleSizeToggle(size)}
-                    className={`w-14 h-14 rounded-xl font-black text-base border-2 transition-all ${formData.sizes.includes(size) ? 'bg-[#FF3E00] border-[#FF3E00] text-white shadow-lg shadow-orange-500/20' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-400'}`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Description</label>
-              <textarea rows={6} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF3E00] focus:ring-1 focus:ring-[#FF3E00] text-gray-900 font-medium resize-none transition-all leading-relaxed" />
-            </div>
-
-            {/* Premium Toggle */}
-            <label className="flex items-center gap-4 p-5 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-              <input type="checkbox" checked={formData.isPremium} onChange={e => setFormData({...formData, isPremium: e.target.checked})} className="w-6 h-6 accent-[#FF3E00] rounded" />
-              <span className="font-black text-gray-900 uppercase tracking-widest text-sm">Add to Premium Vault (Featured)</span>
-            </label>
+        {/* ROW 1: Name & Price */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2">Product Name</label>
+            <input 
+              type="text" 
+              required 
+              value={formData.name} 
+              onChange={e => setFormData({...formData, name: e.target.value})} 
+              className="w-full px-4 py-3 bg-transparent border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white transition-all" 
+            />
           </div>
+          <div>
+            <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2">Price (₹)</label>
+            <input 
+              type="number" 
+              required 
+              value={formData.price} 
+              onChange={e => setFormData({...formData, price: e.target.value})} 
+              className="w-full px-4 py-3 bg-transparent border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white transition-all" 
+            />
+          </div>
+        </div>
 
-          {/* =====================================
-              RIGHT COLUMN: Images (Span 5)
-              ===================================== */}
-          <div className="xl:col-span-5 bg-gray-50 p-8 rounded-2xl border border-gray-200 flex flex-col h-fit">
-            <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <ImageIcon size={16} /> Artifact Media
-            </label>
-            
-            {/* Image Upload Box */}
-            <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-12 flex flex-col items-center justify-center text-center bg-white hover:border-[#FF3E00] hover:bg-orange-50 transition-all mb-8 group cursor-pointer shadow-sm">
-              <input type="file" multiple accept="image/*" onChange={handleImageSelect} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-              <UploadCloud size={56} className="text-gray-300 group-hover:text-[#FF3E00] transition-colors mb-4" />
-              <p className="text-base font-black text-gray-900 mb-1">Click or drag images here</p>
-              <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">PNG, JPG, WEBP • Max 5MB</p>
-            </div>
+        {/* ROW 2: Category & Color */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2">Category</label>
+            <select 
+              value={formData.category} 
+              onChange={e => setFormData({...formData, category: e.target.value})} 
+              className="w-full px-4 py-3 bg-transparent border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white transition-all"
+            >
+              <option value="MEN">MENS</option>
+              <option value="WOMEN">WOMENS</option>
+              <option value="KIDS">KIDS</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2">Color</label>
+            <input 
+              type="text" 
+              value={formData.color} 
+              onChange={e => setFormData({...formData, color: e.target.value})} 
+              className="w-full px-4 py-3 bg-transparent border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white transition-all" 
+            />
+          </div>
+        </div>
 
-            {/* Image Previews Grid */}
-            <div className="grid grid-cols-2 gap-4">
+        {/* ROW 3: Sizes */}
+        <div>
+          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">Available Sizes</label>
+          <div className="flex flex-wrap gap-3">
+            {availableSizes.map(size => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => handleSizeToggle(size)}
+                className={`w-12 h-12 rounded font-bold text-sm border transition-all ${formData.sizes.includes(size) ? 'bg-[#FF3E00] border-[#FF3E00] text-white' : 'bg-transparent border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'}`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ROW 4: Stock */}
+        <div>
+          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2">Stock Quantity</label>
+          <input 
+            type="number" 
+            required 
+            value={formData.stock} 
+            onChange={e => setFormData({...formData, stock: e.target.value})} 
+            className="w-full px-4 py-3 bg-transparent border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white transition-all" 
+          />
+        </div>
+
+        {/* ROW 5: Images */}
+        <div>
+          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2">Product Images (Select Multiple)</label>
+          
+          {/* Simple file input mirroring your Add page */}
+          <input 
+            type="file" 
+            multiple 
+            accept="image/*" 
+            onChange={handleImageSelect} 
+            className="w-full px-4 py-3 bg-transparent border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-600 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 dark:file:bg-gray-800 file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-200 dark:hover:file:bg-gray-700 cursor-pointer transition-all" 
+          />
+
+          {/* Clean thumbnail previews for edit mode */}
+          {(existingImages.length > 0 || newImagesBase64.length > 0) && (
+            <div className="flex flex-wrap gap-4 mt-6">
               
               {/* Existing Images */}
               {existingImages.map((url, index) => (
-                <div key={`existing-${index}`} className="relative aspect-square rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm group">
-                  <Image src={url} alt="Existing" fill className="object-contain p-2" />
-                  <button type="button" onClick={() => removeExistingImage(index)} className="absolute top-2 right-2 bg-red-500 text-white rounded-md p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-md z-10">
-                    <X size={14} strokeWidth={3} />
+                <div key={`existing-${index}`} className="relative w-24 h-24 rounded border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-gray-900">
+                  <Image src={url} alt="Existing" fill className="object-contain p-1" />
+                  <button type="button" onClick={() => removeExistingImage(index)} className="absolute top-1 right-1 bg-white dark:bg-black rounded-full p-1 shadow hover:text-red-500 transition-colors">
+                    <X size={12} strokeWidth={3} />
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gray-900/80 backdrop-blur-sm text-white text-[10px] font-black tracking-wider text-center py-1.5 uppercase">
-                    Current
-                  </div>
+                  <div className="absolute bottom-0 w-full bg-black/70 text-[8px] text-white text-center font-bold uppercase py-0.5">Current</div>
                 </div>
               ))}
               
-              {/* New Uploaded Images */}
+              {/* New Images */}
               {newImagesBase64.map((url, index) => (
-                <div key={`new-${index}`} className="relative aspect-square rounded-xl border-2 border-[#FF3E00] overflow-hidden bg-white shadow-md group">
-                  <Image src={url} alt="New Preview" fill className="object-contain p-2" />
-                  <button type="button" onClick={() => removeNewImage(index)} className="absolute top-2 right-2 bg-red-500 text-white rounded-md p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-md z-10">
-                    <X size={14} strokeWidth={3} />
+                <div key={`new-${index}`} className="relative w-24 h-24 rounded border-2 border-[#FF3E00] overflow-hidden bg-gray-50 dark:bg-gray-900">
+                  <Image src={url} alt="New Preview" fill className="object-contain p-1" />
+                  <button type="button" onClick={() => removeNewImage(index)} className="absolute top-1 right-1 bg-white dark:bg-black rounded-full p-1 shadow hover:text-red-500 transition-colors">
+                    <X size={12} strokeWidth={3} />
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-[#FF3E00] text-white text-[10px] font-black tracking-wider text-center py-1.5 uppercase">
-                    New Upload
-                  </div>
+                  <div className="absolute bottom-0 w-full bg-[#FF3E00] text-[8px] text-white text-center font-bold uppercase py-0.5">New</div>
                 </div>
               ))}
+
             </div>
-          </div>
-
+          )}
         </div>
 
-        {/* Submit Button */}
-        <div className="mt-12 pt-8 border-t border-gray-200 flex justify-end">
-          <button 
-            type="submit" 
-            disabled={isSaving}
-            className="flex items-center gap-3 px-12 py-5 bg-[#FF3E00] hover:bg-[#E63E00] text-white rounded-xl font-black uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/30 text-sm"
-          >
-            {isSaving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-            {isSaving ? "Saving Changes..." : "Save Artifact"}
-          </button>
+        {/* ROW 6: Description */}
+        <div>
+          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2">Description</label>
+          <textarea 
+            rows={5} 
+            value={formData.description} 
+            onChange={e => setFormData({...formData, description: e.target.value})} 
+            className="w-full px-4 py-3 bg-transparent border border-gray-200 dark:border-gray-800 rounded-md focus:outline-none focus:border-[#FF3E00] text-gray-900 dark:text-white resize-none transition-all" 
+          />
         </div>
+
+        {/* ROW 7: Premium Toggle */}
+        <label className="flex items-center gap-3 mt-4 cursor-pointer w-fit">
+          <input 
+            type="checkbox" 
+            checked={formData.isPremium} 
+            onChange={e => setFormData({...formData, isPremium: e.target.checked})} 
+            className="w-4 h-4 accent-[#FF3E00] rounded cursor-pointer" 
+          />
+          <span className="font-bold text-gray-500 text-xs uppercase tracking-widest">Add to Premium Vault (Featured)</span>
+        </label>
+
+        {/* FULL WIDTH BUTTON */}
+        <button 
+          type="submit" 
+          disabled={isSaving}
+          className="w-full mt-8 py-4 bg-[#FF3E00] hover:bg-[#E63E00] text-white rounded font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isSaving ? <Loader2 className="animate-spin" size={18} /> : null}
+          {isSaving ? "UPDATING ARTIFACT..." : "UPDATE ARTIFACT"}
+        </button>
+
       </form>
     </div>
   )
