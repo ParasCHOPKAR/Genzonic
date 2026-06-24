@@ -186,7 +186,7 @@ export default function Hero() {
             className="hero-gorilla-image"
           />
 
-          {/* This text overlay is now completely hidden on mobile! */}
+          {/* This text overlay is strictly hidden on mobile! */}
           <div className="tap-indicator hide-mobile">
             <div className="arrow-wrapper">
                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -337,14 +337,15 @@ export default function Hero() {
           z-index: 1;
         }
 
+        /* --- DESKTOP GORILLA REDUCED SIZE --- */
         .gorilla-layer {
           position: absolute;
           bottom: 0;
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 85%; /* Ensures the gorilla doesn't hit the top of the screen */
-          max-width: 700px;
+          height: 78%; /* Reduced from 85% to give headroom */
+          max-width: 500px; /* Reduced from 700px to ensure the image fully fits */
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -465,19 +466,21 @@ export default function Hero() {
             min-height: 380px; 
           }
 
-          /* Increase the Mobile Background Image Size */
+          /* --- INCREASED MOBILE BACKGROUND SCALE --- */
           .mobile-bg-img {
             object-fit: cover !important;
             object-position: center !important;
-            transform: scale(1.15); /* Significantly increases the background size */
+            transform: scale(1.35); /* Increased size for mobile background models */
           }
           
           .gorilla-layer {
             height: 100%; /* Fill the new relative container */
+            max-width: 450px; /* Keep mobile scale appropriate */
           }
 
           .hero-gorilla-image {
-            transform: scale(1.05); 
+            transform: scale(1.1); /* Kept slight zoom on mobile to stand out */
+            transform-origin: bottom center;
           }
           
           .bottom-content-container { 
