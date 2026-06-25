@@ -342,8 +342,8 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 85%;
-          max-width: 580px;
+          height: 75%;       /* 🔥 Reduced from 85% for a better desktop size */
+          max-width: 460px;  /* 🔥 Reduced from 580px for a better desktop size */
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -426,12 +426,12 @@ export default function Hero() {
           .top-title-container.hide-desktop { display: block !important; } 
           
           .hero-section {
-            /* Strict Flex Layout to force fit within phone screen bounds */
-            height: 100dvh;
+            height: auto;
             min-height: 100dvh;
             flex-direction: column;
             justify-content: space-between;
-            padding: 10vh 5% 5vh 5%; /* Space for header at top, footer at bottom */
+            /* Extra bottom padding gives space to prevent FAB collision */
+            padding: 10vh 5% clamp(60px, 12vh, 100px) 5%; 
           }
 
           /* --- 1. TITLE STYLING --- */
@@ -439,13 +439,14 @@ export default function Hero() {
             flex-shrink: 0;
             text-align: center;
             z-index: 20;
-            margin-bottom: -4vh; /* Overlaps text with Gorilla head like the image */
+            margin-bottom: -5vh; 
           }
           .main-title-text {
-            font-size: clamp(48px, 16vw, 85px); 
+            /* 🔥 Scaled down so it perfectly fits compact screens like iPhone SE */
+            font-size: clamp(34px, 11vw, 65px); 
             font-weight: 900;
-            line-height: 0.88;
-            letter-spacing: -0.05em;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
             text-transform: uppercase;
           }
 
@@ -453,33 +454,35 @@ export default function Hero() {
           .visuals-container {
             position: relative; 
             width: 100%;
-            flex: 1 1 auto; /* Grows/shrinks natively filling space between text */
+            flex: 1 1 auto; 
             margin: 0;
+            min-height: 45vh; /* Assures it doesn't collapse on landscape */
           }
 
           .bg-models-layer {
-            /* Exactly fills the bounds, without wild scaling so all 4 models are visible */
-            width: 100% !important;  
-            left: 0 !important;   
-            height: 95% !important; 
-            top: 5% !important;    
+            /* 🔥 Breaks out of the 5% padding by setting 100vw and translating */
+            width: 100vw !important;  
+            left: 50% !important;   
+            transform: translateX(-50%) !important;
+            height: 100% !important; 
+            top: 0 !important;    
           }
 
           .mobile-bg-img {
-            object-fit: contain !important; /* Contain ensures nothing gets cut off sideways */
-            object-position: bottom center !important; 
-            transform: scale(1.15) !important; /* Modest scale so it fits the screen width tight */
+            object-fit: cover !important; /* Cover eliminates all white spaces on sides */
+            object-position: center top !important; 
+            transform: scale(1.05) !important; /* Slight zoom to smooth edges */
           }
           
           .gorilla-layer {
-            height: 88%; /* Reduced slightly as requested */
+            height: 85%; 
             width: 100%;
             max-width: 480px; 
             bottom: 0;
           }
 
           .hero-gorilla-image {
-            transform: scale(1); /* Resets to true aspect, no stretching */
+            transform: scale(1); 
             transform-origin: bottom center;
           }
           
@@ -492,10 +495,11 @@ export default function Hero() {
             align-items: flex-start; /* Aligns content left generally */
             gap: 10px;
             z-index: 20;
+            padding-right: 60px; /* Buffer space so FABs (floating icons) never cover text */
           }
 
           .subtitle-text {
-            font-size: clamp(14px, 4vw, 16px);
+            font-size: clamp(13px, 3.5vw, 16px);
             font-weight: 900;
             letter-spacing: 1px;
             text-transform: uppercase;
