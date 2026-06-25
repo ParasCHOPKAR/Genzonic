@@ -77,7 +77,7 @@ export default function Hero() {
       const tl = gsap.timeline()
 
       tl.from(".cyber-grid", { opacity: 0, duration: 2, ease: "power2.inOut" })
-        .from(".main-title-text, .editorial-title", { y: -30, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1.5")
+        .from(".editorial-title", { y: -30, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1.5")
         .from(bgRef.current, { opacity: 0, scale: 1.05, duration: 2, ease: "power2.out" }, "-=1.5")
         .from(charRef.current, { y: 50, scale: 1.1, opacity: 0, filter: "blur(20px)", duration: 1.5, ease: "expo.out" }, "-=1.5")
         .from(".reveal-text, .bottom-content", { y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1")
@@ -139,15 +139,6 @@ export default function Hero() {
             </svg>
           </Link>
         </div>
-      </div>
-
-      {/* =========================================
-          MOBILE ONLY: TOP TITLE
-          ========================================= */}
-      <div className="top-title-container z-20 relative hide-desktop">
-        <h1 className="main-title-text">
-          THE NEW<br/>STANDARD
-        </h1>
       </div>
 
       {/* =========================================
@@ -342,8 +333,8 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 75%;       /* 🔥 Reduced from 85% for a better desktop size */
-          max-width: 460px;  /* 🔥 Reduced from 580px for a better desktop size */
+          height: 92%;       /* 🔥 Increased massively for a striking desktop presence */
+          max-width: 620px;  /* 🔥 Expanded width bounds to match the new height */
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -418,49 +409,32 @@ export default function Hero() {
         .hide-mobile { display: flex; } 
 
         /* =========================================
-           MOBILE LAYOUT MATCHING EXACT IMAGE
+           MOBILE LAYOUT - MODERN IMMERSIVE VIEW
            ========================================= */
         @media (max-width: 1024px) {
           .hide-desktop { display: flex !important; }
           .hide-mobile { display: none !important; }
-          .top-title-container.hide-desktop { display: block !important; } 
           
           .hero-section {
             height: auto;
             min-height: 100dvh;
             flex-direction: column;
             justify-content: space-between;
-            /* Extra bottom padding gives space to prevent FAB collision */
-            padding: 10vh 5% clamp(60px, 12vh, 100px) 5%; 
+            /* Top padding for header space, visual expands instantly after */
+            padding: 12vh 0 clamp(40px, 10vh, 80px) 0; 
           }
 
-          /* --- 1. TITLE STYLING --- */
-          .top-title-container {
-            flex-shrink: 0;
-            text-align: center;
-            z-index: 20;
-            margin-bottom: -5vh; 
-          }
-          .main-title-text {
-            /* 🔥 Scaled down so it perfectly fits compact screens like iPhone SE */
-            font-size: clamp(34px, 11vw, 65px); 
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -0.04em;
-            text-transform: uppercase;
-          }
-
-          /* --- 2. FLEXIBLE MIDDLE VISUAL (Background + Gorilla) --- */
+          /* --- IMMERSIVE MIDDLE VISUAL (Background + Gorilla) --- */
           .visuals-container {
             position: relative; 
             width: 100%;
             flex: 1 1 auto; 
             margin: 0;
-            min-height: 45vh; /* Assures it doesn't collapse on landscape */
+            min-height: 55vh; /* Larger minimum height so visuals dominate */
           }
 
           .bg-models-layer {
-            /* 🔥 Breaks out of the 5% padding by setting 100vw and translating */
+            /* Edge-to-edge coverage */
             width: 100vw !important;  
             left: 50% !important;   
             transform: translateX(-50%) !important;
@@ -469,16 +443,16 @@ export default function Hero() {
           }
 
           .mobile-bg-img {
-            object-fit: cover !important; /* Cover eliminates all white spaces on sides */
+            object-fit: cover !important; 
             object-position: center top !important; 
-            transform: scale(1.05) !important; /* Slight zoom to smooth edges */
+            transform: scale(1.05) !important; /* Modest zoom */
           }
           
           .gorilla-layer {
-            height: 85%; 
+            height: 92%; /* Make the gorilla huge and commanding on mobile */
             width: 100%;
-            max-width: 480px; 
-            bottom: 0;
+            max-width: 520px; 
+            bottom: -2%; /* Slightly ground the model */
           }
 
           .hero-gorilla-image {
@@ -486,29 +460,29 @@ export default function Hero() {
             transform-origin: bottom center;
           }
           
-          /* --- 3. BOTTOM CTA MATCHING IMAGE EXACTLY --- */
+          /* --- MODERN BOTTOM CTA --- */
           .bottom-content-container { 
             flex-shrink: 0;
             width: 100%; 
             display: flex; 
             flex-direction: column;
-            align-items: flex-start; /* Aligns content left generally */
-            gap: 10px;
+            align-items: flex-start; 
+            gap: 12px;
             z-index: 20;
-            padding-right: 60px; /* Buffer space so FABs (floating icons) never cover text */
+            padding: 0 5%; /* Brings padding back specifically for the text */
+            padding-right: 70px; /* Safe area for floating action buttons */
           }
 
           .subtitle-text {
-            font-size: clamp(13px, 3.5vw, 16px);
+            font-size: clamp(14px, 4vw, 18px);
             font-weight: 900;
             letter-spacing: 1px;
             text-transform: uppercase;
             width: 100%;
-            text-align: center; /* Centers just this text */
-            margin-bottom: 5px;
+            margin-bottom: 0;
           }
 
-          /* Overriding solid block button to plain text with arrow */
+          /* Sleek text-link style button */
           .bottom-content-container .solid-black-btn { 
             background: transparent !important;
             color: ${darkMode ? "#ffffff" : "#000000"} !important;
@@ -516,9 +490,13 @@ export default function Hero() {
             width: auto !important;
             max-width: none !important;
             justify-content: flex-start !important;
-            font-size: 13px !important;
-            letter-spacing: 0.5px !important;
+            font-size: 14px !important;
+            font-weight: 800 !important;
+            letter-spacing: 1px !important;
             box-shadow: none !important;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            text-decoration-thickness: 2px;
           }
         }
       `}</style>
