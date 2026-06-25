@@ -342,8 +342,8 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 68%; 
-          max-width: 420px; 
+          height: 85%; /* 🔥 Increased from 68% for larger desktop presence */
+          max-width: 580px; /* 🔥 Increased from 420px for larger desktop presence */
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -419,14 +419,14 @@ export default function Hero() {
           margin-bottom: -15px; 
         }
         .main-title-text {
-          font-size: clamp(52px, 15vw, 90px); 
+          font-size: clamp(42px, 15vw, 90px); /* Dynamic clamping for small phones */
           font-weight: 900;
           line-height: 0.95;
           letter-spacing: -0.05em;
           text-transform: uppercase;
         }
         .subtitle-text {
-          font-size: clamp(16px, 4vw, 20px);
+          font-size: clamp(14px, 4vw, 20px);
           font-weight: 900;
           letter-spacing: 1px;
           text-transform: uppercase;
@@ -447,35 +447,36 @@ export default function Hero() {
             min-height: 100dvh;
             flex-direction: column;
             justify-content: space-between; 
-            padding-top: 100px; 
-            padding-bottom: 30px;
+            padding-top: clamp(80px, 12vh, 120px); /* Flex padding for tall/short phones */
+            padding-bottom: clamp(20px, 5vh, 40px);
           }
 
           .visuals-container {
             position: relative; 
             width: 100%;
-            flex-grow: 1;
-            min-height: 55vh; 
+            flex: 1 1 auto; /* 🔥 Flex grow/shrink dynamically based on remaining space */
+            min-height: 40vh; /* Floor for tiny devices */
+            max-height: 60vh; /* Ceiling for large tablets */
             margin: 20px 0;
           }
 
           /* --- EXACT MOBILE BACKGROUND FIT --- */
           .bg-models-layer {
-            width: 150% !important;  /* 🔥 Stretches container wider */
-            left: -25% !important;   /* 🔥 Pulls it left to keep it perfectly centered */
-            height: 140% !important; /* 🔥 Stretches container taller */
-            top: -20% !important;    /* 🔥 Pulls it up to keep it vertically balanced */
+            width: 160% !important;  
+            left: -30% !important;   
+            height: 140% !important; 
+            top: -20% !important;    
           }
 
           .mobile-bg-img {
             object-fit: cover !important;
             object-position: center top !important; 
-            transform: scale(1.1) translateY(2%); /* 🔥 Adds just a bit more zoom to smooth out the edges */
+            transform: scale(1.1) translateY(2%); 
           }
           
           .gorilla-layer {
             height: 100%; 
-            max-width: 500px; 
+            max-width: 90vw; /* Keeps it from bleeding off the edges on narrow screens */
           }
 
           .hero-gorilla-image {
@@ -486,6 +487,7 @@ export default function Hero() {
           .bottom-content-container { 
             width: 100%; 
             display: flex; 
+            flex-direction: column;
             justify-content: center; 
           }
           
@@ -498,11 +500,26 @@ export default function Hero() {
           }
         }
 
+        /* Adjustments for extra small or narrow mobile displays */
         @media (max-width: 600px) {
           .main-title-text { padding: 0 10px; }
           .subtitle-text { margin-bottom: 5px; padding: 0 10px; }
-          .visuals-container { 
-            min-height: 48vh; 
+          .bg-models-layer {
+             width: 180% !important; /* Stretch slightly more for very narrow aspect ratios */
+             left: -40% !important;
+          }
+        }
+
+        /* Adjustments for short landscape displays */
+        @media (max-height: 700px) and (max-width: 1024px) {
+          .hero-section {
+             padding-top: 60px;
+          }
+          .main-title-text {
+             font-size: 40px;
+          }
+          .visuals-container {
+             min-height: 50vh; 
           }
         }
       `}</style>
