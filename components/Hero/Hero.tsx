@@ -461,14 +461,16 @@ export default function Hero() {
 
           /* --- EXACT MOBILE BACKGROUND FIT --- */
           .bg-models-layer {
-            height: 125% !important; /* 🔥 Stretches the container taller behind the Gorilla */
-            top: -12.5% !important; /* 🔥 Shifts it up to keep it centered vertically */
+            width: 150% !important;  /* 🔥 Stretches container wider */
+            left: -25% !important;   /* 🔥 Pulls it left to keep it perfectly centered */
+            height: 140% !important; /* 🔥 Stretches container taller */
+            top: -20% !important;    /* 🔥 Pulls it up to keep it vertically balanced */
           }
 
           .mobile-bg-img {
             object-fit: cover !important;
             object-position: center top !important; 
-            transform: scale(1.5) translateY(2%); /* 🔥 Scaled up slightly to fill the new height */
+            transform: scale(1.1) translateY(2%); /* 🔥 Adds just a bit more zoom to smooth out the edges */
           }
           
           .gorilla-layer {
