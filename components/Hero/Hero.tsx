@@ -126,7 +126,7 @@ export default function Hero() {
           ========================================= */}
       <div className="editorial-side left-side hide-mobile">
         <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
-   
+        <h2 className="editorial-title reveal-text">THE NEW <br/> STANDARD</h2>
         <p className="editorial-desc reveal-text">
           Experience our signature silhouettes. Hover over the subject to cycle through the available premium colorways.
         </p>
@@ -333,8 +333,8 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 92%;       /* 🔥 Increased massively for a striking desktop presence */
-          max-width: 620px;  /* 🔥 Expanded width bounds to match the new height */
+          height: 75%;       /* 🔥 Reduced from 92% for a cleaner desktop size */
+          max-width: 500px;  /* 🔥 Reduced from 620px */
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -449,10 +449,10 @@ export default function Hero() {
           }
           
           .gorilla-layer {
-            height: 92%; /* Make the gorilla huge and commanding on mobile */
+            height: 80%; /* 🔥 Reduced from 92% to sit better on mobile */
             width: 100%;
-            max-width: 520px; 
-            bottom: -2%; /* Slightly ground the model */
+            max-width: 400px; /* 🔥 Reduced from 520px to prevent covering models completely */
+            bottom: 0; 
           }
 
           .hero-gorilla-image {
