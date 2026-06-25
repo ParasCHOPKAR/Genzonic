@@ -126,7 +126,7 @@ export default function Hero() {
           ========================================= */}
       <div className="editorial-side left-side hide-mobile">
         <div className="tech-label reveal-text">SERIES_01 // CORE COLLECTION</div>
-        <h2 className="editorial-title reveal-text">THE NEW <br/> STANDARD</h2>
+   
         <p className="editorial-desc reveal-text">
           Experience our signature silhouettes. Hover over the subject to cycle through the available premium colorways.
         </p>
