@@ -416,10 +416,10 @@ export default function Hero() {
         /* --- MOBILE TYPOGRAPHY --- */
         .top-title-container {
           text-align: center;
-          margin-bottom: -15px; /* Pulls title closer to Gorilla */
+          margin-bottom: -15px; 
         }
         .main-title-text {
-          font-size: clamp(52px, 15vw, 90px); /* Larger title matching mockup */
+          font-size: clamp(52px, 15vw, 90px); 
           font-weight: 900;
           line-height: 0.95;
           letter-spacing: -0.05em;
@@ -460,19 +460,24 @@ export default function Hero() {
           }
 
           /* --- EXACT MOBILE BACKGROUND FIT --- */
+          .bg-models-layer {
+            height: 125% !important; /* 🔥 Stretches the container taller behind the Gorilla */
+            top: -12.5% !important; /* 🔥 Shifts it up to keep it centered vertically */
+          }
+
           .mobile-bg-img {
             object-fit: cover !important;
             object-position: center top !important; 
-            transform: scale(1.4) translateY(2%); /* Scaled & nudged to sit correctly behind shoulders */
+            transform: scale(1.5) translateY(2%); /* 🔥 Scaled up slightly to fill the new height */
           }
           
           .gorilla-layer {
             height: 100%; 
-            max-width: 500px; /* Slightly wider bound for mobile gorilla */
+            max-width: 500px; 
           }
 
           .hero-gorilla-image {
-            transform: scale(1.15); /* 🔥 Zoomed exactly like mockup */
+            transform: scale(1.15); 
             transform-origin: bottom center;
           }
           
@@ -487,7 +492,7 @@ export default function Hero() {
             max-width: 320px; 
             padding: 16px 20px; 
             font-size: 13px;
-            border-radius: 0; /* Sharp edges like mockup */
+            border-radius: 0; 
           }
         }
 
