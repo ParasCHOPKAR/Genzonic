@@ -228,13 +228,13 @@ export default function Hero() {
       {/* =========================================
           MOBILE ONLY: BOTTOM CONTENT & CTA
           ========================================= */}
-      <div className="bottom-content-container z-20 relative flex flex-col items-center gap-4 pb-6 hide-desktop">
+      <div className="bottom-content-container z-20 relative hide-desktop">
         <h3 className="bottom-content subtitle-text" style={{ color: darkMode ? "#fff" : "#000" }}>STREETWEAR REDEFINED</h3>
         
         <Link href="/premium-collection" className="bottom-content solid-black-btn w-full">
           SHOP PREMIUM
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
+            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </Link>
       </div>
@@ -323,7 +323,7 @@ export default function Hero() {
         .spec-list li { margin-bottom: 4px; }
         .bold-statement { font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- VISUALS CONTAINER (DESKTOP & MOBILE) --- */
+        /* --- VISUALS CONTAINER (DESKTOP) --- */
         .visuals-container {
           position: absolute;
           inset: 0;
@@ -342,8 +342,8 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 85%; /* 🔥 Increased from 68% for larger desktop presence */
-          max-width: 580px; /* 🔥 Increased from 420px for larger desktop presence */
+          height: 85%;
+          max-width: 580px;
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -413,113 +413,108 @@ export default function Hero() {
 
         .mt-5 { margin-top: 1.5rem; }
 
-        /* --- MOBILE TYPOGRAPHY --- */
-        .top-title-container {
-          text-align: center;
-          margin-bottom: -15px; 
-        }
-        .main-title-text {
-          font-size: clamp(42px, 15vw, 90px); /* Dynamic clamping for small phones */
-          font-weight: 900;
-          line-height: 0.95;
-          letter-spacing: -0.05em;
-          text-transform: uppercase;
-        }
-        .subtitle-text {
-          font-size: clamp(14px, 4vw, 20px);
-          font-weight: 900;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-        }
-
-        /* --- RESPONSIVE TOGGLES & MOBILE LAYOUT --- */
+        /* --- RESPONSIVE TOGGLES --- */
         .hide-desktop { display: none !important; }
         .hide-mobile { display: flex; } 
 
+        /* =========================================
+           MOBILE LAYOUT MATCHING EXACT IMAGE
+           ========================================= */
         @media (max-width: 1024px) {
           .hide-desktop { display: flex !important; }
           .hide-mobile { display: none !important; }
-          
           .top-title-container.hide-desktop { display: block !important; } 
           
           .hero-section {
-            height: auto;
+            /* Strict Flex Layout to force fit within phone screen bounds */
+            height: 100dvh;
             min-height: 100dvh;
             flex-direction: column;
-            justify-content: space-between; 
-            padding-top: clamp(80px, 12vh, 120px); /* Flex padding for tall/short phones */
-            padding-bottom: clamp(20px, 5vh, 40px);
+            justify-content: space-between;
+            padding: 10vh 5% 5vh 5%; /* Space for header at top, footer at bottom */
           }
 
+          /* --- 1. TITLE STYLING --- */
+          .top-title-container {
+            flex-shrink: 0;
+            text-align: center;
+            z-index: 20;
+            margin-bottom: -4vh; /* Overlaps text with Gorilla head like the image */
+          }
+          .main-title-text {
+            font-size: clamp(48px, 16vw, 85px); 
+            font-weight: 900;
+            line-height: 0.88;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+          }
+
+          /* --- 2. FLEXIBLE MIDDLE VISUAL (Background + Gorilla) --- */
           .visuals-container {
             position: relative; 
             width: 100%;
-            flex: 1 1 auto; /* 🔥 Flex grow/shrink dynamically based on remaining space */
-            min-height: 40vh; /* Floor for tiny devices */
-            max-height: 60vh; /* Ceiling for large tablets */
-            margin: 20px 0;
+            flex: 1 1 auto; /* Grows/shrinks natively filling space between text */
+            margin: 0;
           }
 
-          /* --- EXACT MOBILE BACKGROUND FIT --- */
           .bg-models-layer {
-            width: 160% !important;  
-            left: -30% !important;   
-            height: 140% !important; 
-            top: -20% !important;    
+            /* Exactly fills the bounds, without wild scaling so all 4 models are visible */
+            width: 100% !important;  
+            left: 0 !important;   
+            height: 95% !important; 
+            top: 5% !important;    
           }
 
           .mobile-bg-img {
-            object-fit: cover !important;
-            object-position: center top !important; 
-            transform: scale(1.1) translateY(2%); 
+            object-fit: contain !important; /* Contain ensures nothing gets cut off sideways */
+            object-position: bottom center !important; 
+            transform: scale(1.15) !important; /* Modest scale so it fits the screen width tight */
           }
           
           .gorilla-layer {
-            height: 100%; 
-            max-width: 90vw; /* Keeps it from bleeding off the edges on narrow screens */
+            height: 88%; /* Reduced slightly as requested */
+            width: 100%;
+            max-width: 480px; 
+            bottom: 0;
           }
 
           .hero-gorilla-image {
-            transform: scale(1.15); 
+            transform: scale(1); /* Resets to true aspect, no stretching */
             transform-origin: bottom center;
           }
           
+          /* --- 3. BOTTOM CTA MATCHING IMAGE EXACTLY --- */
           .bottom-content-container { 
+            flex-shrink: 0;
             width: 100%; 
             display: flex; 
             flex-direction: column;
-            justify-content: center; 
+            align-items: flex-start; /* Aligns content left generally */
+            gap: 10px;
+            z-index: 20;
           }
-          
-          .solid-black-btn { 
-            width: 100%; 
-            max-width: 320px; 
-            padding: 16px 20px; 
-            font-size: 13px;
-            border-radius: 0; 
-          }
-        }
 
-        /* Adjustments for extra small or narrow mobile displays */
-        @media (max-width: 600px) {
-          .main-title-text { padding: 0 10px; }
-          .subtitle-text { margin-bottom: 5px; padding: 0 10px; }
-          .bg-models-layer {
-             width: 180% !important; /* Stretch slightly more for very narrow aspect ratios */
-             left: -40% !important;
+          .subtitle-text {
+            font-size: clamp(14px, 4vw, 16px);
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: 100%;
+            text-align: center; /* Centers just this text */
+            margin-bottom: 5px;
           }
-        }
 
-        /* Adjustments for short landscape displays */
-        @media (max-height: 700px) and (max-width: 1024px) {
-          .hero-section {
-             padding-top: 60px;
-          }
-          .main-title-text {
-             font-size: 40px;
-          }
-          .visuals-container {
-             min-height: 50vh; 
+          /* Overriding solid block button to plain text with arrow */
+          .bottom-content-container .solid-black-btn { 
+            background: transparent !important;
+            color: ${darkMode ? "#ffffff" : "#000000"} !important;
+            padding: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+            justify-content: flex-start !important;
+            font-size: 13px !important;
+            letter-spacing: 0.5px !important;
+            box-shadow: none !important;
           }
         }
       `}</style>
