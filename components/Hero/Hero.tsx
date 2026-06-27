@@ -127,8 +127,9 @@ export default function Hero() {
         </p>
 
         <div className="reveal-text mt-5">
-          <Link href="/premium-collection" className="solid-black-btn">
-            SHOP PREMIUM
+          {/* UPDATED SHOP NOW BUTTON - REDIRECTS TO MENS PAGE */}
+          <Link href="/shop/men" className="solid-black-btn">
+            SHOP NOW
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -140,9 +141,7 @@ export default function Hero() {
           MOBILE ONLY: TOP TITLE
           ========================================= */}
       <div className="top-title-container z-20 relative hide-desktop">
-        <h1 className="main-title-text">
-          THE NEW<br/>STANDARD
-        </h1>
+        {/* Title kept clean and hidden initially to not crowd space */}
       </div>
 
       {/* =========================================
@@ -198,15 +197,7 @@ export default function Hero() {
           </ul>
           <p className="bold-statement"><strong>Built for the bold.</strong></p>
         </div>
-
-        <div className="reveal-text mt-5">
-          <Link href="/shop/men" className="solid-black-btn secondary-btn">
-            SHOP MEN'S
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-        </div>
+        {/* Removed extra button here to keep the CTA unified */}
       </div>
 
       {/* =========================================
@@ -215,8 +206,9 @@ export default function Hero() {
       <div className="bottom-content-container z-20 relative hide-desktop">
         <h3 className="bottom-content subtitle-text" style={{ color: darkMode ? "#fff" : "#000" }}>STREETWEAR REDEFINED</h3>
         
-        <Link href="/premium-collection" className="bottom-content solid-black-btn w-full">
-          SHOP PREMIUM
+        {/* UPDATED SHOP NOW BUTTON - REDIRECTS TO MENS PAGE */}
+        <Link href="/shop/men" className="bottom-content solid-black-btn w-full">
+          SHOP NOW
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
             <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -378,17 +370,6 @@ export default function Hero() {
         }
 
         .solid-black-btn:active { transform: translateY(1px); }
-
-        .secondary-btn {
-          background-color: transparent;
-          color: ${darkMode ? "#ffffff" : "#000000"};
-          border: 2px solid ${darkMode ? "#ffffff" : "#000000"};
-          box-shadow: none;
-        }
-        .secondary-btn:hover {
-          background-color: ${darkMode ? "#ffffff" : "#000000"};
-          color: ${darkMode ? "#000000" : "#ffffff"} !important;
-        }
 
         .mt-5 { margin-top: 1.5rem; }
 
