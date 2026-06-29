@@ -2,15 +2,16 @@
 
 import { useEffect, useState, use } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation"; // 🔥 Added Router Import
+import { useRouter } from "next/navigation"; 
 import { useCartStore } from "@/store/cartStore";
-import { ShoppingBag, CheckCircle } from "lucide-react";
+// 🔥 Added Loader2 to the imports
+import { ShoppingBag, CheckCircle, Loader2 } from "lucide-react";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
   
-  const router = useRouter(); // 🔥 Initialized Router
+  const router = useRouter(); 
   
   const [product, setProduct] = useState<any>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -21,7 +22,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // 🔥 CACHE BUSTER ADDED: The timestamp forces Next.js to get fresh DB data
         const res = await fetch(`/api/products?t=${new Date().getTime()}`);
         const data = await res.json();
         if (data.success) {
@@ -36,13 +36,56 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     fetchProduct();
   }, [slug]);
 
+  // 🔥 THE NEW PREMIUM LOADER
   if (!product) {
-    return <div className="loading-state">LOADING ARTIFACT...</div>;
+    return (
+      <div style={{ 
+        minHeight: "100vh", 
+        display: "flex", 
+        flexDirection: "column",
+        justifyContent: "center", 
+        alignItems: "center", 
+        background: "var(--bg)", 
+        color: "var(--text)",
+        fontFamily: "inherit"
+      }}>
+        <Loader2 
+          className="animate-spin" 
+          size={54} 
+          color="#FF3E00" 
+          style={{ marginBottom: "20px" }} 
+        />
+        <h2 style={{ 
+          fontSize: "18px", 
+          fontWeight: 900, 
+          letterSpacing: "4px", 
+          textTransform: "uppercase",
+          margin: "0 0 10px 0",
+          animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+        }}>
+          Forging Artifact
+        </h2>
+        <p style={{ 
+          fontSize: "12px", 
+          fontWeight: 600, 
+          letterSpacing: "2px", 
+          opacity: 0.5, 
+          textTransform: "uppercase",
+          margin: 0
+        }}>
+          Decrypting vault data...
+        </p>
+  
+        <style jsx>{`
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+          }
+        `}</style>
+      </div>
+    );
   }
 
-  // 🔥 THE FIX 🔥
-  // We removed the fake duplicates. It will now ONLY show the exact, unique images 
-  // saved in your database array. If there is only 1, it will only show 1 thumbnail.
   const gallery = Array.isArray(product.images) && product.images.length > 0 
     ? product.images 
     : [product.image];
@@ -53,7 +96,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const handleAddToCart = () => {
     if (!selectedSize) return alert("Please select a size.");
     
-    setIsAdding(true); // Changes button to green "ADDED TO CART"
+    setIsAdding(true); 
     
     addToCart({
       id: product._id,
@@ -63,7 +106,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       size: selectedSize
     });
     
-    // 🔥 Wait 800ms for the animation, then redirect to cart page!
     setTimeout(() => {
       router.push("/cart");
     }, 800);
@@ -71,14 +113,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="pdp-container">
-      {/* Breadcrumb Navigation */}
       <div className="breadcrumb">
         Home / {product.category.toUpperCase()} / T-SHIRTS / <span style={{ color: "var(--text)" }}>{product.name}</span>
       </div>
 
       <div className="pdp-grid">
         
-        {/* 1. VERTICAL THUMBNAILS (LEFT) */}
         <div className="thumbnails">
           {gallery.map((img: string, idx: number) => (
             <div 
@@ -96,7 +136,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           ))}
         </div>
 
-        {/* 2. MAIN LARGE IMAGE (CENTER) */}
         <div className="main-image-container">
           <Image 
             src={gallery[selectedImageIndex] || "/fallback.png"} 
@@ -107,7 +146,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           />
         </div>
 
-        {/* 3. PRODUCT INFO (RIGHT) */}
         <div className="product-info">
           <h1 className="product-title">{product.name}</h1>
           
@@ -155,8 +193,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       </div>
 
       <style jsx>{`
-        .loading-state { height: 100vh; display: flex; justify-content: center; align-items: center; font-weight: 900; letter-spacing: 2px; color: var(--text); }
-        
         .pdp-container { 
           padding: 110px 5% 40px; 
           background: var(--bg); 
