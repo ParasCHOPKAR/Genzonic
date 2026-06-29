@@ -14,7 +14,8 @@ export async function GET(req: Request) {
     // If a category exists in the URL, filter by it. Otherwise, get all.
     const query = category ? { category } : {};
 
-    const products = await Product.find(query).sort({ createdAt: -1 });
+    // 🔥 UPDATED: Sort by Rank (1st, 2nd, 3rd), then fallback to newest first
+    const products = await Product.find(query).sort({ rank: 1, createdAt: -1 });
 
     return NextResponse.json({ success: true, products });
   } catch (error) {
@@ -47,16 +48,23 @@ export async function POST(req: Request) {
       stock: body.stock || 0,
       image: body.image,
       featured: body.featured || false,
+      rank: body.rank || 9999, // 🔥 Ensure rank is saved on creation
     });
 
+    // 🔥 Restored the missing success return here!
     return NextResponse.json(
       { success: true, product },
       { status: 201 }
     );
-  } catch (error: any) {
+
+  } catch (error: unknown) {
     console.error("POST ERROR:", error);
+    
+    // Safely extract the message to satisfy TypeScript
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+
     return NextResponse.json(
-      { success: false, message: error.message },
+      { success: false, message: errorMessage },
       { status: 500 }
     );
   }
