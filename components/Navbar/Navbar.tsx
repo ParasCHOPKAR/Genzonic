@@ -31,28 +31,6 @@ import {
 } from "lucide-react";
 import "./Navbar.css";
 
-// 🔥 DEFINED STRICT TYPES TO FIX ESLINT ERRORS 🔥
-interface NavProduct {
-  _id: string;
-  id?: string;
-  name: string;
-  slug?: string;
-  price: number;
-  originalPrice?: number;
-  image?: string;
-  images?: string[];
-  category?: string;
-  featured?: boolean;
-}
-
-interface WishlistItem {
-  _id?: string;
-  id?: string;
-  name?: string;
-  price?: number;
-  image?: string;
-}
-
 export default function Navbar() {
   /* =========================
      CONTEXT & STORE
@@ -85,13 +63,13 @@ export default function Navbar() {
   // HYDRATION FIX STATE
   const [mounted, setMounted] = useState(false);
 
-  // VAULT FETCH STATES (🔥 Removed 'any')
-  const [premiumProducts, setPremiumProducts] = useState<NavProduct[]>([]);
+  // VAULT FETCH STATES
+  const [premiumProducts, setPremiumProducts] = useState<any[]>([]);
   const [isLoadingPremium, setIsLoadingPremium] = useState(false);
 
-  // LIVE SEARCH STATES (🔥 Removed 'any')
+  // 🔥 NEW: LIVE SEARCH STATES
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<NavProduct[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   /* =========================
@@ -120,7 +98,7 @@ export default function Navbar() {
     };
   }, [categoryOpen, mobileMenuOpen]);
 
-  // FETCH ALL FEATURED PRODUCTS
+  // FETCH ALL FEATURED PRODUCTS (UNLIMITED)
   useEffect(() => {
     if (categoryOpen && premiumProducts.length === 0) {
       setIsLoadingPremium(true);
@@ -128,8 +106,7 @@ export default function Navbar() {
         .then((res) => res.json())
         .then((data) => {
           const productsArray = data.products || data || [];
-          // 🔥 Removed 'any' here
-          const premiumItems = productsArray.filter((item: NavProduct) => item.featured === true);
+          const premiumItems = productsArray.filter((item: any) => item.featured === true);
           setPremiumProducts(premiumItems);
         })
         .catch((err) => console.error("Vault fetch error:", err))
@@ -137,13 +114,14 @@ export default function Navbar() {
     }
   }, [categoryOpen, premiumProducts.length]);
 
-  // LIVE SEARCH DEBOUNCE EFFECT
+  // 🔥 NEW: LIVE SEARCH DEBOUNCE EFFECT
   useEffect(() => {
     if (searchQuery.trim().length === 0) {
       setSearchResults([]);
       return;
     }
 
+    // Debounce to wait 300ms after user stops typing before fetching
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
@@ -151,12 +129,13 @@ export default function Navbar() {
         const data = await res.json();
         const productsArray = data.products || data || [];
         
-        // 🔥 Removed 'any' here
-        const results = productsArray.filter((p: NavProduct) => 
+        // Filter products matching the query (case insensitive)
+        const results = productsArray.filter((p: any) => 
           p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.category?.toLowerCase().includes(searchQuery.toLowerCase())
         );
         
+        // Limit to top 5 results for the dropdown
         setSearchResults(results.slice(0, 5));
       } catch (err) {
         console.error("Search error:", err);
@@ -225,27 +204,9 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* ===== NAV LINKS WITH DROPDOWN SYSTEM ===== */}
+          {/* ===== NAV LINKS (Highlighted Desktop) ===== */}
           <nav className="nav-links desktop-only">
-            {/* 🔥 Men Dropdown Container */}
-            <div className="dropdown-container">
-              <Link href="/shop/men" className="nav-item nav-highlight flex items-center gap-1">
-                Men <ChevronDown size={14} className="dropdown-arrow-icon" />
-              </Link>
-              
-              {/* Dropdown Menu Overlay Panel */}
-              <div className={`dropdown-menu-panel ${theme === "dark" ? "dark-theme-panel" : "light-theme-panel"}`}>
-                <Link href="/shop/men?subcategory=tshirt" className="dropdown-panel-item">
-                  <span>T-Shirts</span>
-                  <ChevronRight size={14} className="item-arrow" />
-                </Link>
-                <Link href="/shop/men?subcategory=pants" className="dropdown-panel-item">
-                  <span>Pants</span>
-                  <ChevronRight size={14} className="item-arrow" />
-                </Link>
-              </div>
-            </div>
-
+            <Link href="/shop/men" className="nav-item nav-highlight">Men</Link>
             <Link href="/shop/women" className="nav-item nav-highlight">Women</Link>
             <Link href="/shop/kids" className="nav-item nav-highlight">Kids</Link>
           </nav>
@@ -253,7 +214,7 @@ export default function Navbar() {
           {/* ===== RIGHT SIDE ACTIONS ===== */}
           <div className="nav-actions grid-layout">
 
-            {/* LIVE SEARCH WRAPPER */}
+            {/* 🔥 UPDATED: LIVE SEARCH WRAPPER 🔥 */}
             <div className={`search-wrapper desktop-only ${searchOpen ? "active" : ""}`} style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
               <input
                 type="text"
@@ -266,7 +227,7 @@ export default function Navbar() {
                 className="icon-grid-btn"
                 onClick={() => {
                   setSearchOpen(!searchOpen);
-                  if (searchOpen) setSearchQuery(""); 
+                  if (searchOpen) setSearchQuery(""); // Clear on close
                 }}
               >
                 {searchOpen ? <X size={22} /> : <Search size={22} />}
@@ -424,7 +385,7 @@ export default function Navbar() {
       <div className={`mobile-sidebar-clean ${mobileMenuOpen ? "open" : ""}`}>
         <div className="sidebar-scroll-wrapper">
           
-          {/* HEADER */}
+          {/* HEADER (Close & Logo) */}
           <div className="clean-header-block" style={{ display: "flex", flexDirection: "column", gap: "15px", padding: "15px 20px 20px" }}>
             <button 
               className="clean-close-btn" 
@@ -470,21 +431,11 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* MAIN MOBILE NAVIGATION (With Direct Subcategories Built In) */}
+          {/* MAIN NAVIGATION (Men, Women, Kids) */}
           <div className="clean-main-nav" style={{ display: "flex", flexDirection: "column", borderTop: "2px solid #000", borderBottom: "2px solid #000", background: "#fff" }}>
-            <div style={{ display: "flex", flexDirection: "column", background: "#fafafa" }}>
-              <Link href="/shop/men" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", fontWeight: 900 }}>
-                <span>MEN (ALL ARCHIVES)</span> <ChevronRight size={24} strokeWidth={2} />
-              </Link>
-              {/* Direct access panels inside mobile sidebar */}
-              <Link href="/shop/men?subcategory=tshirt" className="clean-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ paddingLeft: "40px", fontSize: "13px", color: "#555", borderTop: "1px solid #eee" }}>
-                — T-Shirts
-              </Link>
-              <Link href="/shop/men?subcategory=pants" className="clean-nav-item" onClick={() => setMobileMenuOpen(false)} style={{ paddingLeft: "40px", fontSize: "13px", color: "#555", borderTop: "1px solid #eee" }}>
-                — Pants
-              </Link>
-            </div>
-            
+            <Link href="/shop/men" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <span>MEN</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
+            </Link>
             <Link href="/shop/women" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <span>WOMEN</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
             </Link>
@@ -548,7 +499,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ================= CATEGORY OVERLAY ================= */}
+      {/* ================= CATEGORY OVERLAY (FULL WIDTH PREMIUM VAULT) ================= */}
       <div className={`category-overlay ${categoryOpen ? "show" : ""}`}>
         <div className="overlay-header-split">
           <div className="overlay-brand-line">
@@ -562,6 +513,7 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* 🔥 CSS INJECTION TO HIDE SCROLLBAR BUT KEEP SCROLLING 🔥 */}
         <style dangerouslySetInnerHTML={{ __html: `
           .hide-scroll-vault::-webkit-scrollbar { display: none; }
         `}} />
@@ -579,19 +531,15 @@ export default function Navbar() {
               </div>
             ) : premiumProducts.length > 0 ? (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: "20px", paddingBottom: "60px" }}>
-{premiumProducts.map((product) => {
-                  // 1. Tell TypeScript to safely treat the context array as our WishlistItem type
-                  const safeWishlist = wishlist as WishlistItem[];
-                  const isInWishlist = safeWishlist.some((w) => (w._id || w.id) === product._id);
-
-                  // 2. Guarantee that origPrice is a number so TypeScript allows the math
-                  const origPrice = product.originalPrice || 0;
-                  const hasDiscount = origPrice > product.price;
-                  const discountPercent = hasDiscount ? Math.round(((origPrice - product.price) / origPrice) * 100) : 0;
+                {premiumProducts.map((product) => {
+                  const isInWishlist = wishlist.some((w: any) => w._id === product._id);
+                  const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+                  const discountPercent = hasDiscount ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
 
                   return (
                     <div key={product._id} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       
+                      {/* Image Container with Wishlist Heart */}
                       <div style={{ 
                         position: "relative", 
                         width: "100%", 
@@ -613,6 +561,7 @@ export default function Navbar() {
                           />
                         </Link>
                         
+                        {/* Heart Button Overlay */}
                         <button style={{ 
                           position: "absolute", 
                           top: "10px", 
@@ -637,6 +586,7 @@ export default function Navbar() {
                         </button>
                       </div>
                       
+                      {/* Product Details Area */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <Link 
                           href={`/product/${product.slug}`} 
@@ -680,6 +630,7 @@ export default function Navbar() {
                         </div>
                       </div>
 
+                      {/* Buy Now Button */}
                       <Link 
                         href={`/product/${product.slug}`} 
                         onClick={() => setCategoryOpen(false)}
