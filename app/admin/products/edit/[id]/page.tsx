@@ -23,6 +23,7 @@ export default function EditProduct() {
     category: "MEN",
     color: "",
     stock: "",
+    rank: "", // 🔥 New state for Rank
     description: "",
     isPremium: false,
     sizes: [] as string[],
@@ -49,6 +50,7 @@ export default function EditProduct() {
             category: p.category,
             color: p.color || "",
             stock: p.stock.toString(),
+            rank: p.rank !== undefined ? p.rank.toString() : "", // 🔥 Fetch rank
             description: p.description || "",
             isPremium: p.isPremium || false,
             sizes: p.sizes || [],
@@ -115,6 +117,7 @@ export default function EditProduct() {
         },
         body: JSON.stringify({
           ...formData,
+          rank: formData.rank === "" ? 9999 : Number(formData.rank), // 🔥 Send rank as Number
           existingImages,
           newImages: newImagesBase64 
         }),
@@ -149,7 +152,7 @@ export default function EditProduct() {
         
         {/* Header matched to Add page */}
         <div className={styles.header} style={{ display: 'flex', alignItems: 'flex-start', gap: '15px' }}>
-          <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '5px' }}>
+          <button type="button" onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '5px' }}>
             <ArrowLeft size={24} color="#000" />
           </button>
           <div>
@@ -238,16 +241,29 @@ export default function EditProduct() {
             </div>
           </div>
 
-          {/* Row 4: Stock */}
-          <div className={styles.full}>
-            <label className="label" style={{ textTransform: 'uppercase', fontSize: '13px', fontWeight: 600, color: '#374151' }}>Stock Quantity</label>
-            <input 
-              type="number" 
-              required 
-              className={styles.input} 
-              value={formData.stock} 
-              onChange={e => setFormData({...formData, stock: e.target.value})} 
-            />
+          {/* 🔥 Row 4: Stock & Rank */}
+          <div className={styles.grid}>
+            <div className={styles.inputGroup}>
+              <label className="label" style={{ textTransform: 'uppercase', fontSize: '13px', fontWeight: 600, color: '#374151' }}>Stock Quantity</label>
+              <input 
+                type="number" 
+                required 
+                className={styles.input} 
+                value={formData.stock} 
+                onChange={e => setFormData({...formData, stock: e.target.value})} 
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label className="label" style={{ textTransform: 'uppercase', fontSize: '13px', fontWeight: 900, color: '#FF3E00' }}>Display Rank</label>
+              <input 
+                type="number" 
+                className={styles.input} 
+                placeholder="e.g., 1 (Highest)"
+                value={formData.rank} 
+                onChange={e => setFormData({...formData, rank: e.target.value})} 
+                style={{ borderColor: '#FF3E00', backgroundColor: '#fff5f2' }}
+              />
+            </div>
           </div>
 
           {/* Row 5: Images */}
