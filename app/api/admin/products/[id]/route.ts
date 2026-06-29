@@ -23,7 +23,7 @@ export async function GET(
   }
 }
 
-// PUT: Update product via standard JSON (Fixes Image Upload bugs)
+// PUT: Update product via standard JSON (Merged Images + Rank)
 export async function PUT(
   req: Request, 
   { params }: { params: Promise<{ id: string }> } 
@@ -32,18 +32,15 @@ export async function PUT(
     await connectDB();
     const resolvedParams = await params;
     
-    // Parse the clean JSON body sent from the new frontend
+    // Parse the clean JSON body sent from the frontend
     const body = await req.json();
     
+    // 🔥 Added rank to the extracted variables
     const { 
       name, price, category, color, stock, 
       description, isPremium, sizes, 
-      existingImages, newImages 
+      existingImages, newImages, rank 
     } = body;
-
-    // Optional: If you use Cloudinary, you would upload the base64 strings here.
-    // E.g., const uploadedUrls = await Promise.all(newImages.map(img => cloudinary.uploader.upload(img)))
-    // For now, we will save the raw base64 strings directly to the DB so they render instantly.
     
     const finalImagesArray = [...(existingImages || []), ...(newImages || [])];
 
@@ -60,6 +57,7 @@ export async function PUT(
         isPremium,
         sizes,
         images: finalImagesArray, 
+        rank: rank === "" || rank === undefined ? 9999 : Number(rank), // 🔥 Added rank to DB update
       },
       { new: true, runValidators: true }
     );

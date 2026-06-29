@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import Product from "@/models/Product";
 import { connectDB } from "@/lib/mongodb";
 
+// 🔥 THIS IS THE MAGIC LINE: It tells Next.js NEVER to cache this API route.
+export const dynamic = "force-dynamic";
+
 // ✅ GET ALL PRODUCTS (WITH OPTIONAL CATEGORY FILTER)
 export async function GET(req: Request) {
   try {
@@ -14,7 +17,7 @@ export async function GET(req: Request) {
     // If a category exists in the URL, filter by it. Otherwise, get all.
     const query = category ? { category } : {};
 
-    // 🔥 UPDATED: Sort by Rank (1st, 2nd, 3rd), then fallback to newest first
+    // Sort by Rank (1st, 2nd, 3rd), then fallback to newest first
     const products = await Product.find(query).sort({ rank: 1, createdAt: -1 });
 
     return NextResponse.json({ success: true, products });
@@ -48,10 +51,9 @@ export async function POST(req: Request) {
       stock: body.stock || 0,
       image: body.image,
       featured: body.featured || false,
-      rank: body.rank || 9999, // 🔥 Ensure rank is saved on creation
+      rank: body.rank || 9999, // Ensure rank is saved on creation
     });
 
-    // 🔥 Restored the missing success return here!
     return NextResponse.json(
       { success: true, product },
       { status: 201 }
