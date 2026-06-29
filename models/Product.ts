@@ -45,6 +45,11 @@ const productSchema = new mongoose.Schema(
     featured: { 
       type: Boolean, 
       default: false 
+    },
+    // 🔥 Rank field correctly placed inside the schema
+    rank: { 
+      type: Number, 
+      default: 9999 
     }
   },
   { timestamps: true }
