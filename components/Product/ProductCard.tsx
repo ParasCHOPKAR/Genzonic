@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlist } from "@/app/context/WishlistContext";
 
@@ -14,6 +14,7 @@ interface ProductProps {
     price: number;
     image: string;
     slug?: string;
+    stock: number; // ✅ Added property to fix type definition error
   };
 }
 
@@ -40,12 +41,13 @@ export default function ProductCard({ product }: ProductProps) {
     slug: product.slug,
   };
 
-  // 5. Handlers
+  // 5. Handlers (Fixed premature brackets and removed stray character)
   const handleAddToCart = () => {
     addToCart({
       ...product,
       id: productId,
-      size: "M" // Default size for quick add
+      size: "M", // Default size for quick add
+      stock: product.stock 
     });
     
     setAdded(true);
@@ -59,8 +61,9 @@ export default function ProductCard({ product }: ProductProps) {
   return (
     <div className="border rounded-lg p-4 relative flex flex-col group transition duration-300 hover:shadow-lg dark:border-gray-700">
       
-      {/* 🔥 WISHLIST HEART BUTTON */}
+      {/* WISHLIST HEART BUTTON */}
       <button 
+        type="button"
         onClick={() => toggleWishlist(wishlistProduct)}
         className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
       >
@@ -74,6 +77,7 @@ export default function ProductCard({ product }: ProductProps) {
             src={product.image} 
             alt={product.name} 
             fill 
+            sizes="(max-width: 768px) 100vw, 300px"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
@@ -81,8 +85,9 @@ export default function ProductCard({ product }: ProductProps) {
         <p className="font-semibold mt-2">₹{product.price}</p>
       </Link>
       
-      {/* 🔥 ADD TO CART BUTTON */}
+      {/* ADD TO CART BUTTON */}
       <button 
+        type="button"
         onClick={handleAddToCart}
         disabled={added}
         className={`w-full mt-4 py-3 font-bold uppercase transition-colors rounded-md ${
