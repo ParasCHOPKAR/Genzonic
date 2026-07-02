@@ -8,11 +8,12 @@ export interface CartItem {
   image: string;
   size: string;
   quantity: number;
+  stock: number; // 🔥 1. Added strict stock property
 }
 
 interface CartState {
   cart: CartItem[];
-  setCart: (newCart: CartItem[]) => void; // 🔥 Added setCart to the TypeScript interface
+  setCart: (newCart: CartItem[]) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (id: string | number, size: string) => void;
   increaseQty: (id: string | number, size: string) => void;
@@ -20,17 +21,19 @@ interface CartState {
   clearCart: () => void; 
 }
 
-// 🔥 Removed the 'persist' wrapper entirely
 export const useCartStore = create<CartState>()((set) => ({
   cart: [],
 
-  // 🔥 Added the setCart function to inject the user's history
   setCart: (newCart) => set({ cart: newCart }),
 
   addToCart: (item) => set((state) => {
     const existingItem = state.cart.find((i) => i.id === item.id && i.size === item.size);
     
     if (existingItem) {
+      // 🔥 2. Block adding to cart from PDP if already at max stock
+      if (existingItem.quantity >= item.stock) {
+        return { cart: state.cart }; 
+      }
       return {
         cart: state.cart.map((i) =>
           i.id === item.id && i.size === item.size
@@ -47,25 +50,27 @@ export const useCartStore = create<CartState>()((set) => ({
   })),
 
   increaseQty: (id, size) => set((state) => ({
-    cart: state.cart.map((i) =>
-      i.id === id && i.size === size
-        ? { ...i, quantity: i.quantity + 1 }
-        : i
-    ),
+    cart: state.cart.map((i) => {
+      if (i.id === id && i.size === size) {
+        // 🔥 3. Strict guard: Prevent increasing beyond database stock limit
+        if (i.quantity >= i.stock) {
+          return i; 
+        }
+        return { ...i, quantity: i.quantity + 1 };
+      }
+      return i;
+    }),
   })),
 
-decreaseQty: (id, size) => set((state) => {
-    // 1. Find the specific item we are trying to decrease
+  decreaseQty: (id, size) => set((state) => {
     const existingItem = state.cart.find((i) => i.id === id && i.size === size);
     
-    // 2. 🔥 If the quantity is exactly 1, completely remove it from the cart
     if (existingItem && existingItem.quantity === 1) {
       return {
         cart: state.cart.filter((i) => !(i.id === id && i.size === size)),
       };
     }
 
-    // 3. Otherwise, just decrease the quantity normally
     return {
       cart: state.cart.map((i) =>
         i.id === id && i.size === size

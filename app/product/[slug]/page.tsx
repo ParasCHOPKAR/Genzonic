@@ -4,7 +4,6 @@ import { useEffect, useState, use } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; 
 import { useCartStore } from "@/store/cartStore";
-// 🔥 Added Loader2 to the imports
 import { ShoppingBag, CheckCircle, Loader2 } from "lucide-react";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -36,7 +35,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     fetchProduct();
   }, [slug]);
 
-  // 🔥 THE NEW PREMIUM LOADER
   if (!product) {
     return (
       <div style={{ 
@@ -103,7 +101,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       name: product.name,
       price: product.price,
       image: product.image,
-      size: selectedSize
+      size: selectedSize,
+      stock: product.stock // 🔥 REQUIRED FIX: Passing the stock limit to the cart store!
     });
     
     setTimeout(() => {
@@ -114,7 +113,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   return (
     <div className="pdp-container">
       <div className="breadcrumb">
-        Home / {product.category.toUpperCase()} / T-SHIRTS / <span style={{ color: "var(--text)" }}>{product.name}</span>
+        Home / {product.category?.toUpperCase() || "MEN"} / T-SHIRTS / <span style={{ color: "var(--text)" }}>{product.name}</span>
       </div>
 
       <div className="pdp-grid">
@@ -160,7 +159,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           <div className="size-section">
             <div className="size-header">
               <span className="size-label">SELECT SIZE</span>
-            
             </div>
             <div className="size-grid">
               {product.sizes && product.sizes.length > 0 ? (

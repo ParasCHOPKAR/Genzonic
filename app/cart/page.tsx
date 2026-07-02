@@ -4,13 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react"; // 🔥 1. Imported NextAuth session hook
+import { useSession } from "next-auth/react"; 
 import { X, ArrowLeft, ShieldCheck, Truck, RefreshCw, Ticket, Check, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 
 export default function CartPage() {
   const router = useRouter(); 
-  const { status } = useSession(); // 🔥 2. Grab the user's login status
+  const { status } = useSession(); 
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCartStore();
 
   const [couponInput, setCouponInput] = useState("");
@@ -30,16 +30,12 @@ export default function CartPage() {
 
   const total = subtotal - discount;
 
-  // 🔥 3. The Secure Checkout Handler
   const handleCheckout = () => {
-    if (status === "loading") return; // Wait a split second if NextAuth is still checking
+    if (status === "loading") return; 
     
     if (status === "unauthenticated") {
-      // If not logged in, send them to login. 
-      // We pass the callbackUrl so they come straight back to checkout after signing in!
       router.push("/login?callbackUrl=/checkout"); 
     } else {
-      // If logged in, proceed normally
       router.push("/checkout");
     }
   };
@@ -70,28 +66,44 @@ export default function CartPage() {
         <div className="cart-grid">
           {/* PRODUCT LISTING */}
           <div className="cart-items">
-            {cart.map((item) => (
-              <div key={item.id + item.size} className="item-card">
-                <div className="item-img">
-                  <Image src={item.image} alt="" fill style={{objectFit:"cover"}} />
-                </div>
-                <div className="item-details">
-                  <div className="item-top">
-                    <h3 className="item-name">{item.name}</h3>
-                    <button className="remove-btn" onClick={() => removeFromCart(item.id, item.size)}><X size={20}/></button>
+            {cart.map((item) => {
+              // 🔥 Calculate if they have hit the stock limit
+              const isMaxStock = item.quantity >= item.stock;
+
+              return (
+                <div key={item.id + item.size} className="item-card">
+                  <div className="item-img">
+                    <Image src={item.image} alt="" fill style={{objectFit:"cover"}} />
                   </div>
-                  <p className="item-meta">SIZE: <span className="highlight">{item.size}</span></p>
-                  <div className="item-bottom">
-                    <div className="qty-control">
-                      <button onClick={() => decreaseQty(item.id, item.size)}>-</button>
-                      <span className="qty-num">{item.quantity}</span>
-                      <button onClick={() => increaseQty(item.id, item.size)}>+</button>
+                  <div className="item-details">
+                    <div className="item-top">
+                      <h3 className="item-name">{item.name}</h3>
+                      <button className="remove-btn" onClick={() => removeFromCart(item.id, item.size)}><X size={20}/></button>
                     </div>
-                    <p className="item-price">₹{item.price * item.quantity}</p>
+                    
+                    <div className="meta-container">
+                      <p className="item-meta">SIZE: <span className="highlight">{item.size}</span></p>
+                      {/* 🔥 Show warning if stock is maxed */}
+                      {isMaxStock && <span className="stock-warning">Max Stock Reached</span>}
+                    </div>
+                    
+                    <div className="item-bottom">
+                      <div className="qty-control">
+                        <button onClick={() => decreaseQty(item.id, item.size)}>-</button>
+                        <span className="qty-num">{item.quantity}</span>
+                        {/* 🔥 Disable the + button if at max stock */}
+                        <button 
+                          onClick={() => increaseQty(item.id, item.size)}
+                          disabled={isMaxStock}
+                          className={isMaxStock ? 'disabled-btn' : ''}
+                        >+</button>
+                      </div>
+                      <p className="item-price">₹{item.price * item.quantity}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* CHECKOUT SIDEBAR */}
@@ -130,7 +142,6 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* 🔥 4. Guarded Checkout Button 🔥 */}
               <button 
                 onClick={handleCheckout} 
                 className="pay-now-btn"
@@ -173,13 +184,17 @@ export default function CartPage() {
         .item-name { font-size: 16px; font-weight: 800; text-transform: uppercase; margin: 0; line-height: 1.2; }
         .remove-btn { background: none; border: none; color: #888; cursor: pointer; transition: 0.2s; }
         .remove-btn:hover { color: #ff3e00; }
-        .item-meta { font-size: 11px; font-weight: 700; color: #888; margin: 5px 0 15px; }
+        
+        .meta-container { display: flex; justify-content: space-between; align-items: center; margin: 5px 0 15px; }
+        .item-meta { font-size: 11px; font-weight: 700; color: #888; margin: 0; }
         .highlight { color: var(--text); }
+        .stock-warning { font-size: 10px; font-weight: 800; color: #ff3e00; background: rgba(255, 62, 0, 0.1); padding: 2px 6px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; }
         
         .item-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
         .qty-control { display: flex; align-items: center; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.1); border-radius: 6px; padding: 2px; }
         .qty-control button { width: 30px; height: 30px; border: none; background: none; font-weight: 900; color: var(--text); cursor: pointer; border-radius: 4px; transition: 0.2s; }
-        .qty-control button:hover { background: var(--text); color: var(--bg); }
+        .qty-control button:hover:not(.disabled-btn) { background: var(--text); color: var(--bg); }
+        .disabled-btn { opacity: 0.2; cursor: not-allowed !important; }
         .qty-num { width: 30px; text-align: center; font-size: 13px; font-weight: 900; }
         .item-price { font-size: 18px; font-weight: 900; }
 
