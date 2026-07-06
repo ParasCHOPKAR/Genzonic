@@ -17,6 +17,7 @@ export default function CartPage() {
   const [isApplied, setIsApplied] = useState(false);
   const [discount, setDiscount] = useState(0);
 
+  // 1. Calculate base subtotal
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   
   const handleApplyCoupon = () => {
@@ -28,7 +29,13 @@ export default function CartPage() {
     }
   };
 
-  const total = subtotal - discount;
+  // 🔥 NEW MATH LOGIC FOR GST & DELIVERY 🔥
+  const deliveryCharge = 25;
+  // Calculate 5% GST on the subtotal (after any discounts are applied)
+  const gstAmount = Math.round((subtotal - discount) * 0.05);
+  
+  // Final Total includes Subtotal - Discount + GST + Delivery
+  const total = subtotal - discount + gstAmount + deliveryCharge;
 
   const handleCheckout = () => {
     if (status === "loading") return; 
@@ -67,7 +74,6 @@ export default function CartPage() {
           {/* PRODUCT LISTING */}
           <div className="cart-items">
             {cart.map((item) => {
-              // 🔥 Calculate if they have hit the stock limit
               const isMaxStock = item.quantity >= item.stock;
 
               return (
@@ -83,7 +89,6 @@ export default function CartPage() {
                     
                     <div className="meta-container">
                       <p className="item-meta">SIZE: <span className="highlight">{item.size}</span></p>
-                      {/* 🔥 Show warning if stock is maxed */}
                       {isMaxStock && <span className="stock-warning">Max Stock Reached</span>}
                     </div>
                     
@@ -91,7 +96,6 @@ export default function CartPage() {
                       <div className="qty-control">
                         <button onClick={() => decreaseQty(item.id, item.size)}>-</button>
                         <span className="qty-num">{item.quantity}</span>
-                        {/* 🔥 Disable the + button if at max stock */}
                         <button 
                           onClick={() => increaseQty(item.id, item.size)}
                           disabled={isMaxStock}
@@ -112,7 +116,6 @@ export default function CartPage() {
               <h2 className="summary-title">ORDER SUMMARY</h2>
               
               <div className="summary-row"><span>SUBTOTAL</span><span>₹{subtotal}</span></div>
-              <div className="summary-row"><span className="orange-text">SHIPPING</span><span className="orange-text">Free</span></div>
               
               {isApplied && (
                 <div className="summary-row discount">
@@ -120,6 +123,10 @@ export default function CartPage() {
                   <span className="orange-text">-₹{discount}</span>
                 </div>
               )}
+
+              {/* 🔥 NEW UI ROWS FOR GST AND SHIPPING */}
+              <div className="summary-row"><span>GST (5%)</span><span>₹{gstAmount}</span></div>
+              <div className="summary-row"><span className="orange-text">SHIPPING</span><span className="orange-text">₹{deliveryCharge}</span></div>
 
               <div className="total-row">
                 <span>TOTAL DUE</span>
@@ -164,7 +171,6 @@ export default function CartPage() {
         .cart-page { padding: 120px 5% 100px; background: var(--bg); color: var(--text); min-height: 100vh; font-family: 'Inter', sans-serif; transition: background 0.3s ease, color 0.3s ease; }
         .container { max-width: 1300px; margin: 0 auto; }
         
-        /* Header Styling */
         .cart-header { margin-bottom: 40px; border-bottom: 2px solid var(--text); padding-bottom: 20px; }
         .title { font-size: clamp(28px, 4vw, 36px); font-weight: 900; letter-spacing: -1px; margin: 0; }
         .count { color: #ff3e00; }
@@ -173,7 +179,6 @@ export default function CartPage() {
 
         .cart-grid { display: grid; grid-template-columns: 1fr 420px; gap: 50px; }
 
-        /* Item Cards */
         .item-card { display: flex; gap: 20px; padding: 20px; background: transparent; border: 1px solid rgba(128,128,128,0.2); margin-bottom: 15px; border-radius: 8px; transition: 0.3s; }
         .item-card:hover { border-color: var(--text); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         :global(.dark) .item-card:hover { box-shadow: 0 10px 30px rgba(255,255,255,0.02); }
@@ -198,7 +203,6 @@ export default function CartPage() {
         .qty-num { width: 30px; text-align: center; font-size: 13px; font-weight: 900; }
         .item-price { font-size: 18px; font-weight: 900; }
 
-        /* Sidebar & Summary */
         .summary-box { position: sticky; top: 120px; background: var(--bg); border: 2px solid var(--text); padding: 35px; border-radius: 12px; box-shadow: 8px 8px 0px var(--text); transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
         :global(.dark) .summary-box { box-shadow: 6px 6px 0px rgba(255,255,255,0.2); }
 
@@ -207,7 +211,6 @@ export default function CartPage() {
         .orange-text { color: #ff3e00; }
         .total-row { border-top: 1px dashed rgba(128,128,128,0.3); margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 24px; font-weight: 900; letter-spacing: -1px; }
 
-        /* Coupon Box */
         .coupon-container { margin: 25px 0; }
         .coupon-input-wrapper { display: flex; align-items: center; border: 1px solid rgba(128,128,128,0.3); border-radius: 8px; padding: 0 15px; transition: 0.2s; background: rgba(128,128,128,0.02); }
         .coupon-input-wrapper:focus-within { border-color: var(--text); background: transparent; }
@@ -215,7 +218,6 @@ export default function CartPage() {
         .coupon-input-wrapper input { flex: 1; padding: 14px; background: none; border: none; outline: none; font-weight: 800; font-size: 12px; color: var(--text); }
         .apply-btn { background: none; border: none; color: #ff3e00; font-weight: 900; cursor: pointer; padding-left: 10px; }
 
-        /* YELLOW PAY NOW BUTTON */
         .pay-now-btn { 
           display: flex !important; 
           align-items: center !important; 
