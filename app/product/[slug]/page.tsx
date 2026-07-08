@@ -2,9 +2,10 @@
 
 import { useEffect, useState, use } from "react";
 import Image from "next/image";
+import Link from "next/link"; // 🔥 ADDED: Link import for routing
 import { useRouter } from "next/navigation"; 
 import { useCartStore } from "@/store/cartStore";
-import { ShoppingBag, CheckCircle, Loader2 } from "lucide-react";
+import { ShoppingBag, CheckCircle, Loader2, RefreshCw } from "lucide-react"; // 🔥 ADDED: RefreshCw icon
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -102,7 +103,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       price: product.price,
       image: product.image,
       size: selectedSize,
-      stock: product.stock // 🔥 REQUIRED FIX: Passing the stock limit to the cart store!
+      stock: product.stock 
     });
     
     setTimeout(() => {
@@ -182,6 +183,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             {isAdding ? "ADDED TO CART ✓" : "ADD TO CART"}
           </button>
 
+          {/* 🔥 NEW: Return Policy Link */}
+          <Link href="/about#returns" className="pdp-return-link">
+            <RefreshCw size={14} />
+            <span>7-DAY RETURN & REPLACEMENT POLICY</span>
+          </Link>
+
           <div className="product-desc">
             <h4>DESCRIPTION / LORE</h4>
             <p>{product.description || "A premium artifact crafted with meticulous attention to detail. Heavyweight fabric, dropped shoulders, and a structured fit designed for the modern streetwear aesthetic."}</p>
@@ -252,6 +259,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         .add-to-cart-large { width: 100%; padding: 22px; background: var(--text); color: var(--bg); border: none; border-radius: 6px; font-size: 14px; font-weight: 900; letter-spacing: 2px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: 0.3s; margin-top: 35px; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .add-to-cart-large:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
         .add-to-cart-large.success { background: #50e3c2; color: #000; }
+
+        /* 🔥 NEW: Return Policy Link CSS */
+        .pdp-return-link { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-size: 11px; font-weight: 800; color: #888; text-decoration: none; letter-spacing: 1px; transition: color 0.2s; }
+        .pdp-return-link:hover { color: var(--text); }
 
         .product-desc { margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(128,128,128,0.1); }
         .product-desc h4 { font-size: 11px; font-weight: 800; letter-spacing: 2px; margin-bottom: 12px; color: #888; }

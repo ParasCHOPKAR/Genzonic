@@ -157,11 +157,15 @@ export default function CartPage() {
                 <ArrowRight size={22} strokeWidth={3} />
               </button>
 
-              <div className="trust-badges">
+<div className="trust-badges">
                 <div className="badge-item"><ShieldCheck size={14}/> <span>SECURE CHECKOUT</span></div>
-                <div className="badge-item"><RefreshCw size={14}/> <span>EASY REPLACEMENT</span></div>
+                {/* 🔥 UPDATED: Now a clickable link to the return policy */}
+                <Link href="/about#returns" className="badge-item policy-link">
+                  <RefreshCw size={14}/> <span>7-DAY RETURN POLICY</span>
+                </Link>
                 <div className="badge-item"><Truck size={14}/> <span>FAST DISPATCH</span></div>
               </div>
+              
             </div>
           </div>
         </div>
@@ -210,7 +214,8 @@ export default function CartPage() {
         .summary-row { display: flex; justify-content: space-between; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
         .orange-text { color: #ff3e00; }
         .total-row { border-top: 1px dashed rgba(128,128,128,0.3); margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 24px; font-weight: 900; letter-spacing: -1px; }
-
+.policy-link { cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .policy-link:hover { color: var(--text); }
         .coupon-container { margin: 25px 0; }
         .coupon-input-wrapper { display: flex; align-items: center; border: 1px solid rgba(128,128,128,0.3); border-radius: 8px; padding: 0 15px; transition: 0.2s; background: rgba(128,128,128,0.02); }
         .coupon-input-wrapper:focus-within { border-color: var(--text); background: transparent; }
