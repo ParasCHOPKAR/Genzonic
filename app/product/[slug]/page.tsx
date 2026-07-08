@@ -2,10 +2,10 @@
 
 import { useEffect, useState, use } from "react";
 import Image from "next/image";
-import Link from "next/link"; // 🔥 ADDED: Link import for routing
+import Link from "next/link"; 
 import { useRouter } from "next/navigation"; 
 import { useCartStore } from "@/store/cartStore";
-import { ShoppingBag, CheckCircle, Loader2, RefreshCw } from "lucide-react"; // 🔥 ADDED: RefreshCw icon
+import { ShoppingBag, CheckCircle, Loader2, RefreshCw } from "lucide-react"; 
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -18,6 +18,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [selectedSize, setSelectedSize] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const { addToCart } = useCartStore();
+
+  // 🔥 NEW: State for Mobile Touch Swiping
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 50;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -92,6 +97,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const originalPrice = product.originalPrice || Math.round(product.price * 1.35);
   const discountPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
 
+  // 🔥 NEW: Swipe Gesture Handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEndHandler = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      // Swipe Left -> Next Image
+      setSelectedImageIndex((prev) => (prev === gallery.length - 1 ? 0 : prev + 1));
+    }
+    if (isRightSwipe) {
+      // Swipe Right -> Previous Image
+      setSelectedImageIndex((prev) => (prev === 0 ? gallery.length - 1 : prev - 1));
+    }
+  };
+
   const handleAddToCart = () => {
     if (!selectedSize) return alert("Please select a size.");
     
@@ -136,14 +167,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           ))}
         </div>
 
-        <div className="main-image-container">
-          <Image 
-            src={gallery[selectedImageIndex] || "/fallback.png"} 
-            alt={product.name} 
-            fill 
-            style={{ objectFit: 'contain', padding: '20px' }} 
-            priority 
-          />
+        {/* 🔥 UPDATED: Main Image Display with Swiping & Dots */}
+        <div className="main-display">
+          <div 
+            className="main-image-container"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEndHandler}
+          >
+            <Image 
+              src={gallery[selectedImageIndex] || "/fallback.png"} 
+              alt={product.name} 
+              fill 
+              style={{ objectFit: 'contain', padding: '20px' }} 
+              priority 
+            />
+          </div>
+
+          {gallery.length > 1 && (
+            <div className="dots-container">
+              {gallery.map((_, idx) => (
+                <button 
+                  key={idx} 
+                  className={`dot ${selectedImageIndex === idx ? 'active' : ''}`}
+                  onClick={() => setSelectedImageIndex(idx)}
+                  aria-label={`View image ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="product-info">
@@ -183,7 +235,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             {isAdding ? "ADDED TO CART ✓" : "ADD TO CART"}
           </button>
 
-          {/* 🔥 NEW: Return Policy Link */}
           <Link href="/about#returns" className="pdp-return-link">
             <RefreshCw size={14} />
             <span>7-DAY RETURN & REPLACEMENT POLICY</span>
@@ -229,7 +280,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         .thumb img { transition: 0.2s; }
         .thumb:hover { border-color: rgba(128,128,128,0.5); }
 
-        .main-image-container { position: relative; width: 100%; height: 100%; background: rgba(128,128,128,0.03); border-radius: 8px; overflow: hidden; border: 1px solid rgba(128,128,128,0.1); }
+        /* 🔥 NEW CSS for Main Display & Dots */
+        .main-display { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 12px; }
+        .main-image-container { position: relative; width: 100%; flex: 1; min-height: 400px; background: rgba(128,128,128,0.03); border-radius: 8px; overflow: hidden; border: 1px solid rgba(128,128,128,0.1); touch-action: pan-y; }
+        
+        .dots-container { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 5px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(128,128,128,0.2); border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 0; }
+        .dot.active { background: var(--text); width: 24px; border-radius: 4px; }
 
         .product-info { display: flex; flex-direction: column; height: 100%; overflow-y: auto; padding-right: 15px; padding-bottom: 50px; }
         .product-info::-webkit-scrollbar { width: 4px; }
@@ -248,8 +305,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         .size-section { margin-top: 35px; }
         .size-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
         .size-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #888; }
-        .size-guide { font-size: 12px; font-weight: 700; color: var(--text); cursor: pointer; text-decoration: underline; opacity: 0.6; transition: 0.2s; }
-        .size-guide:hover { opacity: 1; }
         
         .size-grid { display: flex; gap: 10px; flex-wrap: wrap; }
         .size-btn { width: 55px; height: 55px; border-radius: 6px; border: 1px solid rgba(128,128,128,0.2); background: transparent; color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; }
@@ -260,7 +315,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         .add-to-cart-large:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
         .add-to-cart-large.success { background: #50e3c2; color: #000; }
 
-        /* 🔥 NEW: Return Policy Link CSS */
         .pdp-return-link { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-size: 11px; font-weight: 800; color: #888; text-decoration: none; letter-spacing: 1px; transition: color 0.2s; }
         .pdp-return-link:hover { color: var(--text); }
 
@@ -273,7 +327,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           .pdp-grid { grid-template-columns: 1fr; height: auto; gap: 30px; }
           .thumbnails { flex-direction: row; order: 2; overflow-x: auto; height: auto; padding-bottom: 10px; }
           .thumb { width: 80px; height: 100px; flex-shrink: 0; }
-          .main-image-container { order: 1; height: 60vh; }
+          
+          /* 🔥 UPDATED for Mobile Layout */
+          .main-display { order: 1; height: 60vh; }
           .product-info { order: 3; padding-bottom: 20px; }
         }
       `}</style>
