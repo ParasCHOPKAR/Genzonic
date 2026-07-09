@@ -186,7 +186,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
           {gallery.length > 1 && (
             <div className="dots-container">
-              {gallery.map((_, idx) => (
+              {/* 🔥 FIX: Explicitly typed the parameters to satisfy TypeScript */}
+              {gallery.map((_: string, idx: number) => (
                 <button 
                   key={idx} 
                   className={`dot ${selectedImageIndex === idx ? 'active' : ''}`}
