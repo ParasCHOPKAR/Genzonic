@@ -125,16 +125,6 @@ export default function Hero() {
         <p className="editorial-desc reveal-text">
           Experience our signature silhouettes. Hover over the subject to cycle through the available premium colorways.
         </p>
-
-        <div className="reveal-text mt-5">
-          {/* UPDATED SHOP NOW BUTTON - REDIRECTS TO MENS PAGE */}
-          <Link href="/shop/men" className="solid-black-btn">
-            SHOP NOW
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-        </div>
       </div>
 
       {/* =========================================
@@ -180,6 +170,13 @@ export default function Hero() {
             </span>
           </div>
         </div>
+
+        <Link href="/shop/men" className="hero-center-cta solid-black-btn hide-mobile">
+          SHOP NOW
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
+            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
       </div>
 
       {/* =========================================
@@ -313,8 +310,8 @@ export default function Hero() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 68%; /* Desktop height constraint */
-          max-width: 420px; 
+          height: 60%; /* Desktop height constraint */
+          max-width: 350px; 
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -355,21 +352,42 @@ export default function Hero() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          background: ${darkMode ? "#ffffff" : "#000000"};
-          color: ${darkMode ? "#000000" : "#ffffff"};
-          padding: 18px 48px;
+          gap: 10px;
+          background: ${darkMode ? "#ffffff" : "#000000"} !important;
+          color: ${darkMode ? "#000000" : "#ffffff"} !important;
+          padding: 16px 34px;
           font-weight: 900;
           font-size: 14px;
           letter-spacing: 2px;
           text-transform: uppercase;
           text-decoration: none;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          width: 100%;
-          max-width: 380px; 
-          border-radius: 4px;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+          width: auto;
+          min-width: 190px;
+          border-radius: 8px;
+          box-shadow: ${darkMode ? "0 14px 35px rgba(255,255,255,0.14)" : "0 14px 35px rgba(0,0,0,0.16)"};
+          border: 1px solid ${darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.08)"};
         }
 
+        .solid-black-btn:hover { transform: translateY(-2px); }
         .solid-black-btn:active { transform: translateY(1px); }
+
+        .hero-center-cta {
+          position: absolute;
+          left: 50%;
+          bottom: 58px;
+          transform: translateX(-50%);
+          z-index: 20;
+          pointer-events: auto;
+        }
+
+        .hero-center-cta:hover {
+          transform: translateX(-50%) translateY(-2px);
+        }
+
+        .hero-center-cta:active {
+          transform: translateX(-50%) translateY(1px);
+        }
 
         .mt-5 { margin-top: 1.5rem; }
 
