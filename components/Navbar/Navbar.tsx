@@ -25,7 +25,6 @@ import {
   Crown,
   Info,
   Mail,
-  Gift,
   Link as LinkIcon,
   Loader2
 } from "lucide-react";
@@ -165,7 +164,7 @@ export default function Navbar() {
   };
 
   const marqueeText =
-    "EVERY ORDER INCLUDES • CUSTOM GENZONIC KEYCHAIN • BRAND STORY CARD • EXCLUSIVE DISCOUNT CARD • CUSTOM PATCH & STICKERS • PREMIUM UTILITY BOX • MORE THAN JUST APPAREL — IT’S AN EXPERIENCE • ";
+    "EVERY ORDER INCLUDES • CUSTOM GENZONIC KEYCHAIN • BRAND STORY CARD • CUSTOM PATCH & STICKERS • PREMIUM UTILITY BOX • MORE THAN JUST APPAREL — IT’S AN EXPERIENCE • ";
 
   return (
     <>
@@ -483,17 +482,6 @@ export default function Navbar() {
                 <ShieldAlert size={18} strokeWidth={2} color="#FF3E00" style={{ display: "block", flexShrink: 0 }}/> <span style={{color: "#FF3E00"}}>ADMIN PANEL</span>
               </Link>
             )}
-          </div>
-
-          {/* PROMO BANNER */}
-          <div className="clean-promo-container" style={{ padding: "20px", marginTop: "auto" }}>
-            <div className="clean-promo-banner" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "15px" }}>
-              <Gift size={32} strokeWidth={2} color="#fff" style={{ display: "block", flexShrink: 0 }} />
-              <div className="clean-promo-text" style={{ display: "flex", flexDirection: "column" }}>
-                <strong>GET EXTRA 10% OFF</strong>
-                <span>YOUR FIRST ORDER</span>
-              </div>
-            </div>
           </div>
 
         </div>

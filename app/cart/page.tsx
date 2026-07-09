@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react"; 
-import { X, ArrowLeft, ShieldCheck, Truck, RefreshCw, Ticket, Check, ArrowRight } from "lucide-react";
+import { X, ArrowLeft, ShieldCheck, Truck, RefreshCw, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 
 export default function CartPage() {
@@ -13,29 +12,16 @@ export default function CartPage() {
   const { status } = useSession(); 
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCartStore();
 
-  const [couponInput, setCouponInput] = useState("");
-  const [isApplied, setIsApplied] = useState(false);
-  const [discount, setDiscount] = useState(0);
-
   // 1. Calculate base subtotal
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  
-  const handleApplyCoupon = () => {
-    if (couponInput.toUpperCase() === "GENZONIC10") {
-      setDiscount(Math.floor(subtotal * 0.10));
-      setIsApplied(true);
-    } else {
-      alert("INVALID CODE. ACCESS DENIED.");
-    }
-  };
 
   // 🔥 NEW MATH LOGIC FOR GST & DELIVERY 🔥
   const deliveryCharge = 25;
-  // Calculate 5% GST on the subtotal (after any discounts are applied)
-  const gstAmount = Math.round((subtotal - discount) * 0.05);
+  // Calculate 5% GST on the subtotal
+  const gstAmount = Math.round(subtotal * 0.05);
   
-  // Final Total includes Subtotal - Discount + GST + Delivery
-  const total = subtotal - discount + gstAmount + deliveryCharge;
+  // Final Total includes Subtotal + GST + Delivery
+  const total = subtotal + gstAmount + deliveryCharge;
 
   const handleCheckout = () => {
     if (status === "loading") return; 
@@ -117,13 +103,6 @@ export default function CartPage() {
               
               <div className="summary-row"><span>SUBTOTAL</span><span>₹{subtotal}</span></div>
               
-              {isApplied && (
-                <div className="summary-row discount">
-                  <span>VIP DISCOUNT</span>
-                  <span className="orange-text">-₹{discount}</span>
-                </div>
-              )}
-
               {/* 🔥 NEW UI ROWS FOR GST AND SHIPPING */}
               <div className="summary-row"><span>GST (5%)</span><span>₹{gstAmount}</span></div>
               <div className="summary-row"><span className="orange-text">SHIPPING</span><span className="orange-text">₹{deliveryCharge}</span></div>
@@ -131,22 +110,6 @@ export default function CartPage() {
               <div className="total-row">
                 <span>TOTAL DUE</span>
                 <span>₹{total}</span>
-              </div>
-
-              {/* MODERN COUPON BOX */}
-              <div className="coupon-container">
-                <div className="coupon-input-wrapper">
-                  <Ticket size={18} className="ticket-icon"/>
-                  <input 
-                    placeholder="COUPON CODE" 
-                    value={couponInput}
-                    onChange={(e) => setCouponInput(e.target.value)}
-                    disabled={isApplied}
-                  />
-                  <button onClick={handleApplyCoupon} className="apply-btn">
-                    {isApplied ? <Check size={20}/> : "APPLY"}
-                  </button>
-                </div>
               </div>
 
               <button 
@@ -216,13 +179,6 @@ export default function CartPage() {
         .total-row { border-top: 1px dashed rgba(128,128,128,0.3); margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 24px; font-weight: 900; letter-spacing: -1px; }
 .policy-link { cursor: pointer; text-decoration: none; transition: 0.2s; }
         .policy-link:hover { color: var(--text); }
-        .coupon-container { margin: 25px 0; }
-        .coupon-input-wrapper { display: flex; align-items: center; border: 1px solid rgba(128,128,128,0.3); border-radius: 8px; padding: 0 15px; transition: 0.2s; background: rgba(128,128,128,0.02); }
-        .coupon-input-wrapper:focus-within { border-color: var(--text); background: transparent; }
-        .ticket-icon { color: #888; }
-        .coupon-input-wrapper input { flex: 1; padding: 14px; background: none; border: none; outline: none; font-weight: 800; font-size: 12px; color: var(--text); }
-        .apply-btn { background: none; border: none; color: #ff3e00; font-weight: 900; cursor: pointer; padding-left: 10px; }
-
         .pay-now-btn { 
           display: flex !important; 
           align-items: center !important; 

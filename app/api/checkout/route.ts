@@ -10,17 +10,16 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🔥 1. Extract the base numbers sent from your frontend checkout
+    // 🔥 1. Extract the base number sent from your frontend checkout
     const subtotal = body.subtotal || 0;
-    const discount = body.discount || 0;
 
     // 🔥 2. Perform the exact same mathematical calculations on the SERVER
     // This strictly prevents anyone from tampering with the final price in the browser.
-    const gstAmount = Math.round((subtotal - discount) * 0.05);
+    const gstAmount = Math.round(subtotal * 0.05);
     const deliveryCharge = 25;
     
     // Calculate the final total in standard Rupees
-    const finalTotalInRupees = subtotal - discount + gstAmount + deliveryCharge;
+    const finalTotalInRupees = subtotal + gstAmount + deliveryCharge;
 
     // 🔥 3. Razorpay requires the amount in PAISE (multiply by 100)
     const amountInPaise = finalTotalInRupees * 100;

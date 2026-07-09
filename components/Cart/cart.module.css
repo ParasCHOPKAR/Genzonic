@@ -115,28 +115,6 @@
   margin: 15px 0;
 }
 
-.coupon {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
-}
-
-.coupon input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-.coupon button {
-  background: black;
-  color: white;
-  border-radius: 8px;
-  padding: 10px 15px;
-  border: none;
-  cursor: pointer;
-}
-
 .checkoutBtn {
   width: 100%;
   padding: 15px;

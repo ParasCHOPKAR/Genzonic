@@ -774,17 +774,6 @@
   .clean-sec-item:active { color: #FF3E00 !important; background: #fafafa; }
   .clean-sec-item:active .sec-icon { color: #FF3E00 !important; }
 
-  /* PROMO BANNER */
-  .clean-promo-banner {
-    padding: 18px 20px;
-    background: #FF3E00;
-    border-radius: 0; color: #fff; 
-    box-shadow: 0 4px 15px rgba(255, 62, 0, 0.3);
-    border: 2px solid #000;
-  }
-  .clean-promo-text strong { font-size: 14px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
-  .clean-promo-text span { font-size: 11px; font-weight: 700; opacity: 0.9; text-transform: uppercase;}
-
   .overlay-split-body { grid-template-columns: 1fr !important; gap: 40px !important; }
   .desktop-only-text { display: none !important; }
 }
