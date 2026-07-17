@@ -72,3 +72,25 @@ export async function PUT(
     return NextResponse.json({ success: false, message: "Failed to update product" }, { status: 500 });
   }
 }
+
+// DELETE: Delete a product
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await connectDB();
+    const resolvedParams = await params;
+    
+    const deletedProduct = await Product.findByIdAndDelete(resolvedParams.id);
+
+    if (!deletedProduct) {
+      return NextResponse.json({ success: false, message: "Product not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Delete Product Error:", error);
+    return NextResponse.json({ success: false, message: "Failed to delete product" }, { status: 500 });
+  }
+}
