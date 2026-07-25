@@ -222,10 +222,13 @@ export default function Hero() {
           width: 100%;
           max-width: 1800px;
           padding: 0 5%;
+          margin: 0 auto;
           display: flex;
           align-items: center;
           justify-content: space-between;
           height: 100%;
+          box-sizing: border-box;
+          position: relative;
         }
 
         .hero-col {
@@ -235,24 +238,27 @@ export default function Hero() {
         }
 
         .left-col {
-          width: 25%;
+          flex: 1;
           align-items: flex-start;
           text-align: left;
+          z-index: 20;
         }
 
         .center-col {
-          width: 50%;
+          flex: 1.5;
           height: 100%;
           display: flex;
           justify-content: center;
           align-items: flex-end;
           position: relative;
+          z-index: 5;
         }
 
         .right-col {
-          width: 25%;
+          flex: 1;
           align-items: flex-end;
           text-align: right;
+          z-index: 20;
         }
 
         /* --- BACKGROUND --- */
