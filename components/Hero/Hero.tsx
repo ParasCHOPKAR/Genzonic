@@ -211,11 +211,10 @@ export default function Hero() {
         /* --- LAYOUT FUNDAMENTALS --- */
         .hero-section {
           height: 100vh;
+          width: 100%;
           position: relative;
           overflow: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          /* Removed display: flex on parent to prevent child flex items from forcing overflow */
         }
 
         .hero-content {
@@ -235,6 +234,7 @@ export default function Hero() {
           display: flex;
           flex-direction: column;
           z-index: 10;
+          min-width: 0; /* Critical for preventing flex items from exceeding container */
         }
 
         .left-col {
@@ -347,7 +347,8 @@ export default function Hero() {
           line-height: 1.1; 
           margin-bottom: 16px; 
           letter-spacing: -0.02em; 
-          text-transform: uppercase; 
+          text-transform: uppercase;
+          word-break: break-word; 
         }
         
         .spec-list { 
