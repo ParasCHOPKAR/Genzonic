@@ -366,15 +366,17 @@ export default function Hero() {
         /* --- VISUALS --- */
         .gorilla-layer {
           position: absolute;
+          top: 0;
           bottom: 0;
           left: 0;
           right: 0;
-          margin: 0 auto;
+          margin: auto;
           width: 100%;
-          max-width: 420px;
+          height: fit-content;
+          max-width: 450px;
           display: flex;
           justify-content: center;
-          align-items: flex-end;
+          align-items: center;
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
         }
@@ -384,7 +386,7 @@ export default function Hero() {
           height: auto;
           max-height: 60vh;
           object-fit: contain;
-          object-position: bottom; 
+          object-position: center; 
           transition: filter 0.3s ease;
         }
 
@@ -519,7 +521,7 @@ export default function Hero() {
             height: auto;
             max-height: 40vh;
             object-fit: contain;
-            transform-origin: bottom center;
+            object-position: center;
           }
 
           .editorial-title {
