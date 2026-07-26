@@ -367,8 +367,11 @@ export default function Hero() {
         .gorilla-layer {
           position: absolute;
           bottom: 0;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
           width: 100%;
-          max-width: 400px;
+          max-width: 420px;
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -494,14 +497,21 @@ export default function Hero() {
           .center-col {
             width: 100%;
             flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
           }
           
           .gorilla-layer {
             position: relative;
             height: auto;
             width: 100%;
-            max-width: 280px;
+            max-width: 320px;
             margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
           }
 
           .hero-gorilla-image {
