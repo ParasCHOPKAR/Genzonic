@@ -367,8 +367,8 @@ export default function Hero() {
         .gorilla-layer {
           position: absolute;
           bottom: 0;
-          height: 65%;
-          max-height: 700px;
+          height: 55%;
+          max-height: 550px;
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -497,13 +497,13 @@ export default function Hero() {
           
           .gorilla-layer {
             height: 100%;
-            max-height: 55vh;
+            max-height: 45vh;
             width: 100%;
             max-width: 100vw;
           }
 
           .hero-gorilla-image {
-            transform: scale(1.1); 
+            object-fit: contain;
             transform-origin: bottom center;
           }
 

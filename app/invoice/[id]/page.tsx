@@ -38,7 +38,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
             <h1>GENZONIC</h1>
             <p>Pimpri-Chinchwad, Maharashtra, India</p>
             <p>support@genzonic.shop</p>
-            <p>GSTIN: 27AABCU9603R1ZX (Pending)</p>
+            <p>GSTIN: 27CPEPC1309H1ZC</p>
           </div>
           <div className="inv-details">
             <h2>TAX INVOICE</h2>
