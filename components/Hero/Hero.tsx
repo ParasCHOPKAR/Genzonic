@@ -215,16 +215,8 @@ export default function Hero() {
           <div style={{ color:accent }}>Stay Raw.</div>
         </div>
 
-        {/* gorilla */}
+        {/* gorilla — no text overlay */}
         <div className="hz-mob-img" onClick={() => switchTo((activeIdx + 1) % COLORWAYS.length)}>
-          {/* Always-visible label */}
-          <div className="hz-mob-click" style={{ background: darkMode?"rgba(0,0,0,0.55)":"rgba(255,255,255,0.8)", color:fg, border:`1px solid ${borderC}` }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-              <path d="M20 12a8 8 0 1 1-8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M20 4v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Tap image to change color
-          </div>
           <Image
             src={COLORWAYS[activeIdx].img}
             alt={`GenZonic ${COLORWAYS[activeIdx].label}`}
@@ -236,9 +228,15 @@ export default function Hero() {
           />
         </div>
 
-        {/* swatches */}
+        {/* swatches + tap hint */}
         <div className="hz-swatches hz-sw-sm">
-          <span className="hz-sw-label" style={{ color:muted }}>{COLORWAYS[activeIdx].label}</span>
+          <div className="hz-sw-tap-hint" style={{ color: muted }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+              <path d="M20 12a8 8 0 1 1-8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M20 4v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Tap image · {COLORWAYS[activeIdx].label}
+          </div>
           <div className="hz-sw-row">
             {COLORWAYS.map((c,i)=>(
               <button key={c.label} onClick={()=>switchTo(i)} title={c.label} className="hz-swatch"
@@ -259,11 +257,6 @@ export default function Hero() {
           </svg>
         </Link>
 
-        <div className="hz-chips-row">
-          {["240GSM","Drop-Shoulder","Puff Print","Bio-washed"].map(t=>(
-            <span key={t} className="hz-chip" style={{ background:cardBg, color:muted }}>{t}</span>
-          ))}
-        </div>
       </div>
 
       <style jsx>{`
@@ -315,10 +308,11 @@ export default function Hero() {
         }
         .hz-btn-fill {
           display:inline-flex; align-items:center; gap:6px;
-          padding:16px 32px; border-radius:50px; font-weight:900; font-size:13px;
+          padding:16px 36px; border-radius:50px; font-weight:900; font-size:13px;
           letter-spacing:2px; text-transform:uppercase; text-decoration:none;
           transition:transform 0.25s, box-shadow 0.25s; border:none; cursor:pointer;
           display:inline-flex; align-items:center; gap:10px;
+          white-space:nowrap;
         }
         .hz-btn-fill:hover {
           transform:translateY(-3px);
@@ -431,15 +425,14 @@ export default function Hero() {
           .hz-sw-sm { padding:8px 0 0; }
 
           .hz-btn-full {
-            width:100%; max-width:320px; justify-content:center; margin-bottom:14px;
+            width:100%; max-width:340px; justify-content:center;
+            margin-bottom:10px; padding:18px 32px; font-size:14px;
           }
 
-          .hz-chips-row {
-            display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
-          }
-          .hz-chip {
-            padding:5px 12px; border-radius:100px;
-            font-size:9.5px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase;
+          .hz-sw-tap-hint {
+            display:flex; align-items:center; gap:5px;
+            font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+            margin-bottom:4px;
           }
         }
 
