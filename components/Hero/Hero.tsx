@@ -106,10 +106,10 @@ export default function Hero() {
           </p>
 
           <div className="hz-actions">
-            <Link href="/shop/men" className="hz-btn-fill" style={{ background: accent, color: "#ffffff" }}>
+            <Link href="/shop/men" className="hz-btn-fill">
               Shop Now
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="hz-btn-arrow">
-                <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </Link>
           </div>
@@ -250,10 +250,10 @@ export default function Hero() {
         </div>
 
         {/* CTA */}
-        <Link href="/shop/men" className="hz-btn-fill hz-btn-full" style={{ background: accent, color: "#ffffff" }}>
+        <Link href="/shop/men" className="hz-btn-fill hz-btn-full">
           Shop Now
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="hz-btn-arrow">
-            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </Link>
 
@@ -307,16 +307,45 @@ export default function Hero() {
           display:flex; gap:10px; flex-wrap:wrap; margin-bottom:36px; align-items:center;
         }
         .hz-btn-fill {
-          display:inline-flex; align-items:center; gap:6px;
-          padding:16px 36px; border-radius:50px; font-weight:900; font-size:13px;
-          letter-spacing:2px; text-transform:uppercase; text-decoration:none;
-          transition:transform 0.25s, box-shadow 0.25s; border:none; cursor:pointer;
-          display:inline-flex; align-items:center; gap:10px;
-          white-space:nowrap;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 16px 40px;
+          border-radius: 100px;
+          font-weight: 900;
+          font-size: 14px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          text-decoration: none;
+          background: linear-gradient(135deg, #ff6a00 0%, #ff3300 100%);
+          color: #ffffff;
+          box-shadow: 0 8px 24px rgba(255, 69, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          border: none;
+          cursor: pointer;
+          white-space: nowrap;
+          position: relative;
+          overflow: hidden;
         }
+        
+        .hz-btn-fill::after {
+          content: '';
+          position: absolute;
+          top: 0; left: -100%;
+          width: 50%; height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          transform: skewX(-20deg);
+          transition: all 0.5s ease;
+        }
+
         .hz-btn-fill:hover {
-          transform:translateY(-3px);
-          box-shadow:0 18px 40px rgba(255,69,0,0.35);
+          transform: translateY(-3px);
+          box-shadow: 0 14px 32px rgba(255, 69, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+        
+        .hz-btn-fill:hover::after {
+          left: 150%;
         }
 
         .hz-btn-arrow {
@@ -426,8 +455,11 @@ export default function Hero() {
           .hz-sw-sm { padding:8px 0 0; }
 
           .hz-btn-full {
-            width:100%; max-width:340px; justify-content:center;
-            margin-bottom:10px; padding:18px 32px; font-size:14px;
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 12px;
+            padding: 18px 32px;
+            font-size: 15px;
           }
 
           .hz-sw-tap-hint {
