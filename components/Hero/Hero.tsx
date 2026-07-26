@@ -106,11 +106,11 @@ export default function Hero() {
           </p>
 
           <div className="hz-actions">
-            <Link href="/shop/men" className="hz-btn-fill" style={{ background:fg, color:bg }}>
-              Shop Now →
-            </Link>
-            <Link href="/collections/premium" className="hz-btn-ghost" style={{ border:`1px solid ${borderC}`, color:muted }}>
-              View Collection
+            <Link href="/shop/men" className="hz-btn-fill" style={{ background: accent, color: "#ffffff" }}>
+              Shop Now
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="hz-btn-arrow">
+                <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </Link>
           </div>
 
@@ -252,8 +252,11 @@ export default function Hero() {
         </div>
 
         {/* CTA */}
-        <Link href="/shop/men" className="hz-btn-fill hz-btn-full" style={{ background:fg, color:bg }}>
-          Shop Now →
+        <Link href="/shop/men" className="hz-btn-fill hz-btn-full" style={{ background: accent, color: "#ffffff" }}>
+          Shop Now
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="hz-btn-arrow">
+            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </Link>
 
         <div className="hz-chips-row">
@@ -312,19 +315,21 @@ export default function Hero() {
         }
         .hz-btn-fill {
           display:inline-flex; align-items:center; gap:6px;
-          padding:15px 28px; border-radius:50px; font-weight:800; font-size:12px;
-          letter-spacing:1.5px; text-transform:uppercase; text-decoration:none;
-          transition:transform 0.2s,box-shadow 0.2s; border:none; cursor:pointer;
+          padding:16px 32px; border-radius:50px; font-weight:900; font-size:13px;
+          letter-spacing:2px; text-transform:uppercase; text-decoration:none;
+          transition:transform 0.25s, box-shadow 0.25s; border:none; cursor:pointer;
+          display:inline-flex; align-items:center; gap:10px;
         }
-        .hz-btn-fill:hover { transform:translateY(-2px); box-shadow:0 14px 30px rgba(0,0,0,0.22); }
-
-        .hz-btn-ghost {
-          display:inline-flex; align-items:center; padding:14px 22px; border-radius:50px;
-          font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
-          text-decoration:none; background:transparent;
-          transition:background 0.2s,transform 0.2s; cursor:pointer;
+        .hz-btn-fill:hover {
+          transform:translateY(-3px);
+          box-shadow:0 18px 40px rgba(255,69,0,0.35);
         }
-        .hz-btn-ghost:hover { transform:translateY(-2px); }
+        .hz-btn-arrow {
+          transition:transform 0.25s ease;
+        }
+        .hz-btn-fill:hover .hz-btn-arrow {
+          transform:translateX(5px);
+        }
 
         .hz-stats { display:flex; gap:26px; }
 
