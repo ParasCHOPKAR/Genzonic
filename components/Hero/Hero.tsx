@@ -367,8 +367,8 @@ export default function Hero() {
         .gorilla-layer {
           position: absolute;
           bottom: 0;
-          height: 55%;
-          max-height: 550px;
+          width: 100%;
+          max-width: 400px;
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -377,8 +377,9 @@ export default function Hero() {
         }
 
         .hero-gorilla-image {
-          height: 100%;
-          width: auto;
+          width: 100%;
+          height: auto;
+          max-height: 60vh;
           object-fit: contain;
           object-position: bottom; 
           transition: filter 0.3s ease;
@@ -496,13 +497,17 @@ export default function Hero() {
           }
           
           .gorilla-layer {
-            height: 100%;
-            max-height: 45vh;
+            position: relative;
+            height: auto;
             width: 100%;
-            max-width: 100vw;
+            max-width: 280px;
+            margin: 0 auto;
           }
 
           .hero-gorilla-image {
+            width: 100%;
+            height: auto;
+            max-height: 40vh;
             object-fit: contain;
             transform-origin: bottom center;
           }
