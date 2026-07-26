@@ -366,14 +366,13 @@ export default function Hero() {
         /* --- VISUALS --- */
         .gorilla-layer {
           position: absolute;
-          top: 0;
-          bottom: 0;
+          bottom: 12%;
           left: 0;
           right: 0;
-          margin: auto;
+          margin: 0 auto;
           width: 100%;
           height: fit-content;
-          max-width: 450px;
+          max-width: 600px;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -384,7 +383,7 @@ export default function Hero() {
         .hero-gorilla-image {
           width: 100%;
           height: auto;
-          max-height: 60vh;
+          max-height: 75vh;
           object-fit: contain;
           object-position: center; 
           transition: filter 0.3s ease;
@@ -501,16 +500,17 @@ export default function Hero() {
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 300px;
+            align-items: flex-start;
+            min-height: 350px;
+            padding-bottom: 5vh;
           }
           
           .gorilla-layer {
             position: relative;
             height: auto;
             width: 100%;
-            max-width: 320px;
-            margin: 0 auto;
+            max-width: 450px;
+            margin: -5vh auto 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -519,7 +519,7 @@ export default function Hero() {
           .hero-gorilla-image {
             width: 100%;
             height: auto;
-            max-height: 40vh;
+            max-height: 50vh;
             object-fit: contain;
             object-position: center;
           }
