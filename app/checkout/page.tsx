@@ -381,6 +381,13 @@ export default function CheckoutPage() {
             .input-row { grid-template-columns: 1fr; gap: 20px; }
             .order-manifest { position: relative; top: 0; }
           }
+          
+          @media (max-width: 600px) {
+            .checkout-page { padding: 100px 5% 60px; }
+            .title { font-size: 2.2rem; margin-bottom: 40px; }
+            .type-selector { flex-direction: column; }
+            .pay-btn { padding: 18px; font-size: 14px; }
+          }
         `}</style>
       </div>
     </>

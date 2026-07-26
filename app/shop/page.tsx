@@ -168,6 +168,19 @@ export default function CategoryShopPage({ params }: { params: Promise<{ categor
           letter-spacing: 2px;
           text-decoration: none;
         }
+
+        @media (max-width: 1024px) {
+          .category-page { padding: 120px 5% 80px; }
+          .product-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px 20px; }
+        }
+
+        @media (max-width: 600px) {
+          .category-page { padding: 100px 5% 60px; }
+          .product-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 10px; }
+          .title { font-size: 2.2rem; }
+          .product-info h3 { font-size: 12px; }
+          .product-info p { font-size: 12px; }
+        }
       `}</style>
     </div>
   );

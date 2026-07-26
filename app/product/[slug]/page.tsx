@@ -333,6 +333,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           .main-display { order: 1; height: 60vh; }
           .product-info { order: 3; padding-bottom: 20px; }
         }
+
+        @media (max-width: 600px) {
+          .pdp-container { padding: 90px 15px 30px; }
+          .pdp-title { font-size: 2.2rem; }
+          .main-display { height: 50vh; }
+          .price-block { flex-direction: column; align-items: flex-start; gap: 8px; }
+          .add-to-cart-large { padding: 18px; font-size: 12px; }
+        }
       `}</style>
     </div>
   );

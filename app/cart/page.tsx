@@ -198,6 +198,7 @@ export default function CartPage() {
           box-shadow: 0 8px 24px rgba(255, 193, 7, 0.35) !important;
           margin-bottom: 30px !important;
         }
+
         .pay-now-btn:hover { 
           transform: translateY(-4px) !important; 
           background: #ffb300 !important; 
@@ -215,6 +216,15 @@ export default function CartPage() {
           .cart-grid { grid-template-columns: 1fr; } 
           .sidebar { margin-top: 40px; }
           .summary-box { position: relative; top: 0; }
+        }
+
+        @media (max-width: 600px) {
+          .cart-page { padding: 100px 5% 60px; }
+          .page-title { font-size: 2.2rem; }
+          .item-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .item-img { width: 100%; height: auto; max-width: 120px; }
+          .item-bottom { width: 100%; margin-top: 10px; }
+          .pay-now-btn { font-size: 14px !important; padding: 18px 20px !important; }
         }
       `}</style>
     </div>

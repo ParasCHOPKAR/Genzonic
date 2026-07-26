@@ -221,6 +221,20 @@ export default function CategoryShopPage({ params }: { params: Promise<{ categor
         .empty-state h2 { font-size: 20px; font-weight: 800; letter-spacing: 2px; }
         .empty-state p { opacity: 0.6; font-size: 14px; margin-bottom: 20px; }
         .btn-return { display: inline-flex; align-items: center; gap: 8px; background: var(--text); color: var(--bg); padding: 12px 24px; font-size: 11px; font-weight: 800; text-decoration: none; margin-top: 20px;}
+
+        @media (max-width: 1024px) {
+          .category-page { padding: 100px 5% 80px; }
+          .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 30px 15px; }
+        }
+
+        @media (max-width: 600px) {
+          .category-page { padding: 80px 5% 60px; }
+          .product-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 10px; }
+          .title { font-size: 2.2rem; }
+          .info-header h3 { font-size: 12px; }
+          .current-price { font-size: 14px; }
+          .buy-now-btn { font-size: 10px; padding: 8px; }
+        }
       `}</style>
     </div>
   );
