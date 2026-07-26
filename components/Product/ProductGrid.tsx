@@ -170,7 +170,12 @@ export default function ProductGrid() {
         
         <div className="section-header">
           <h2 className="title">NEW ARRIVALS</h2>
-          <Link href="/shop/men" className="view-all">VIEW ALL →</Link>
+          <Link href="/shop/men" className="view-all">
+            VIEW ALL
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="view-all-icon">
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
         </div>
 
         {isLoading ? (
@@ -315,15 +320,33 @@ export default function ProductGrid() {
         }
         
         .view-all {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
           font-size: 11px;
           font-weight: 800;
-          letter-spacing: 1px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
           text-decoration: none;
           color: var(--text);
-          padding-bottom: 5px;
-          transition: opacity 0.2s;
+          border: 1.5px solid var(--text);
+          padding: 10px 20px;
+          border-radius: 50px;
+          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+          white-space: nowrap;
         }
-        .view-all:hover { opacity: 0.6; }
+        .view-all:hover {
+          background: var(--text);
+          color: var(--bg);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        .view-all-icon {
+          transition: transform 0.25s ease;
+        }
+        .view-all:hover .view-all-icon {
+          transform: translateX(4px);
+        }
 
         .grid-container { 
           display: grid; 
