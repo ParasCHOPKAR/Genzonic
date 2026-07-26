@@ -238,24 +238,26 @@ export default function Hero() {
         }
 
         .left-col {
-          flex: 1;
+          width: 30%;
           align-items: flex-start;
           text-align: left;
           z-index: 20;
         }
 
         .center-col {
-          flex: 1.5;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40%;
           height: 100%;
           display: flex;
           justify-content: center;
-          align-items: flex-end;
-          position: relative;
+          align-items: center;
           z-index: 5;
         }
 
         .right-col {
-          flex: 1;
+          width: 30%;
           align-items: flex-end;
           text-align: right;
           z-index: 20;
@@ -366,13 +368,14 @@ export default function Hero() {
         /* --- VISUALS --- */
         .gorilla-layer {
           position: absolute;
-          bottom: 12%;
+          top: 0;
+          bottom: 12vh;
           left: 0;
           right: 0;
-          margin: 0 auto;
+          margin: auto;
           width: 100%;
           height: fit-content;
-          max-width: 600px;
+          max-width: 650px;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -383,7 +386,7 @@ export default function Hero() {
         .hero-gorilla-image {
           width: 100%;
           height: auto;
-          max-height: 75vh;
+          max-height: 80vh;
           object-fit: contain;
           object-position: center; 
           transition: filter 0.3s ease;
@@ -496,21 +499,26 @@ export default function Hero() {
           }
 
           .center-col {
+            position: relative;
+            left: auto;
+            transform: none;
             width: 100%;
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 350px;
-            padding-bottom: 5vh;
+            padding-bottom: 8vh;
           }
           
           .gorilla-layer {
             position: relative;
+            top: auto;
+            bottom: auto;
             height: auto;
             width: 100%;
-            max-width: 450px;
-            margin: -5vh auto 0;
+            max-width: 500px;
+            margin: -6vh auto 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -519,7 +527,7 @@ export default function Hero() {
           .hero-gorilla-image {
             width: 100%;
             height: auto;
-            max-height: 50vh;
+            max-height: 55vh;
             object-fit: contain;
             object-position: center;
           }
