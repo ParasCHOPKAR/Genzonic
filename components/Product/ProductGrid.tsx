@@ -118,9 +118,8 @@ export default function ProductGrid() {
         const res = await fetch("/api/products");
         const data = await res.json();
         if (data.success) {
-          // Fetch some products across categories to act as featured items
-          const featured = data.products.slice(0, 4);
-          setProducts(featured);
+          // Show all products instead of slicing
+          setProducts(data.products);
         }
         setIsLoading(false);
       } catch (error) {
