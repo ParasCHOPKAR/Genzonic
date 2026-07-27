@@ -17,7 +17,11 @@ declare global {
 export default function CheckoutPage() {
   const { cart, clearCart } = useCartStore();
   const router = useRouter();
-  const total = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  
+  const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const deliveryCharge = 25;
+  const gstAmount = Math.round(subtotal * 0.05);
+  const total = subtotal > 0 ? subtotal + gstAmount + deliveryCharge : 0;
 
   const [addressType, setAddressType] = useState("Home");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -102,6 +106,9 @@ export default function CheckoutPage() {
       userEmail: shippingInfo.email,
       shippingInfo,
       orderItems: cart,
+      subtotal: subtotal,
+      gstAmount: gstAmount,
+      deliveryCharge: deliveryCharge,
       totalAmount: total,
     };
 
@@ -127,7 +134,7 @@ export default function CheckoutPage() {
         amount: data.amount,
         currency: "INR",
         name: "GenZonic",
-        description: "Premium Artifact Dispatch",
+        description: `Subtotal: ₹${subtotal} | GST: ₹${gstAmount} | Shipping: ₹${deliveryCharge}`,
         image: "/favicon.ico", 
         order_id: data.rzpOrderId, 
         
@@ -305,8 +312,9 @@ export default function CheckoutPage() {
                 ))}
               </div>
               <div className="manifest-footer">
-                <div className="line"><span>SUBTOTAL</span><span>₹{total}</span></div>
-                <div className="line"><span>SHIPPING</span><span className="green">Free</span></div>
+                <div className="line"><span>SUBTOTAL</span><span>₹{subtotal}</span></div>
+                <div className="line"><span>GST (5%)</span><span>₹{gstAmount}</span></div>
+                <div className="line"><span>SHIPPING</span><span style={{ color: "#ff3e00" }}>₹{deliveryCharge}</span></div>
                 <div className="line grand"><span>TOTAL DUE</span><span>₹{total}</span></div>
               </div>
             </div>

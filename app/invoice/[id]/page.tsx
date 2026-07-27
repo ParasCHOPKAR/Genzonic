@@ -89,11 +89,15 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
         <div className="inv-totals-box">
           <div className="total-row">
             <span>SUBTOTAL</span>
-            <span>₹{order.totalAmount}</span>
+            <span>₹{order.subtotal || order.totalAmount}</span>
+          </div>
+          <div className="total-row">
+            <span>GST (5%)</span>
+            <span>₹{order.gstAmount || 0}</span>
           </div>
           <div className="total-row">
             <span>SHIPPING</span>
-            <span>₹0.00</span>
+            <span>{order.deliveryCharge ? `₹${order.deliveryCharge}` : "Free"}</span>
           </div>
           <div className="total-row grand-total">
             <span>GRAND TOTAL</span>

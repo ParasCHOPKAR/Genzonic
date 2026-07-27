@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     });
 
     const body = await req.json();
-    const { userEmail, shippingInfo, orderItems, totalAmount } = body;
+    const { userEmail, shippingInfo, orderItems, subtotal, gstAmount, deliveryCharge, totalAmount } = body;
 
     if (!totalAmount || !userEmail) {
       return NextResponse.json({ success: false, message: "Missing required data" }, { status: 400 });
@@ -62,6 +62,9 @@ export async function POST(req: Request) {
       userEmail,
       shippingInfo,
       orderItems,
+      subtotal,
+      gstAmount,
+      deliveryCharge,
       totalAmount,
       paymentMethod: "Razorpay",
       paymentStatus: "Pending",
@@ -72,6 +75,11 @@ export async function POST(req: Request) {
       amount: Math.round(totalAmount * 100), 
       currency: "INR",
       receipt: newOrder._id.toString(),
+      notes: {
+        subtotal: subtotal,
+        gst: gstAmount,
+        shipping: deliveryCharge
+      }
     };
 
     const razorpayOrder = await razorpay.orders.create(options);
