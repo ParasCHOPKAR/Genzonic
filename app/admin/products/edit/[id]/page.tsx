@@ -110,6 +110,29 @@ export default function EditProduct() {
     setError("")
 
     try {
+      // 1. Upload new base64 images to Cloudinary first
+      const uploadedUrls: string[] = []
+      if (newImagesBase64.length > 0) {
+        const uploadPromises = newImagesBase64.map(async (base64Img) => {
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64Img }),
+          })
+          return res.json()
+        })
+        
+        const uploadResults = await Promise.all(uploadPromises)
+        for (const data of uploadResults) {
+          if (data.url) {
+            uploadedUrls.push(data.url)
+          } else {
+            throw new Error(data.error || "Image upload failed")
+          }
+        }
+      }
+
+      // 2. Send the update request with Cloudinary URLs
       const res = await fetch(`/api/admin/products/${productId}`, {
         method: "PUT",
         headers: {
@@ -119,7 +142,7 @@ export default function EditProduct() {
           ...formData,
           rank: formData.rank === "" ? 9999 : Number(formData.rank), // 🔥 Send rank as Number
           existingImages,
-          newImages: newImagesBase64 
+          newImages: uploadedUrls 
         }),
       })
 
@@ -131,8 +154,8 @@ export default function EditProduct() {
       } else {
         setError(result.message || "Failed to update product")
       }
-    } catch (err) {
-      setError("Server error during update")
+    } catch (err: any) {
+      setError(err.message || "Server error during update")
     } finally {
       setIsSaving(false)
     }

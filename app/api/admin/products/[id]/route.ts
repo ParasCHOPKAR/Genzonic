@@ -42,6 +42,14 @@ export async function PUT(
       existingImages, newImages, rank 
     } = body;
     
+    // 1. CLEAN CATEGORY: Ensure "MENS" becomes "men"
+    const rawCategory = category || "men";
+    const cleanCategory = rawCategory.toLowerCase().includes("men") 
+      ? "men" 
+      : rawCategory.toLowerCase().includes("women") 
+      ? "women" 
+      : "kids";
+      
     const finalImagesArray = [...(existingImages || []), ...(newImages || [])];
 
     // Update MongoDB
@@ -50,12 +58,13 @@ export async function PUT(
       {
         name,
         price: Number(price),
-        category,
+        category: cleanCategory,
         color,
         stock: Number(stock),
         description,
         isPremium,
         sizes,
+        image: finalImagesArray[0], // Main thumbnail
         images: finalImagesArray, 
         rank: rank === "" || rank === undefined ? 9999 : Number(rank), // 🔥 Added rank to DB update
       },
