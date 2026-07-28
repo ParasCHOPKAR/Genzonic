@@ -360,7 +360,7 @@ export default function Hero() {
         /* ─ CENTER ─ */
         .hz-center {
           display:flex; flex-direction:column; align-items:center;
-          justify-content:flex-end; position:relative; overflow:visible; padding-bottom:12px;
+          justify-content:flex-end; position:relative; overflow:visible; padding-bottom:50px;
         }
 
         .hz-click-label {
@@ -429,7 +429,7 @@ export default function Hero() {
           .hz-grid { display:none; }
           .hz-mob {
             display:flex; flex-direction:column; align-items:center; text-align:center;
-            height:100%; box-sizing:border-box; padding:90px 5% 20px;
+            height:100%; box-sizing:border-box; padding:100px 5% 40px;
             position:relative; z-index:10; overflow:hidden;
           }
 
