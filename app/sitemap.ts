@@ -5,7 +5,7 @@ import Product from "@/models/Product";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.genzonic.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  let products = []
+  let products: any[] = []
   
   try {
     await connectDB();
