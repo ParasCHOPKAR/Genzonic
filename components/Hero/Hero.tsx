@@ -169,6 +169,7 @@ export default function Hero() {
                 <button
                   key={c.label}
                   onClick={() => switchTo(i)}
+                  onMouseEnter={() => switchTo(i)}
                   title={c.label}
                   className="hz-swatch"
                   style={{
@@ -239,7 +240,7 @@ export default function Hero() {
           </div>
           <div className="hz-sw-row">
             {COLORWAYS.map((c,i)=>(
-              <button key={c.label} onClick={()=>switchTo(i)} title={c.label} className="hz-swatch"
+              <button key={c.label} onClick={()=>switchTo(i)} onMouseEnter={()=>switchTo(i)} title={c.label} className="hz-swatch"
                 style={{ background:c.color,
                   outline: i===activeIdx?`2px solid ${accent}`:"2px solid transparent",
                   outlineOffset:2, transform:i===activeIdx?"scale(1.25)":"scale(1)" }}
