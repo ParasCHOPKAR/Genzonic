@@ -1,53 +1,35 @@
-"use client";
-
-import { useEffect, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Metadata } from "next";
 
-// Update the type to indicate params is a Promise
-export default function CategoryShopPage({ params }: { params: Promise<{ category: string }> }) {
-  // Unwrap the params Promise using React.use()
-  const resolvedParams = use(params);
-  const category = resolvedParams.category; 
-  
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export const metadata: Metadata = {
+  title: "Shop - All Collections",
+  description: "Browse all premium streetwear collections from GenZonic.",
+  alternates: {
+    canonical: "/shop",
+  }
+};
 
-  useEffect(() => {
-    const fetchCategoryProducts = async () => {
-      try {
-        // We pass the category to our updated API route
-        const res = await fetch(`/api/products?category=${category}`);
-        const data = await res.json();
-        
-        if (data.success) {
-          setProducts(data.products);
-        }
-      } catch (error) {
-        console.error("Failed to load collection", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+export const dynamic = "force-dynamic";
 
-    fetchCategoryProducts();
-  }, [category]);
-
-  if (isLoading) {
-    return (
-      <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "var(--bg)", color: "var(--text)" }}>
-        <Loader2 className="animate-spin" size={32} />
-      </div>
-    );
+export default async function ShopPage() {
+  let products = [];
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, { cache: 'no-store' });
+    const data = await res.json();
+    if (data.success) {
+      products = data.products;
+    }
+  } catch (error) {
+    console.error("Failed to load collection", error);
   }
 
   return (
     <div className="category-page">
       <div className="page-header">
         <span className="label">GENZONIC ARCHIVE</span>
-        {/* Make the title dynamic based on the URL */}
-        <h1 className="title">{category.toUpperCase()}S COLLECTION</h1>
+        <h1 className="title">ALL COLLECTIONS</h1>
       </div>
 
       {products.length === 0 ? (

@@ -105,10 +105,10 @@ export default function Hero() {
             New Drop · 2025
           </div>
 
-          <div className="hz-h1">
+          <h1 className="hz-h1">
             <div>Dress Bold.</div>
             <div style={{ color:accent }}>Stay Raw.</div>
-          </div>
+          </h1>
 
           <p className="hz-desc" style={{ color:muted }}>
             Premium streetwear for people who don't follow trends — they set them.
