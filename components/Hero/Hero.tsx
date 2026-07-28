@@ -26,6 +26,15 @@ export default function Hero() {
   const darkMode = theme === "dark"
 
   const [activeIdx, setActiveIdx] = useState(0)
+  const [introPlaying, setIntroPlaying] = useState(true)
+
+  useEffect(() => {
+    let t: NodeJS.Timeout
+    if (introPlaying) {
+      t = setTimeout(() => setIntroPlaying(false), 4000)
+    }
+    return () => clearTimeout(t)
+  }, [introPlaying])
 
   const switchTo = (i: number) => {
     if (!charRef.current || i === activeIdx) return
@@ -135,28 +144,46 @@ export default function Hero() {
             Click to change color
           </div>
 
-          {/* gorilla image */}
+          {/* gorilla image or intro video */}
           <div
             ref={charRef}
             className="hz-char"
-            onClick={() => switchTo((activeIdx + 1) % COLORWAYS.length)}
+            onClick={() => introPlaying ? setIntroPlaying(false) : switchTo((activeIdx + 1) % COLORWAYS.length)}
             title="Click to change colorway"
           >
-            {/* pulsing ring to signal clickability */}
-            <div className="hz-ring" style={{ borderColor: darkMode?"rgba(255,255,255,0.12)":"rgba(0,0,0,0.1)" }} />
-
-            <Image
-              src={COLORWAYS[activeIdx].img}
-              alt={`GenZonic ${COLORWAYS[activeIdx].label} T-shirt`}
-              fill
-              priority
-              sizes="(max-width:1023px) 90vw, 38vw"
-              style={{
-                objectFit:"contain",
-                objectPosition:"bottom center",
-                filter:`drop-shadow(0 18px 42px ${darkMode?"rgba(0,0,0,0.6)":"rgba(0,0,0,0.15)"})`,
+            <video 
+              src="/herovideo-01111.webm" 
+              autoPlay muted playsInline loop
+              style={{ 
+                width: "100%", height: "100%", objectFit: "contain", 
+                objectPosition: "bottom center",
+                transformOrigin: "bottom center",
+                transform: "scale(2.0)",
+                mixBlendMode: darkMode ? "screen" : "normal",
+                position: "absolute", inset: 0, zIndex: 10,
+                pointerEvents: "none",
+                opacity: introPlaying ? 1 : 0,
+                transition: "opacity 1.5s ease-in-out"
               }}
             />
+            
+            <div style={{ opacity: introPlaying ? 0 : 1, transition: "opacity 1.5s ease-in-out", height: "100%", width: "100%", position: "relative" }}>
+              {/* pulsing ring to signal clickability */}
+              <div className="hz-ring" style={{ borderColor: darkMode?"rgba(255,255,255,0.12)":"rgba(0,0,0,0.1)" }} />
+
+              <Image
+                src={COLORWAYS[activeIdx].img}
+                alt={`GenZonic ${COLORWAYS[activeIdx].label} T-shirt`}
+                fill
+                priority
+                sizes="(max-width:1023px) 90vw, 38vw"
+                style={{
+                  objectFit:"contain",
+                  objectPosition:"bottom center",
+                  filter:`drop-shadow(0 18px 42px ${darkMode?"rgba(0,0,0,0.6)":"rgba(0,0,0,0.15)"})`,
+                }}
+              />
+            </div>
           </div>
 
           {/* Color swatches — always visible, clearly labeled */}
@@ -217,16 +244,33 @@ export default function Hero() {
         </div>
 
         {/* gorilla — no text overlay */}
-        <div className="hz-mob-img" onClick={() => switchTo((activeIdx + 1) % COLORWAYS.length)}>
-          <Image
-            src={COLORWAYS[activeIdx].img}
-            alt={`GenZonic ${COLORWAYS[activeIdx].label}`}
-            fill
-            priority
-            sizes="90vw"
-            style={{ objectFit:"contain", objectPosition:"bottom center",
-              filter:`drop-shadow(0 14px 32px ${darkMode?"rgba(0,0,0,0.5)":"rgba(0,0,0,0.12)"})` }}
+        <div className="hz-mob-img" onClick={() => introPlaying ? setIntroPlaying(false) : switchTo((activeIdx + 1) % COLORWAYS.length)}>
+          <video 
+            src="/herovideo-01111.webm" 
+            autoPlay muted playsInline loop
+            style={{ 
+              width: "100%", height: "100%", objectFit: "contain", 
+              objectPosition: "bottom center",
+              transformOrigin: "bottom center",
+              transform: "scale(2.0)",
+              mixBlendMode: darkMode ? "screen" : "normal",
+              position: "absolute", inset: 0, zIndex: 10,
+              pointerEvents: "none",
+              opacity: introPlaying ? 1 : 0,
+              transition: "opacity 1.5s ease-in-out"
+            }}
           />
+          <div style={{ opacity: introPlaying ? 0 : 1, transition: "opacity 1.5s ease-in-out", height: "100%", width: "100%", position: "relative" }}>
+            <Image
+              src={COLORWAYS[activeIdx].img}
+              alt={`GenZonic ${COLORWAYS[activeIdx].label}`}
+              fill
+              priority
+              sizes="90vw"
+              style={{ objectFit:"contain", objectPosition:"bottom center",
+                filter:`drop-shadow(0 14px 32px ${darkMode?"rgba(0,0,0,0.5)":"rgba(0,0,0,0.12)"})` }}
+            />
+          </div>
         </div>
 
         {/* swatches + tap hint */}
