@@ -208,7 +208,7 @@ export default function Navbar() {
             <Link href="/shop/men" className="nav-item nav-highlight">Men</Link>
             <Link href="/shop/women" className="nav-item nav-highlight">Women</Link>
             <Link href="/shop/kids" className="nav-item nav-highlight">Kids</Link>
-            <Link href="/customizer" className="nav-item nav-highlight">Customizer</Link>
+            <Link href="/custom-design" className="nav-item nav-highlight">Customizer</Link>
           </nav>
 
           {/* ===== RIGHT SIDE ACTIONS ===== */}

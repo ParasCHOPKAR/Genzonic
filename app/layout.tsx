@@ -1,9 +1,6 @@
 import "./globals.css";
 import Loader from "@/components/Loader/Loader";
-import Navbar from "@/components/Navbar/Navbar";
-import Footer from "@/components/Footer/Footer";
-import ThemeToggle from "@/components/ThemeToggle";
-import FloatingButtons from "@/components/FloatingButtons/FloatingButtons";
+import ClientLayout from "@/components/ClientLayout/ClientLayout";
 import Script from "next/script";
 import { Providers } from "./providers";
 
@@ -62,17 +59,10 @@ export default function RootLayout({
         />
 
         <Providers>
-          {/* 1. Put the Loader here as a standalone component! */}
           <Loader />
-
-          {/* 2. The rest of your app renders normally in the background */}
-          <Navbar />
-          {children}
-          <Footer />
-
-          {/* Global UI */}
-          <ThemeToggle />
-          <FloatingButtons />
+          <ClientLayout>
+            {children}
+          </ClientLayout>
         </Providers>
 
       </body>
