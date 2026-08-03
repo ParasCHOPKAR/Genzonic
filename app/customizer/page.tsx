@@ -132,7 +132,7 @@ export default function CustomizerPage() {
   // ── Shirt Canvas ───────────────────────────────────────────────────────────
   const ShirtCanvas = ({ interactive }: { interactive?: boolean }) => (
     <div style={{
-      position: "relative", width: "100%", height: "100%",
+      position: "relative", height: "100%", aspectRatio: "4/5", margin: "0 auto",
       background: `radial-gradient(ellipse at 55% 45%, ${color.previewBg}dd, ${color.previewBg}ff)`,
       display: "flex", alignItems: "center", justifyContent: "center",
       borderRadius: 16, overflow: "hidden",
