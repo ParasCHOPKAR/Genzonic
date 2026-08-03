@@ -58,6 +58,7 @@ export default function Navbar() {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   // HYDRATION FIX STATE
   const [mounted, setMounted] = useState(false);
@@ -329,38 +330,107 @@ export default function Navbar() {
             </Link>
 
             {/* AUTH */}
-            <div className="auth-group desktop-only grid-layout" style={{ gap: '10px' }}>
-              {!isAuthenticated ? (
-                <>
-                  <Link
-                    href="/login"
-                    className={`auth-btn ${isLogin ? "active-auth" : ""}`}
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "40px", boxSizing: "border-box" }}
-                  >
-                    Sign In
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <span className="user-name" style={{ display: 'flex', alignItems: 'center', height: '40px' }}>
-                    Hi, {getDisplayName()}
-                  </span>
-                  <Link href="/profile" className="icon-grid-btn hover-scale">
-                    <User size={22} />
-                  </Link>
-                  {user?.role === "admin" && (
-                    <Link href="/admin" className="admin-btn" style={{ display: "flex", alignItems: "center", height: "40px", boxSizing: "border-box" }}>
-                      Admin
-                    </Link>
+            <div className="auth-group desktop-only" style={{ display: 'flex', alignItems: 'center', height: '40px' }}>
+              {isAuthenticated ? (
+                <div style={{ position: 'relative' }}>
+                  {isProfileOpen && (
+                    <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setIsProfileOpen(false)}></div>
                   )}
+
                   <button
-                    className="icon-grid-btn hover-scale"
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer' }}
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      background: 'transparent', 
+                      border: `2px solid ${theme === "dark" ? "#fff" : "#0f1b2e"}`, 
+                      padding: '4px 12px 4px 4px', 
+                      borderRadius: '8px', 
+                      cursor: 'pointer', 
+                      color: 'inherit',
+                      position: 'relative',
+                      zIndex: 50
+                    }}
                   >
-                    <LogOut size={22} />
+                    <div style={{ 
+                      background: theme === "dark" ? "#fff" : "#0f1b2e", 
+                      color: theme === "dark" ? "#000" : "#fff", 
+                      width: '28px', 
+                      height: '28px', 
+                      borderRadius: '50%', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      fontSize: '14px', 
+                      fontWeight: 'bold' 
+                    }}>
+                      {user?.email?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                    <span style={{ fontSize: '13px', fontWeight: 'bold' }}>Account</span>
+                    <ChevronDown size={14} style={{ transform: isProfileOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
                   </button>
-                </>
+
+                  {isProfileOpen && (
+                    <div style={{ 
+                      position: 'absolute', 
+                      right: 0, 
+                      top: 'calc(100% + 8px)', 
+                      width: '250px', 
+                      background: theme === "dark" ? "#1a1a1a" : "#fff", 
+                      border: `1px solid ${theme === "dark" ? "#333" : "#eaeaea"}`, 
+                      boxShadow: '0 10px 40px -10px rgba(0,0,0,0.15)', 
+                      borderRadius: '16px', 
+                      overflow: 'hidden', 
+                      zIndex: 50 
+                    }}>
+                      {/* Header */}
+                      <div style={{ padding: '12px 16px', background: theme === "dark" ? "#222" : "#f9f9f9", borderBottom: `1px solid ${theme === "dark" ? "#333" : "#eaeaea"}` }}>
+                        <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', color: '#888', fontWeight: 'bold', marginBottom: '2px' }}>Signed in as</p>
+                        <p style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
+                        {user?.role === "admin" && (
+                          <span style={{ display: 'inline-block', marginTop: '6px', padding: '2px 6px', background: 'rgba(255, 62, 0, 0.1)', color: '#FF3E00', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                            Administrator
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Standard User Links */}
+                      <div style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <Link href="/profile" onClick={() => setIsProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', fontSize: '13px', fontWeight: '500', color: theme === "dark" ? "#ddd" : "#555", borderRadius: '8px', textDecoration: 'none' }} onMouseEnter={(e) => { e.currentTarget.style.color = "#FF3E00"; e.currentTarget.style.background = theme === "dark" ? "#2a2a2a" : "#f5f5f5"; }} onMouseLeave={(e) => { e.currentTarget.style.color = theme === "dark" ? "#ddd" : "#555"; e.currentTarget.style.background = "transparent"; }}>
+                          <User size={16} /> My Profile
+                        </Link>
+                        <Link href="/orders" onClick={() => setIsProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', fontSize: '13px', fontWeight: '500', color: theme === "dark" ? "#ddd" : "#555", borderRadius: '8px', textDecoration: 'none' }} onMouseEnter={(e) => { e.currentTarget.style.color = "#FF3E00"; e.currentTarget.style.background = theme === "dark" ? "#2a2a2a" : "#f5f5f5"; }} onMouseLeave={(e) => { e.currentTarget.style.color = theme === "dark" ? "#ddd" : "#555"; e.currentTarget.style.background = "transparent"; }}>
+                          <Box size={16} /> My Orders
+                        </Link>
+                      </div>
+
+                      {/* ADMIN ONLY LINK */}
+                      {user?.role === "admin" && (
+                        <div style={{ padding: '8px', borderTop: `1px solid ${theme === "dark" ? "#333" : "#eaeaea"}` }}>
+                          <Link href="/admin" onClick={() => setIsProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', fontSize: '13px', fontWeight: 'bold', color: theme === "dark" ? "#fff" : "#000", background: theme === "dark" ? "#2a2a2a" : "#f5f5f5", borderRadius: '8px', textDecoration: 'none' }} onMouseEnter={(e) => e.currentTarget.style.background = theme === "dark" ? "#333" : "#eaeaea"} onMouseLeave={(e) => e.currentTarget.style.background = theme === "dark" ? "#2a2a2a" : "#f5f5f5"}>
+                            <ShieldAlert size={16} color="#FF3E00" /> Admin Dashboard
+                          </Link>
+                        </div>
+                      )}
+
+                      {/* Sign Out */}
+                      <div style={{ padding: '8px', borderTop: `1px solid ${theme === "dark" ? "#333" : "#eaeaea"}` }}>
+                        <button onClick={() => { signOut({ callbackUrl: "/" }); setIsProfileOpen(false); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', fontSize: '13px', fontWeight: 'bold', color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: '8px', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                          <LogOut size={16} /> Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className={`auth-btn ${isLogin ? "active-auth" : ""}`}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "40px", boxSizing: "border-box" }}
+                >
+                  Sign In
+                </Link>
               )}
             </div>
 
