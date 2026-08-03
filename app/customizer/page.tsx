@@ -628,9 +628,12 @@ export default function CustomizerPage() {
         .cz-body {
           flex: 1;
           display: grid;
-          grid-template-columns: 1fr 400px;
+          grid-template-columns: minmax(auto, 600px) 400px;
+          justify-content: center;
+          gap: 20px;
           min-height: 0;
           overflow: hidden;
+          padding: 0 20px;
         }
 
         /* ── Preview column ───────────────────────────────────────────── */
