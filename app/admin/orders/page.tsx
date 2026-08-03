@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Package, Search } from "lucide-react";
+import { Loader2, Package, Search, Download } from "lucide-react";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [orderTimeFilter, setOrderTimeFilter] = useState("All Time");
 
   useEffect(() => {
     fetchOrders();
@@ -64,8 +65,30 @@ export default function AdminOrdersPage() {
     }).toUpperCase();
   };
 
-  // Filter orders by search (ID, Email, or Name)
+  // Filter orders by search (ID, Email, or Name) and Time
   const filteredOrders = orders.filter((order: any) => {
+    // Time Filter
+    let timeMatch = true;
+    if (orderTimeFilter !== "All Time") {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const orderDate = new Date(order.createdAt);
+      
+      if (orderTimeFilter === "Today") {
+        timeMatch = orderDate >= today;
+      } else if (orderTimeFilter === "This Week") {
+        const firstDayOfWeek = new Date(today);
+        firstDayOfWeek.setDate(today.getDate() - today.getDay());
+        timeMatch = orderDate >= firstDayOfWeek;
+      } else if (orderTimeFilter === "This Month") {
+        timeMatch = orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear();
+      } else if (orderTimeFilter === "This Year") {
+        timeMatch = orderDate.getFullYear() === now.getFullYear();
+      }
+    }
+
+    if (!timeMatch) return false;
+
     const searchLower = searchTerm.toLowerCase();
     
     // Safely check ID, Email, and Name without crashing
@@ -75,6 +98,42 @@ export default function AdminOrdersPage() {
     
     return idMatch || emailMatch || nameMatch;
   });
+
+  const exportToCSV = () => {
+    if (filteredOrders.length === 0) return alert("No orders to export!");
+
+    const headers = [
+      "Order ID", "Date", "Customer Name", "Email", "Phone", 
+      "Address", "City", "State", "PIN Code", "Total Amount (Rs)", "Delivery Status"
+    ];
+
+    const rows = filteredOrders.map((order: any) => [
+      order._id,
+      new Date(order.createdAt).toLocaleDateString(),
+      `"${((order.shippingInfo?.firstName || '') + ' ' + (order.shippingInfo?.lastName || '')).replace(/"/g, '""').trim()}"`,
+      `"${(order.userEmail || order.shippingInfo?.email || '').replace(/"/g, '""')}"`,
+      `"${(order.shippingInfo?.phone || '').replace(/"/g, '""')}"`,
+      `"${(order.shippingInfo?.address || '').replace(/"/g, '""')}"`,
+      `"${(order.shippingInfo?.city || '').replace(/"/g, '""')}"`,
+      `"${(order.shippingInfo?.state || '').replace(/"/g, '""')}"`,
+      `"${(order.shippingInfo?.pinCode || '').replace(/"/g, '""')}"`,
+      order.totalAmount || 0,
+      order.status || 'Pending'
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `genzonic_orders_${orderTimeFilter.replace(/\s+/g, '_').toLowerCase()}.csv`);
+    link.style.visibility = "hidden";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   if (isLoading) {
     return (
@@ -93,14 +152,32 @@ export default function AdminOrdersPage() {
           <p className="admin-subtitle">Manage fulfillment, shipping, and manifests.</p>
         </div>
         
-        <div className="search-box">
-          <Search size={16} />
-          <input 
-            type="text" 
-            placeholder="SEARCH ID, NAME, OR EMAIL..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="header-actions">
+          <div className="search-box">
+            <Search size={16} />
+            <input 
+              type="text" 
+              placeholder="SEARCH ID, NAME, OR EMAIL..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <select 
+            value={orderTimeFilter} 
+            onChange={(e) => setOrderTimeFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="All Time">All Time</option>
+            <option value="Today">Today</option>
+            <option value="This Week">This Week</option>
+            <option value="This Month">This Month</option>
+            <option value="This Year">This Year</option>
+          </select>
+
+          <button onClick={exportToCSV} className="export-btn">
+            <Download size={16} /> EXPORT CSV
+          </button>
         </div>
       </div>
 
@@ -246,6 +323,13 @@ export default function AdminOrdersPage() {
           margin: 0;
         }
 
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          flex-wrap: wrap;
+        }
+
         .search-box {
           display: flex;
           align-items: center;
@@ -254,6 +338,44 @@ export default function AdminOrdersPage() {
           padding: 10px 15px;
           width: 300px;
           border-radius: 4px;
+        }
+
+        .filter-select {
+          background: transparent;
+          border: 1px solid rgba(128,128,128,0.3);
+          color: var(--text);
+          padding: 10px 15px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          border-radius: 4px;
+          outline: none;
+          cursor: pointer;
+        }
+        
+        .filter-select option {
+          background: var(--bg);
+          color: var(--text);
+        }
+
+        .export-btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: var(--text);
+          color: var(--bg);
+          border: none;
+          padding: 10px 20px;
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 1px;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: opacity 0.2s;
+        }
+
+        .export-btn:hover {
+          opacity: 0.8;
         }
 
         .search-box input {
