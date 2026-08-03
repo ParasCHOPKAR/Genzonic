@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import connectToDatabase from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import Profile from "@/models/Profile";
 import { authOptions } from "@/lib/authOptions";
 
@@ -11,7 +11,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    await connectToDatabase();
+    await connectDB();
     const profile = await Profile.findOne({ userEmail: session.user.email });
     
     return NextResponse.json({ success: true, profile: profile || { addresses: [] } });
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    await connectToDatabase();
+    await connectDB();
     const { addresses } = await req.json();
 
     const updatedProfile = await Profile.findOneAndUpdate(
