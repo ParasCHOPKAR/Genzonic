@@ -9,6 +9,7 @@ export default function AdminOrdersPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [orderTimeFilter, setOrderTimeFilter] = useState("All Time");
+  const [customDate, setCustomDate] = useState("");
 
   useEffect(() => {
     fetchOrders();
@@ -84,6 +85,13 @@ export default function AdminOrdersPage() {
         timeMatch = orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear();
       } else if (orderTimeFilter === "This Year") {
         timeMatch = orderDate.getFullYear() === now.getFullYear();
+      } else if (orderTimeFilter === "Custom Date" && customDate) {
+        const selectedDate = new Date(customDate);
+        timeMatch = orderDate.getFullYear() === selectedDate.getFullYear() && 
+                    orderDate.getMonth() === selectedDate.getMonth() && 
+                    orderDate.getDate() === selectedDate.getDate();
+      } else if (orderTimeFilter === "Custom Date" && !customDate) {
+        timeMatch = true;
       }
     }
 
@@ -173,7 +181,17 @@ export default function AdminOrdersPage() {
             <option value="This Week">This Week</option>
             <option value="This Month">This Month</option>
             <option value="This Year">This Year</option>
+            <option value="Custom Date">Custom Date</option>
           </select>
+
+          {orderTimeFilter === "Custom Date" && (
+            <input
+              type="date"
+              value={customDate}
+              onChange={(e) => setCustomDate(e.target.value)}
+              className="filter-date"
+            />
+          )}
 
           <button onClick={exportToCSV} className="export-btn">
             <Download size={16} /> EXPORT CSV
@@ -356,6 +374,18 @@ export default function AdminOrdersPage() {
         .filter-select option {
           background: var(--bg);
           color: var(--text);
+        }
+
+        .filter-date {
+          background: transparent;
+          border: 1px solid rgba(128,128,128,0.3);
+          color: var(--text);
+          padding: 8px 15px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          border-radius: 4px;
+          outline: none;
         }
 
         .export-btn {
