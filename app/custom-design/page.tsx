@@ -233,10 +233,10 @@ export default function CustomDesignPage() {
                     <div style={{
                       position: "absolute", zIndex: 20, inset: 0,
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      paddingTop: "8%",
+                      paddingTop: "30%",
                     }}>
                       <div style={{
-                        width: "44%", height: "42%",
+                        width: "42%", height: "35%",
                         border: "2px solid rgba(255,255,255,0.7)",
                         background: "rgba(0,0,0,0.25)",
                         backdropFilter: "blur(2px)",
