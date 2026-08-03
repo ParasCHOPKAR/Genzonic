@@ -24,7 +24,7 @@ const PRODUCTS: Product[] = [
     hex: "#FFFFFF",
     bgClass: "#e8e8e8",
     name: "Light Quality Regular Fit",
-    image: "/products/tshirt-1-removebg-preview.png",
+    image: "/regular-white-01.jpeg",
     tag: "EVERYDAY",
   },
   {
@@ -33,25 +33,25 @@ const PRODUCTS: Product[] = [
     hex: "#1a1a1a",
     bgClass: "#2d2d2d",
     name: "Light Quality Oversized Fit",
-    image: "/products/tshirt-2-removebg-preview.png",
+    image: "/oversized-black-01.jpeg",
     tag: "TRENDING",
   },
   {
     id: 3,
-    color: "Navy",
-    hex: "#1A237E",
-    bgClass: "#283593",
+    color: "Black",
+    hex: "#1a1a1a",
+    bgClass: "#2d2d2d",
     name: "Heavy Quality Regular Fit",
-    image: "/products/tshirt-3-removebg-preview.png",
+    image: "/regular-black-01.jpeg",
     tag: "PREMIUM",
   },
   {
     id: 4,
-    color: "Charcoal",
-    hex: "#424242",
-    bgClass: "#4a4a4a",
+    color: "White",
+    hex: "#FFFFFF",
+    bgClass: "#e8e8e8",
     name: "Heavy Quality Oversized Fit",
-    image: "/products/tshirt-4-removebg-preview.png",
+    image: "/oversized-white-01.jpeg",
     tag: "BEST SELLER",
   },
 ];
@@ -138,14 +138,14 @@ export default function CustomDesignPage() {
 
             {/* Floating T-Shirts */}
             <div className="cd-hero-shirts">
-              <div style={{ position: "relative", width: "100px", height: "140px", transform: "rotate(-8deg) translateY(10px)", opacity: 0.7 }}>
-                <Image src="/products/tshirt-3-removebg-preview.png" alt="" fill style={{ objectFit: "contain", filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.5))" }} />
+              <div style={{ position: "relative", width: "100px", height: "140px", transform: "rotate(-8deg) translateY(10px)", opacity: 0.7, borderRadius: "10px", overflow: "hidden" }}>
+                <Image src="/regular-black-01.jpeg" alt="" fill style={{ objectFit: "cover", filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.5))" }} />
               </div>
-              <div style={{ position: "relative", width: "120px", height: "160px", transform: "rotate(3deg)", zIndex: 2 }}>
-                <Image src="/products/tshirt-1-removebg-preview.png" alt="" fill style={{ objectFit: "contain", filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.6))" }} />
+              <div style={{ position: "relative", width: "120px", height: "160px", transform: "rotate(3deg)", zIndex: 2, borderRadius: "12px", overflow: "hidden" }}>
+                <Image src="/regular-white-01.jpeg" alt="" fill style={{ objectFit: "cover", filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.6))" }} />
               </div>
-              <div style={{ position: "relative", width: "100px", height: "140px", transform: "rotate(10deg) translateY(10px)", opacity: 0.7 }}>
-                <Image src="/products/tshirt-5-removebg-preview.png" alt="" fill style={{ objectFit: "contain", filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.5))" }} />
+              <div style={{ position: "relative", width: "100px", height: "140px", transform: "rotate(10deg) translateY(10px)", opacity: 0.7, borderRadius: "10px", overflow: "hidden" }}>
+                <Image src="/oversized-black-01.jpeg" alt="" fill style={{ objectFit: "cover", filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.5))" }} />
               </div>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function CustomDesignPage() {
                       src={product.image}
                       alt={product.name}
                       fill
-                      style={{ objectFit: "contain", padding: "20px" }}
+                      style={{ objectFit: "cover" }}
                     />
 
                     {/* "YOUR DESIGN HERE" Overlay */}
