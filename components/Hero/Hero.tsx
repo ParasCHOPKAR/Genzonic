@@ -181,6 +181,8 @@ export default function Hero() {
                   objectFit:"contain",
                   objectPosition:"bottom center",
                   filter:`drop-shadow(0 18px 42px ${darkMode?"rgba(0,0,0,0.6)":"rgba(0,0,0,0.15)"})`,
+                  transform: "scale(1.15)",
+                  transformOrigin: "bottom center",
                 }}
               />
             </div>
