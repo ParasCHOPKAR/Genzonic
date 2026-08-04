@@ -181,8 +181,6 @@ export default function Hero() {
                   objectFit:"contain",
                   objectPosition:"bottom center",
                   filter:`drop-shadow(0 18px 42px ${darkMode?"rgba(0,0,0,0.6)":"rgba(0,0,0,0.15)"})`,
-                  transform: "scale(1.15)",
-                  transformOrigin: "bottom center",
                 }}
               />
             </div>
@@ -420,7 +418,7 @@ export default function Hero() {
         .hz-char {
           position:relative; width:100%; flex:1; cursor:pointer;
           -webkit-tap-highlight-color:transparent; min-height:0;
-          margin-top: 80px;
+          top: 50px;
         }
         .hz-char:hover { filter:brightness(1.03); }
 
