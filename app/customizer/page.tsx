@@ -147,7 +147,7 @@ export default function CustomizerPage() {
       <div style={{ position: "absolute", inset: 0, opacity: 0.03, backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "120px 120px" }} />
       
       {/* Aspect-ratio wrapper ensures the interactive box maps perfectly to the image bounds */}
-      <div style={{ position: "relative", height: "100%", aspectRatio: "3/4", transform: "scale(1.4) translateY(8%)", transformOrigin: "center center" }}>
+      <div style={{ position: "relative", height: "90%", aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Image src={tshirtImage} alt={`${color.name} T-Shirt`} fill style={{ objectFit: "contain", filter: "drop-shadow(0 16px 36px rgba(0,0,0,0.3))", zIndex: 10 }} priority unoptimized />
         {interactive && (
           <div ref={canvasRef} style={{ position: "absolute", zIndex: 20, top: "26%", left: "25%", width: "50%", height: "35%", border: `2px dashed ${color.light ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.5)"}`, borderRadius: 4 }}>
