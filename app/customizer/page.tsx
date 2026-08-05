@@ -148,7 +148,7 @@ export default function CustomizerPage() {
       
       {/* Aspect-ratio wrapper ensures the interactive box maps perfectly to the image bounds */}
       <div style={{ position: "relative", height: "100%", aspectRatio: "3/4", transform: "scale(1.4) translateY(8%)", transformOrigin: "center center" }}>
-        <Image src={tshirtImage} alt={`${color.name} T-Shirt`} fill style={{ objectFit: "contain", filter: "drop-shadow(0 16px 36px rgba(0,0,0,0.3))", zIndex: 10 }} priority />
+        <Image src={tshirtImage} alt={`${color.name} T-Shirt`} fill style={{ objectFit: "contain", filter: "drop-shadow(0 16px 36px rgba(0,0,0,0.3))", zIndex: 10 }} priority unoptimized />
         {interactive && (
           <div ref={canvasRef} style={{ position: "absolute", zIndex: 20, top: "26%", left: "25%", width: "50%", height: "35%", border: `2px dashed ${color.light ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.5)"}`, borderRadius: 4 }}>
           {designs.map(d => (
@@ -448,7 +448,7 @@ export default function CustomizerPage() {
       {/* Selection summary */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
         <div className="cz-thumb" style={{ background: color.previewBg }}>
-          <Image src={tshirtImage} alt="" fill style={{ objectFit: "contain", padding: 3 }} />
+          <Image src={tshirtImage} alt="" fill style={{ objectFit: "contain", padding: 3 }} unoptimized />
         </div>
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.4px", textTransform: "uppercase" }}>Your Design</div>
