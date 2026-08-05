@@ -94,6 +94,7 @@ export default function CustomizerPage() {
   const [showText,  setShowText] = useState(false);
   const [isAdding,  setIsAdding] = useState(false);
   const [showGuide, setShowGuide]= useState(false);
+  const [activeElId, setActiveElId] = useState<string | null>(null);
   const canvasRef  = useRef<HTMLDivElement>(null);
   const addToCart  = useCartStore((s) => s.addToCart);
 
@@ -138,30 +139,80 @@ export default function CustomizerPage() {
 
   // ── Shirt Canvas ───────────────────────────────────────────────────────────
   const ShirtCanvas = ({ interactive }: { interactive?: boolean }) => (
-    <div style={{
-      position: "relative", height: "100%", aspectRatio: "4/5", margin: "0 auto",
-      background: "#f7f8fa",
-      borderRadius: 16, overflow: "hidden",
-    }}>
+    <div 
+      onClick={() => setActiveElId(null)}
+      style={{
+        position: "relative", height: "100%", aspectRatio: "4/5", margin: "0 auto",
+        background: "#f7f8fa",
+        borderRadius: 16, overflow: "hidden",
+      }}
+    >
       <Image src={tshirtImage} alt={`${color.name} T-Shirt`} fill style={{ objectFit: "cover", zIndex: 10 }} priority unoptimized />
       
+      {/* Flip Button overlay on Canvas */}
+      {interactive && (
+        <button 
+          onClick={(e) => { e.stopPropagation(); setViewSide(s => s === "front" ? "back" : "front"); }}
+          style={{ position: "absolute", top: 16, right: 16, zIndex: 40, background: "rgba(0,0,0,0.15)", backdropFilter: "blur(4px)", border: "none", borderRadius: 8, padding: "8px 14px", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", transition: "background 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.25)"}
+          onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.15)"}
+        >
+          <RotateCcw size={20} strokeWidth={2.5} />
+          <span style={{ fontSize: 10, fontWeight: 700 }}>Flip</span>
+        </button>
+      )}
+
       {/* Interactive Canvas Overlay */}
       <div style={{ position: "absolute", inset: 0, zIndex: 20 }}>
         {interactive && (
           <div ref={canvasRef} style={{ position: "absolute", top: "28%", left: "22%", width: "56%", height: "40%", border: `2px dashed rgba(255,255,255,0.5)`, borderRadius: 4 }}>
-          {designs.map(d => (
-            <motion.div key={d.id} drag dragConstraints={canvasRef} dragElastic={0} dragMomentum={false} initial={{ x: d.x, y: d.y }} style={{ position: "absolute", cursor: "grab", zIndex: 30 }} whileDrag={{ cursor: "grabbing" }}>
-              <div className="print-el" style={{ position: "relative" }}>
-                <button onClick={() => removeEl(d.id)} className="el-del" style={{ position: "absolute", top: -12, right: -12, background: "#ef4444", color: "#fff", border: "none", borderRadius: "50%", width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 50, opacity: 0, transition: "opacity 0.15s", boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}>
-                  <X size={11} />
-                </button>
-                {d.type === "text"
-                  ? <div style={{ color: textOnShirt, fontWeight: 900, fontSize: 18, whiteSpace: "nowrap", textShadow: color.light ? "none" : "0 2px 6px rgba(0,0,0,0.5)", userSelect: "none", transform: `scale(${d.scale || 1}) rotate(${d.rotation || 0}deg)`, transformOrigin: "top left" }}>{d.content}</div>
-                  : <div style={{ position: "relative", width: 80 * (d.scale || 1), height: 80 * (d.scale || 1), transform: `rotate(${d.rotation || 0}deg)` }}><Image src={d.content} alt="" fill style={{ objectFit: "contain" }} draggable={false} /></div>
-                }
-              </div>
-            </motion.div>
-          ))}
+          {designs.map(d => {
+            const isActive = activeElId === d.id;
+            return (
+              <motion.div 
+                key={d.id} drag dragConstraints={canvasRef} dragElastic={0} dragMomentum={false} 
+                initial={{ x: d.x, y: d.y }} 
+                onPointerDown={(e) => { e.stopPropagation(); setActiveElId(d.id); }}
+                style={{ position: "absolute", cursor: "grab", zIndex: isActive ? 35 : 30 }} 
+                whileDrag={{ cursor: "grabbing" }}
+              >
+                <div style={{ 
+                  position: "relative",
+                  border: isActive ? "1.5px dashed #111" : "1.5px dashed transparent",
+                  padding: 4, margin: -4 // offset padding so content doesn't shift
+                }}>
+                  {/* Delete Button (visible when active) */}
+                  {isActive && (
+                    <button onClick={(e) => { e.stopPropagation(); removeEl(d.id); }} style={{ position: "absolute", top: -10, right: -10, background: "#ef4444", color: "#fff", border: "none", borderRadius: "50%", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 50, boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}>
+                      <X size={11} strokeWidth={3} />
+                    </button>
+                  )}
+                  
+                  {/* Resize Handle (bottom-right) */}
+                  {isActive && (
+                    <motion.div 
+                      drag dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }} dragElastic={1} dragMomentum={false}
+                      onPointerDown={e => e.stopPropagation()} // stop parent from dragging
+                      onDrag={(e, info) => {
+                         // increase scale based on diagonal drag (offset x + y)
+                         const delta = (info.delta.x + info.delta.y) * 0.005;
+                         setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scale: Math.max(0.2, (x.scale || 1) + delta) } : x));
+                      }}
+                      style={{
+                        position: "absolute", bottom: -6, right: -6, width: 14, height: 14,
+                        background: "#fff", border: "1.5px solid #111", cursor: "nwse-resize", zIndex: 50
+                      }}
+                    />
+                  )}
+
+                  {d.type === "text"
+                    ? <div style={{ color: textOnShirt, fontWeight: 900, fontSize: 18, whiteSpace: "nowrap", textShadow: color.light ? "none" : "0 2px 6px rgba(0,0,0,0.5)", userSelect: "none", transform: `scale(${d.scale || 1}) rotate(${d.rotation || 0}deg)`, transformOrigin: "top left" }}>{d.content}</div>
+                    : <div style={{ position: "relative", width: 80 * (d.scale || 1), height: 80 * (d.scale || 1), transform: `rotate(${d.rotation || 0}deg)` }}><Image src={d.content} alt="" fill style={{ objectFit: "contain" }} draggable={false} /></div>
+                  }
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       )}
       </div>
@@ -534,11 +585,6 @@ export default function CustomizerPage() {
             <div className="cz-canvas-wrap">
               <ShirtCanvas interactive={step === 2} />
             </div>
-            {step === 2 && (
-              <button className="cz-flip-btn" onClick={() => setViewSide(s => s === "front" ? "back" : "front")}>
-                <RotateCcw size={13} /> View {viewSide === "front" ? "Back" : "Front"} Side
-              </button>
-            )}
           </div>
 
           {/* RIGHT: Controls */}
