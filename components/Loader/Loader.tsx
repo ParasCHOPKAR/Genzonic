@@ -25,13 +25,13 @@ const Loader = () => {
             // This prevents React Strict Mode from breaking the loader on the first load!
             sessionStorage.setItem("genzonic_visited", "true");
             
-            setTimeout(() => setIsLoaded(true), 400); 
-            setTimeout(() => setUnmount(true), 1600); 
+            setTimeout(() => setIsLoaded(true), 200); 
+            setTimeout(() => setUnmount(true), 1000); 
             return 100;
           }
-          return prev + 1; 
+          return prev + 2; 
         });
-      }, 35);
+      }, 15);
 
       return () => clearInterval(interval);
     } else {
@@ -63,7 +63,7 @@ const Loader = () => {
           justify-content: center;
           z-index: 999999; 
           overflow: hidden;
-          transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1), opacity 1s ease-in-out;
+          transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.8s ease-in-out;
         }
 
         .watermark-logo {
