@@ -140,17 +140,15 @@ export default function CustomizerPage() {
   const ShirtCanvas = ({ interactive }: { interactive?: boolean }) => (
     <div style={{
       position: "relative", height: "100%", aspectRatio: "4/5", margin: "0 auto",
-      background: `radial-gradient(ellipse at 55% 45%, ${color.previewBg}dd, ${color.previewBg}ff)`,
-      display: "flex", alignItems: "center", justifyContent: "center",
+      background: "#f7f8fa",
       borderRadius: 16, overflow: "hidden",
     }}>
-      <div style={{ position: "absolute", inset: 0, opacity: 0.03, backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "120px 120px" }} />
+      <Image src={tshirtImage} alt={`${color.name} T-Shirt`} fill style={{ objectFit: "cover", zIndex: 10 }} priority unoptimized />
       
-      {/* Aspect-ratio wrapper ensures the interactive box maps perfectly to the image bounds */}
-      <div style={{ position: "relative", height: "90%", aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Image src={tshirtImage} alt={`${color.name} T-Shirt`} fill style={{ objectFit: "contain", filter: "drop-shadow(0 16px 36px rgba(0,0,0,0.3))", zIndex: 10 }} priority unoptimized />
+      {/* Interactive Canvas Overlay */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 20 }}>
         {interactive && (
-          <div ref={canvasRef} style={{ position: "absolute", zIndex: 20, top: "26%", left: "25%", width: "50%", height: "35%", border: `2px dashed ${color.light ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.5)"}`, borderRadius: 4 }}>
+          <div ref={canvasRef} style={{ position: "absolute", top: "28%", left: "22%", width: "56%", height: "40%", border: `2px dashed rgba(255,255,255,0.5)`, borderRadius: 4 }}>
           {designs.map(d => (
             <motion.div key={d.id} drag dragConstraints={canvasRef} dragElastic={0} dragMomentum={false} style={{ position: "absolute", x: d.x, y: d.y, cursor: "grab", zIndex: 30 }} whileDrag={{ cursor: "grabbing" }}>
               <div className="print-el" style={{ position: "relative" }}>
