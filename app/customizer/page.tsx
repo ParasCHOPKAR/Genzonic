@@ -18,10 +18,9 @@ interface DesignEl { id: string; type: "text" | "image"; content: string; x: num
 const COLORS: Color[] = [
   { name: "White",    hex: "#FFFFFF", previewBg: "#d4d4d4", light: true  },
   { name: "Black",    hex: "#111111", previewBg: "#1a1a1a", light: false },
-  { name: "Navy",     hex: "#1A237E", previewBg: "#1e2a8a", light: false },
-  { name: "Charcoal", hex: "#424242", previewBg: "#383838", light: false },
-  { name: "Crimson",  hex: "#C62828", previewBg: "#b71c1c", light: false },
+  { name: "Gray",     hex: "#808080", previewBg: "#737373", light: false },
   { name: "Olive",    hex: "#558B2F", previewBg: "#4a7a29", light: false },
+  { name: "Red",      hex: "#C62828", previewBg: "#b71c1c", light: false },
 ];
 
 const SIZES = ["S", "M", "L", "XL", "2XL"];
@@ -33,13 +32,12 @@ const GUIDE: Record<string, { chest: string; length: string; sleeve: string }> =
   "2XL":{ chest: "46", length: "31.5", sleeve: "11"  },
 };
 
-const COLOR_IMAGE: Record<string, string> = {
-  White:    "/products/tshirt-1-removebg-preview.png",
-  Black:    "/products/tshirt-2-removebg-preview.png",
-  Navy:     "/products/tshirt-3-removebg-preview.png",
-  Charcoal: "/products/tshirt-4-removebg-preview.png",
-  Crimson:  "/products/tshirt-5-removebg-preview.png",
-  Olive:    "/products/tshirt-6-removebg-preview.png",
+const COLOR_IMAGE: Record<string, { front: string; back: string }> = {
+  White: { front: "/white-front.png", back: "/white-back.png" },
+  Black: { front: "/black-front.png", back: "/black-back.png" },
+  Gray:  { front: "/gray-front.png",  back: "/gray-back.png"  },
+  Olive: { front: "/olive-front.png", back: "/olive-back.png" },
+  Red:   { front: "/red-front.png",   back: "/red-back.png"   },
 };
 
 const TRENDY_IMAGES = [
@@ -89,13 +87,22 @@ export default function CustomizerPage() {
   const [step,      setStep]     = useState(1);
   const [color,     setColor]    = useState(COLORS[0]);
   const [size,      setSize]     = useState("M");
-  const [designs,   setDesigns]  = useState<DesignEl[]>([]);
+  const [designsFront, setDesignsFront] = useState<DesignEl[]>([]);
+  const [designsBack,  setDesignsBack]  = useState<DesignEl[]>([]);
+  const [viewSide,  setViewSide] = useState<"front" | "back">("front");
   const [textVal,   setTextVal]  = useState("");
   const [showText,  setShowText] = useState(false);
   const [isAdding,  setIsAdding] = useState(false);
   const [showGuide, setShowGuide]= useState(false);
   const canvasRef  = useRef<HTMLDivElement>(null);
   const addToCart  = useCartStore((s) => s.addToCart);
+
+  const designs = viewSide === "front" ? designsFront : designsBack;
+  const setDesigns = viewSide === "front" ? setDesignsFront : setDesignsBack;
+
+  useEffect(() => {
+    if (step === 1) setViewSide("front");
+  }, [step]);
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search).get("color");
@@ -122,11 +129,11 @@ export default function CustomizerPage() {
 
   const handleAddToCart = () => {
     setIsAdding(true);
-    addToCart({ id: `custom-${Date.now()}`, name: `Custom T-Shirt (${color.name}, ${size})`, price: 999, image: COLOR_IMAGE[color.name] || "/products/tshirt-1-removebg-preview.png", size, stock: 100 });
+    addToCart({ id: `custom-${Date.now()}`, name: `Custom T-Shirt (${color.name}, ${size})`, price: 999, image: COLOR_IMAGE[color.name]?.front || "/white-front.png", size, stock: 100 });
     setTimeout(() => setIsAdding(false), 1800);
   };
 
-  const tshirtImage = COLOR_IMAGE[color.name] || "/products/tshirt-1-removebg-preview.png";
+  const tshirtImage = COLOR_IMAGE[color.name] ? COLOR_IMAGE[color.name][viewSide] : "/white-front.png";
   const textOnShirt = color.light ? "#1a1a1a" : "#ffffff";
 
   // ── Shirt Canvas ───────────────────────────────────────────────────────────
@@ -394,14 +401,16 @@ export default function CustomizerPage() {
 };
 
   // ── Step 3 ────────────────────────────────────────────────────────────────
-  const Step3 = () => (
+  const Step3 = () => {
+    const totalDesigns = designsFront.length + designsBack.length;
+    return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: "1px", color: "#6b7280", textTransform: "uppercase", marginBottom: 20 }}>Order Summary</div>
       {[
         { label: "Product",  value: "Custom T-Shirt" },
         { label: "Color",    value: color.name, swatch: color.hex },
         { label: "Size",     value: size, sub: `Chest ${GUIDE[size].chest}″ · Length ${GUIDE[size].length}″` },
-        { label: "Print",    value: `${designs.length} element${designs.length !== 1 ? "s" : ""}`, sub: "Premium DTF" },
+        { label: "Print",    value: `${totalDesigns} element${totalDesigns !== 1 ? "s" : ""}`, sub: "Premium DTF" },
       ].map(({ label, value, sub, swatch }: { label: string; value: string; sub?: string; swatch?: string }, i) => (
         <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "13px 0", borderBottom: i < 3 ? "1px solid #f3f4f6" : "none" }}>
           <div>
@@ -429,7 +438,7 @@ export default function CustomizerPage() {
         </div>
       </div>
     </div>
-  );
+  )};
 
   const panels = [<Step1 key={1} />, <Step2 key={2} />, <Step3 key={3} />];
 
@@ -503,15 +512,17 @@ export default function CustomizerPage() {
           {/* LEFT: Preview */}
           <div className="cz-preview-col">
             <div className="cz-preview-label">
-              <span>Live Preview · {color.name}</span>
+              <span>Live Preview · {color.name} ({viewSide === "front" ? "Front" : "Back"})</span>
               {step === 2 && <div className="cz-drag-hint">✦ Drag to position</div>}
             </div>
             <div className="cz-canvas-wrap">
               <ShirtCanvas interactive={step === 2} />
             </div>
-            <button className="cz-flip-btn">
-              <RotateCcw size={13} /> View Back Side
-            </button>
+            {step === 2 && (
+              <button className="cz-flip-btn" onClick={() => setViewSide(s => s === "front" ? "back" : "front")}>
+                <RotateCcw size={13} /> View {viewSide === "front" ? "Back" : "Front"} Side
+              </button>
+            )}
           </div>
 
           {/* RIGHT: Controls */}
