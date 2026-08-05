@@ -12,7 +12,7 @@ import {
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 interface Color { name: string; hex: string; previewBg: string; light: boolean }
-interface DesignEl { id: string; type: "text" | "image"; content: string; x: number; y: number }
+interface DesignEl { id: string; type: "text" | "image"; content: string; x: number; y: number; scale: number; rotation: number; }
 
 // ─── Config ─────────────────────────────────────────────────────────────────
 const COLORS: Color[] = [
@@ -111,7 +111,7 @@ export default function CustomizerPage() {
 
   const addText = () => {
     if (!textVal.trim()) return;
-    setDesigns(d => [...d, { id: `t${Date.now()}`, type: "text", content: textVal, x: 20, y: 20 }]);
+    setDesigns(d => [...d, { id: `t${Date.now()}`, type: "text", content: textVal, x: 20, y: 20, scale: 1, rotation: 0 }]);
     setTextVal(""); setShowText(false);
   };
 
@@ -120,7 +120,7 @@ export default function CustomizerPage() {
     const reader = new FileReader();
     reader.onload = ev => {
       if (typeof ev.target?.result === "string")
-        setDesigns(d => [...d, { id: `i${Date.now()}`, type: "image", content: ev.target!.result as string, x: 20, y: 20 }]);
+        setDesigns(d => [...d, { id: `i${Date.now()}`, type: "image", content: ev.target!.result as string, x: 20, y: 20, scale: 1, rotation: 0 }]);
     };
     reader.readAsDataURL(file);
   };
@@ -150,14 +150,14 @@ export default function CustomizerPage() {
         {interactive && (
           <div ref={canvasRef} style={{ position: "absolute", top: "28%", left: "22%", width: "56%", height: "40%", border: `2px dashed rgba(255,255,255,0.5)`, borderRadius: 4 }}>
           {designs.map(d => (
-            <motion.div key={d.id} drag dragConstraints={canvasRef} dragElastic={0} dragMomentum={false} style={{ position: "absolute", x: d.x, y: d.y, cursor: "grab", zIndex: 30 }} whileDrag={{ cursor: "grabbing" }}>
+            <motion.div key={d.id} drag dragConstraints={canvasRef} dragElastic={0} dragMomentum={false} initial={{ x: d.x, y: d.y }} style={{ position: "absolute", cursor: "grab", zIndex: 30 }} whileDrag={{ cursor: "grabbing" }}>
               <div className="print-el" style={{ position: "relative" }}>
                 <button onClick={() => removeEl(d.id)} className="el-del" style={{ position: "absolute", top: -12, right: -12, background: "#ef4444", color: "#fff", border: "none", borderRadius: "50%", width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 50, opacity: 0, transition: "opacity 0.15s", boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}>
                   <X size={11} />
                 </button>
                 {d.type === "text"
-                  ? <div style={{ color: textOnShirt, fontWeight: 900, fontSize: 18, whiteSpace: "nowrap", textShadow: color.light ? "none" : "0 2px 6px rgba(0,0,0,0.5)", userSelect: "none" }}>{d.content}</div>
-                  : <div style={{ position: "relative", width: 80, height: 80 }}><Image src={d.content} alt="" fill style={{ objectFit: "contain" }} /></div>
+                  ? <div style={{ color: textOnShirt, fontWeight: 900, fontSize: 18, whiteSpace: "nowrap", textShadow: color.light ? "none" : "0 2px 6px rgba(0,0,0,0.5)", userSelect: "none", transform: `scale(${d.scale || 1}) rotate(${d.rotation || 0}deg)`, transformOrigin: "top left" }}>{d.content}</div>
+                  : <div style={{ position: "relative", width: 80 * (d.scale || 1), height: 80 * (d.scale || 1), transform: `rotate(${d.rotation || 0}deg)` }}><Image src={d.content} alt="" fill style={{ objectFit: "contain" }} draggable={false} /></div>
                 }
               </div>
             </motion.div>
@@ -344,7 +344,7 @@ export default function CustomizerPage() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, borderTop: "1px dashed #e5e7eb", borderLeft: "1px dashed #e5e7eb" }}>
                 {TRENDY_IMAGES.filter(img => img.category === category).map((img, i) => (
                   <button key={i} 
-                    onClick={() => setDesigns(d => [...d, { id: `img${Date.now()}`, type: "image", content: img.src, x: 20, y: 20 }])}
+                    onClick={() => setDesigns(d => [...d, { id: `img${Date.now()}`, type: "image", content: img.src, x: 20, y: 20, scale: 1, rotation: 0 }])}
                     style={{ background: "#fff", borderBottom: "1px dashed #e5e7eb", borderRight: "1px dashed #e5e7eb", borderTop: "none", borderLeft: "none", height: 80, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "background 0.2s", padding: 8 }}
                     onMouseEnter={e => e.currentTarget.style.background = "#f9fafb"} onMouseLeave={e => e.currentTarget.style.background = "#fff"}
                   >
@@ -365,16 +365,34 @@ export default function CustomizerPage() {
           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.8px", color: "#9ca3af", textTransform: "uppercase", marginBottom: 10 }}>Added Elements ({designs.length})</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {designs.map(d => (
-              <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12, background: "#f9fafb", borderRadius: 10, padding: "10px 14px", border: "1px solid #f0f2f5" }}>
-                <div style={{ width: 30, height: 30, borderRadius: 8, background: d.type === "text" ? "#f0f0ff" : "#fff0f5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  {d.type === "text" ? <Type size={13} color="#6366f1" /> : <ImageIcon size={13} color="#ec4899" />}
+              <div key={d.id} style={{ display: "flex", flexDirection: "column", gap: 10, background: "#f9fafb", borderRadius: 10, padding: "10px 14px", border: "1px solid #f0f2f5" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: 8, background: d.type === "text" ? "#f0f0ff" : "#fff0f5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    {d.type === "text" ? <Type size={13} color="#6366f1" /> : <ImageIcon size={13} color="#ec4899" />}
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#374151", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {d.type === "text" ? d.content : "Uploaded Artwork"}
+                  </span>
+                  <button onClick={() => removeEl(d.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#d1d5db", padding: 4 }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#ef4444")} onMouseLeave={e => (e.currentTarget.style.color = "#d1d5db")}
+                  ><Trash2 size={14} /></button>
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 600, color: "#374151", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {d.type === "text" ? d.content : "Uploaded Artwork"}
-                </span>
-                <button onClick={() => removeEl(d.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#d1d5db", padding: 4 }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "#ef4444")} onMouseLeave={e => (e.currentTarget.style.color = "#d1d5db")}
-                ><Trash2 size={14} /></button>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, paddingLeft: 42 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 24 }}>Size</span>
+                  <input type="range" min="0.5" max="3" step="0.1" value={d.scale || 1} 
+                    onChange={e => setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scale: parseFloat(e.target.value) } : x))}
+                    style={{ flex: 1, accentColor: "#111", cursor: "ew-resize" }} 
+                  />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 28, textAlign: "right" }}>{Math.round((d.scale || 1) * 100)}%</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, paddingLeft: 42 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 24 }}>Turn</span>
+                  <input type="range" min="-180" max="180" step="1" value={d.rotation || 0} 
+                    onChange={e => setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, rotation: parseInt(e.target.value) } : x))}
+                    style={{ flex: 1, accentColor: "#111", cursor: "ew-resize" }} 
+                  />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 28, textAlign: "right" }}>{d.rotation || 0}°</span>
+                </div>
               </div>
             ))}
           </div>
