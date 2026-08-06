@@ -165,7 +165,7 @@ export default function CustomizerPage() {
       {/* Interactive Canvas Overlay */}
       <div style={{ position: "absolute", inset: 0, zIndex: 20 }}>
         {interactive && (
-          <div ref={canvasRef} style={{ position: "absolute", top: "28%", left: "22%", width: "56%", height: "40%", border: `2px dashed rgba(255,255,255,0.5)`, borderRadius: 4 }}>
+          <div ref={canvasRef} style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "85%", border: `2px dashed rgba(255,255,255,0.4)`, borderRadius: 4 }}>
           {designs.map(d => {
             const isActive = activeElId === d.id;
             return (
