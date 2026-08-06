@@ -12,7 +12,7 @@ import {
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 interface Color { name: string; hex: string; previewBg: string; light: boolean }
-interface DesignEl { id: string; type: "text" | "image"; content: string; x: number; y: number; scale: number; rotation: number; }
+interface DesignEl { id: string; type: "text" | "image"; content: string; x: number; y: number; scale: number; scaleX?: number; scaleY?: number; rotation: number; }
 
 // ─── Config ─────────────────────────────────────────────────────────────────
 const COLORS: Color[] = [
@@ -170,7 +170,7 @@ export default function CustomizerPage() {
             const isActive = activeElId === d.id;
             return (
               <motion.div 
-                key={d.id} drag dragConstraints={canvasRef} dragElastic={0} dragMomentum={false} 
+                key={d.id} drag dragElastic={0} dragMomentum={false} 
                 initial={{ x: d.x, y: d.y }} 
                 onPointerDown={(e) => { e.stopPropagation(); setActiveElId(d.id); }}
                 style={{ position: "absolute", cursor: "grab", zIndex: isActive ? 35 : 30 }} 
@@ -188,26 +188,43 @@ export default function CustomizerPage() {
                     </button>
                   )}
                   
-                  {/* Resize Handle (bottom-right) */}
+                  {/* Resize Handles */}
                   {isActive && (
-                    <motion.div 
-                      drag dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }} dragElastic={1} dragMomentum={false}
-                      onPointerDown={e => e.stopPropagation()} // stop parent from dragging
-                      onDrag={(e, info) => {
-                         // increase scale based on diagonal drag (offset x + y)
-                         const delta = (info.delta.x + info.delta.y) * 0.005;
-                         setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scale: Math.max(0.2, (x.scale || 1) + delta) } : x));
-                      }}
-                      style={{
-                        position: "absolute", bottom: -6, right: -6, width: 14, height: 14,
-                        background: "#fff", border: "1.5px solid #111", cursor: "nwse-resize", zIndex: 50
-                      }}
-                    />
+                    <>
+                      {/* Right Handle (Width) */}
+                      <motion.div 
+                        drag dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }} dragElastic={1} dragMomentum={false}
+                        onPointerDown={e => e.stopPropagation()}
+                        onDrag={(e, info) => {
+                           setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scaleX: Math.max(0.2, (x.scaleX ?? x.scale ?? 1) + info.delta.x * 0.005) } : x));
+                        }}
+                        style={{ position: "absolute", top: "50%", right: -6, marginTop: -7, width: 14, height: 14, background: "#fff", border: "1.5px solid #111", cursor: "ew-resize", zIndex: 50 }}
+                      />
+                      {/* Bottom Handle (Height) */}
+                      <motion.div 
+                        drag dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }} dragElastic={1} dragMomentum={false}
+                        onPointerDown={e => e.stopPropagation()}
+                        onDrag={(e, info) => {
+                           setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scaleY: Math.max(0.2, (x.scaleY ?? x.scale ?? 1) + info.delta.y * 0.005) } : x));
+                        }}
+                        style={{ position: "absolute", bottom: -6, left: "50%", marginLeft: -7, width: 14, height: 14, background: "#fff", border: "1.5px solid #111", cursor: "ns-resize", zIndex: 50 }}
+                      />
+                      {/* Bottom-Right Handle (Both) */}
+                      <motion.div 
+                        drag dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }} dragElastic={1} dragMomentum={false}
+                        onPointerDown={e => e.stopPropagation()}
+                        onDrag={(e, info) => {
+                           const dx = info.delta.x * 0.005; const dy = info.delta.y * 0.005;
+                           setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scaleX: Math.max(0.2, (x.scaleX ?? x.scale ?? 1) + dx), scaleY: Math.max(0.2, (x.scaleY ?? x.scale ?? 1) + dy) } : x));
+                        }}
+                        style={{ position: "absolute", bottom: -6, right: -6, width: 14, height: 14, background: "#fff", border: "1.5px solid #111", cursor: "nwse-resize", zIndex: 50 }}
+                      />
+                    </>
                   )}
 
                   {d.type === "text"
-                    ? <div style={{ color: textOnShirt, fontWeight: 900, fontSize: 18, whiteSpace: "nowrap", textShadow: color.light ? "none" : "0 2px 6px rgba(0,0,0,0.5)", userSelect: "none", transform: `scale(${d.scale || 1}) rotate(${d.rotation || 0}deg)`, transformOrigin: "top left" }}>{d.content}</div>
-                    : <div style={{ position: "relative", width: 80 * (d.scale || 1), height: 80 * (d.scale || 1), transform: `rotate(${d.rotation || 0}deg)` }}><Image src={d.content} alt="" fill style={{ objectFit: "contain" }} draggable={false} /></div>
+                    ? <div style={{ color: textOnShirt, fontWeight: 900, fontSize: 18, whiteSpace: "nowrap", textShadow: color.light ? "none" : "0 2px 6px rgba(0,0,0,0.5)", userSelect: "none", transform: `scaleX(${d.scaleX ?? d.scale ?? 1}) scaleY(${d.scaleY ?? d.scale ?? 1}) rotate(${d.rotation || 0}deg)`, transformOrigin: "top left" }}>{d.content}</div>
+                    : <div style={{ position: "relative", width: 80 * (d.scaleX ?? d.scale ?? 1), height: 80 * (d.scaleY ?? d.scale ?? 1), transform: `rotate(${d.rotation || 0}deg)` }}><Image src={d.content} alt="" fill style={{ objectFit: "fill" }} draggable={false} /></div>
                   }
                 </div>
               </motion.div>
@@ -430,11 +447,11 @@ export default function CustomizerPage() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, paddingLeft: 42 }}>
                   <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 24 }}>Size</span>
-                  <input type="range" min="0.5" max="3" step="0.1" value={d.scale || 1} 
-                    onChange={e => setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scale: parseFloat(e.target.value) } : x))}
+                  <input type="range" min="0.5" max="3" step="0.1" value={d.scaleX ?? d.scale ?? 1} 
+                    onChange={e => setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, scale: parseFloat(e.target.value), scaleX: parseFloat(e.target.value), scaleY: parseFloat(e.target.value) } : x))}
                     style={{ flex: 1, accentColor: "#111", cursor: "ew-resize" }} 
                   />
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 28, textAlign: "right" }}>{Math.round((d.scale || 1) * 100)}%</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 28, textAlign: "right" }}>{Math.round((d.scaleX ?? d.scale ?? 1) * 100)}%</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, paddingLeft: 42 }}>
                   <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", width: 24 }}>Turn</span>
