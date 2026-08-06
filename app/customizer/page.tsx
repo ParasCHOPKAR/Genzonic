@@ -171,7 +171,11 @@ export default function CustomizerPage() {
             return (
               <motion.div 
                 key={d.id} drag dragElastic={0} dragMomentum={false} 
-                initial={{ x: d.x, y: d.y }} 
+                animate={{ x: d.x, y: d.y }} 
+                transition={{ type: "tween", duration: 0 }}
+                onDragEnd={(e, info) => {
+                   setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, x: x.x + info.offset.x, y: x.y + info.offset.y } : x));
+                }}
                 onPointerDown={(e) => { e.stopPropagation(); setActiveElId(d.id); }}
                 style={{ position: "absolute", cursor: "grab", zIndex: isActive ? 35 : 30 }} 
                 whileDrag={{ cursor: "grabbing" }}
