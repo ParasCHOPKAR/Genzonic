@@ -9,6 +9,7 @@ export interface CartItem {
   size: string;
   quantity: number;
   stock: number; // 🔥 1. Added strict stock property
+  customDesign?: any; // To store customization details
 }
 
 interface CartState {

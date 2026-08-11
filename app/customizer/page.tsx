@@ -130,7 +130,19 @@ export default function CustomizerPage() {
 
   const handleAddToCart = () => {
     setIsAdding(true);
-    addToCart({ id: `custom-${Date.now()}`, name: `Custom T-Shirt (${color.name}, ${size})`, price: 999, image: COLOR_IMAGE[color.name]?.front || "/white-front.png", size, stock: 100 });
+    addToCart({ 
+      id: `custom-${Date.now()}`, 
+      name: `Custom T-Shirt (${color.name}, ${size})`, 
+      price: 449, 
+      image: COLOR_IMAGE[color.name]?.front || "/white-front.png", 
+      size, 
+      stock: 100,
+      customDesign: {
+        front: designsFront,
+        back: designsBack,
+        color: color.name
+      }
+    });
     setTimeout(() => setIsAdding(false), 1800);
   };
 

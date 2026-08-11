@@ -31,6 +31,7 @@ const orderSchema = new mongoose.Schema(
         price: { type: Number, required: true },
         size: { type: String, required: true },
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: false },
+        customDesign: { type: mongoose.Schema.Types.Mixed, required: false }, // Save customized t-shirt data
       },
     ],
 
