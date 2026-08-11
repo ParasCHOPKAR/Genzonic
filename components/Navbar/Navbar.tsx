@@ -209,7 +209,9 @@ export default function Navbar() {
             <Link href="/shop/men" className="nav-item nav-highlight">Men</Link>
             <Link href="/shop/women" className="nav-item nav-highlight">Women</Link>
             <Link href="/shop/kids" className="nav-item nav-highlight">Kids</Link>
-            <Link href="/custom-design" className="nav-item nav-highlight">Customizer</Link>
+            {user?.role === "admin" && (
+              <Link href="/custom-design" className="nav-item nav-highlight">Customizer</Link>
+            )}
           </nav>
 
           {/* ===== RIGHT SIDE ACTIONS ===== */}
@@ -512,9 +514,11 @@ export default function Navbar() {
             <Link href="/shop/kids" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <span>KIDS</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
             </Link>
-            <Link href="/custom-design" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <span>CUSTOMIZER</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
-            </Link>
+            {user?.role === "admin" && (
+              <Link href="/custom-design" className="clean-nav-item primary-highlight" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                <span>CUSTOMIZER</span> <ChevronRight size={24} strokeWidth={2} style={{ display: "block", flexShrink: 0 }}/>
+              </Link>
+            )}
             
             {/* PREMIUM BUTTON */}
             <button 
