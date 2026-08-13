@@ -57,7 +57,7 @@ export default function CartPage() {
           {/* PRODUCT LISTING */}
           <div className="cart-items">
             {cart.map((item) => {
-              const isMaxStock = item.quantity >= item.stock;
+              const isMaxStock = item.quantity >= Math.min(item.stock ?? Infinity, 2);
 
               return (
                 <div key={item.id + item.size} className="item-card">

@@ -31,8 +31,8 @@ export const useCartStore = create<CartState>()((set) => ({
     const existingItem = state.cart.find((i) => i.id === item.id && i.size === item.size);
     
     if (existingItem) {
-      // 🔥 2. Block adding to cart from PDP if already at max stock
-      if (existingItem.quantity >= item.stock) {
+      // 🔥 2. Block adding to cart from PDP if already at max stock or limit of 2
+      if (existingItem.quantity >= Math.min(item.stock ?? Infinity, 2)) {
         return { cart: state.cart }; 
       }
       return {
@@ -53,8 +53,8 @@ export const useCartStore = create<CartState>()((set) => ({
   increaseQty: (id, size) => set((state) => ({
     cart: state.cart.map((i) => {
       if (i.id === id && i.size === size) {
-        // 🔥 3. Strict guard: Prevent increasing beyond database stock limit
-        if (i.quantity >= i.stock) {
+        // 🔥 3. Strict guard: Prevent increasing beyond database stock limit or limit of 2
+        if (i.quantity >= Math.min(i.stock ?? Infinity, 2)) {
           return i; 
         }
         return { ...i, quantity: i.quantity + 1 };
