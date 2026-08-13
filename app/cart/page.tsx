@@ -15,13 +15,10 @@ export default function CartPage() {
   // 1. Calculate base subtotal
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  // 🔥 NEW MATH LOGIC FOR GST & DELIVERY 🔥
   const deliveryCharge = 25;
-  // Calculate 5% GST on the subtotal
-  const gstAmount = Math.round(subtotal * 0.05);
   
-  // Final Total includes Subtotal + GST + Delivery
-  const total = subtotal + gstAmount + deliveryCharge;
+  // Final Total includes Subtotal + Delivery
+  const total = subtotal + deliveryCharge;
 
   const handleCheckout = () => {
     if (status === "loading") return; 
@@ -103,8 +100,6 @@ export default function CartPage() {
               
               <div className="summary-row"><span>SUBTOTAL</span><span>₹{subtotal}</span></div>
               
-              {/* 🔥 NEW UI ROWS FOR GST AND SHIPPING */}
-              <div className="summary-row"><span>GST (5%)</span><span>₹{gstAmount}</span></div>
               <div className="summary-row"><span className="orange-text">SHIPPING</span><span className="orange-text">₹{deliveryCharge}</span></div>
 
               <div className="total-row">

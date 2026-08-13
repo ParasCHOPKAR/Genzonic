@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/cartStore";
 import Image from "next/image";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
+import { useSession } from "next-auth/react";
 
 // Tells TypeScript that window.Razorpay exists
 declare global {
@@ -17,11 +18,14 @@ declare global {
 export default function CheckoutPage() {
   const { cart, clearCart } = useCartStore();
   const router = useRouter();
+  const { data: session } = useSession();
+  
+  const [profileData, setProfileData] = useState<any>(null);
+  const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   const deliveryCharge = 25;
-  const gstAmount = Math.round(subtotal * 0.05);
-  const total = subtotal > 0 ? subtotal + gstAmount + deliveryCharge : 0;
+  const total = subtotal > 0 ? subtotal + deliveryCharge : 0;
 
   const [addressType, setAddressType] = useState("Home");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -35,6 +39,47 @@ export default function CheckoutPage() {
   
   // 🔥 NEW: Tracks if the API successfully filled the data so we can lock the fields
   const [isAutoFilled, setIsAutoFilled] = useState(false);
+
+  // Fetch profile to prefill
+  useEffect(() => {
+    async function fetchProfile() {
+      if (session?.user?.email) {
+        try {
+          const res = await fetch("/api/user/profile");
+          const data = await res.json();
+          if (data.success && data.profile?.addresses?.length > 0) {
+            const addr = data.profile.addresses.find((a: any) => a.isDefault) || data.profile.addresses[0];
+            
+            const parts = (addr.fullName || "").split(" ");
+            const firstName = parts[0] || "";
+            const lastName = parts.slice(1).join(" ") || "";
+            
+            const streetParts = (addr.streetAddress || "").split(", ");
+            const address = streetParts[0] || "";
+            const area = streetParts.slice(1).join(", ") || "";
+
+            setProfileData({ 
+              email: session.user.email,
+              firstName,
+              lastName,
+              phone: addr.phone || "",
+              address,
+              area
+            });
+            
+            setPincode(addr.pinCode || "");
+            setDistrict(addr.city || "");
+            setStateName(addr.state || "");
+            if (addr.city && addr.state) setIsAutoFilled(true);
+          }
+        } catch (err) {
+          console.error("Failed to load profile", err);
+        }
+      }
+      setIsProfileLoaded(true);
+    }
+    fetchProfile();
+  }, [session]);
 
   // 🔥 Strict Pincode Logic & API Fetch
   const handlePincodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +152,6 @@ export default function CheckoutPage() {
       shippingInfo,
       orderItems: cart,
       subtotal: subtotal,
-      gstAmount: gstAmount,
       deliveryCharge: deliveryCharge,
       totalAmount: total,
     };
@@ -134,7 +178,7 @@ export default function CheckoutPage() {
         amount: data.amount,
         currency: "INR",
         name: "GenZonic",
-        description: `Subtotal: ₹${subtotal} | GST: ₹${gstAmount} | Shipping: ₹${deliveryCharge}`,
+        description: `Subtotal: ₹${subtotal} | Shipping: ₹${deliveryCharge}`,
         image: "/favicon.ico", 
         order_id: data.rzpOrderId, 
         
@@ -197,6 +241,14 @@ export default function CheckoutPage() {
     }
   };
 
+  if (!isProfileLoaded) {
+    return (
+      <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "var(--bg)", color: "var(--text)" }}>
+        <Loader2 className="animate-spin" size={40} />
+      </div>
+    );
+  }
+
   return (
     <>
       <Script id="razorpay-checkout-js" src="https://checkout.razorpay.com/v1/checkout.js" />
@@ -208,13 +260,13 @@ export default function CheckoutPage() {
           <form className="shipping-form" onSubmit={handlePayment}>
             <h2 className="section-label">01 // CONTACT LOGISTICS</h2>
             <div className="grid-inputs">
-              <div className="input-group half"><label>FIRST NAME *</label><input name="firstName" type="text" required /></div>
-              <div className="input-group half"><label>LAST NAME *</label><input name="lastName" type="text" required /></div>
-              <div className="input-group full"><label>EMAIL ADDRESS *</label><input name="email" type="email" required /></div>
+              <div className="input-group half"><label>FIRST NAME *</label><input name="firstName" type="text" defaultValue={profileData?.firstName || ""} required /></div>
+              <div className="input-group half"><label>LAST NAME *</label><input name="lastName" type="text" defaultValue={profileData?.lastName || ""} required /></div>
+              <div className="input-group full"><label>EMAIL ADDRESS *</label><input name="email" type="email" defaultValue={profileData?.email || ""} required /></div>
               
               <div className="input-group half"><label>MOBILE NUMBER *</label>
                 <div className="phone-wrapper"><span className="prefix">+91</span>
-                  <input name="phone" type="tel" required maxLength={10} minLength={10} onInput={(e) => e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '')} />
+                  <input name="phone" type="tel" defaultValue={profileData?.phone || ""} required maxLength={10} minLength={10} onInput={(e) => e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '')} />
                 </div>
               </div>
               <div className="input-group half"><label>ALTERNATIVE NUMBER</label>
@@ -248,8 +300,8 @@ export default function CheckoutPage() {
                 {pinError && <span className="error-text">{pinError}</span>}
               </div>
               
-              <div className="input-group full"><label>FLAT NO / BUILDING / STREET NAME *</label><input name="address" type="text" required /></div>
-              <div className="input-group full"><label>AREA / LOCALITY *</label><input name="area" type="text" required /></div>
+              <div className="input-group full"><label>FLAT NO / BUILDING / STREET NAME *</label><input name="address" type="text" defaultValue={profileData?.address || ""} required /></div>
+              <div className="input-group full"><label>AREA / LOCALITY *</label><input name="area" type="text" defaultValue={profileData?.area || ""} required /></div>
               <div className="input-group full"><label>LANDMARK</label><input name="landmark" type="text" /></div>
               
               {/* 🔥 AUTO-FILLED DISTRICT & STATE (LOCKED ON SUCCESS) 🔥 */}
@@ -313,7 +365,6 @@ export default function CheckoutPage() {
               </div>
               <div className="manifest-footer">
                 <div className="line"><span>SUBTOTAL</span><span>₹{subtotal}</span></div>
-                <div className="line"><span>GST (5%)</span><span>₹{gstAmount}</span></div>
                 <div className="line"><span>SHIPPING</span><span style={{ color: "#ff3e00" }}>₹{deliveryCharge}</span></div>
                 <div className="line grand"><span>TOTAL DUE</span><span>₹{total}</span></div>
               </div>

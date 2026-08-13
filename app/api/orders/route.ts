@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     });
 
     const body = await req.json();
-    const { userEmail, shippingInfo, orderItems, subtotal, gstAmount, deliveryCharge, totalAmount } = body;
+    const { userEmail, shippingInfo, orderItems, subtotal, deliveryCharge, totalAmount } = body;
 
     if (!totalAmount || !userEmail) {
       return NextResponse.json({ success: false, message: "Missing required data" }, { status: 400 });
@@ -63,7 +63,6 @@ export async function POST(req: Request) {
       shippingInfo,
       orderItems,
       subtotal,
-      gstAmount,
       deliveryCharge,
       totalAmount,
       paymentMethod: "Razorpay",
@@ -71,13 +70,46 @@ export async function POST(req: Request) {
       status: "Processing",
     });
 
+    // 🔥 AUTOMATICALLY SAVE ADDRESS TO PROFILE
+    try {
+      const Profile = (await import("@/models/Profile")).default;
+      let profile = await Profile.findOne({ userEmail });
+      
+      const newAddress = {
+        fullName: `${shippingInfo.firstName} ${shippingInfo.lastName}`.trim(),
+        phone: shippingInfo.phone,
+        pinCode: shippingInfo.pinCode,
+        city: shippingInfo.city,
+        state: shippingInfo.state,
+        streetAddress: `${shippingInfo.address}, ${shippingInfo.area}${shippingInfo.landmark ? ', ' + shippingInfo.landmark : ''}`,
+        isDefault: profile ? profile.addresses.length === 0 : true
+      };
+
+      if (profile) {
+        // Check for duplicates
+        const isDuplicate = profile.addresses.some((a: any) => 
+          a.streetAddress === newAddress.streetAddress && a.pinCode === newAddress.pinCode
+        );
+        if (!isDuplicate) {
+          profile.addresses.push(newAddress);
+          await profile.save();
+        }
+      } else {
+        await Profile.create({
+          userEmail,
+          addresses: [newAddress]
+        });
+      }
+    } catch (profileError) {
+      console.error("Failed to auto-save address to profile:", profileError);
+    }
+
     const options = {
       amount: Math.round(totalAmount * 100), 
       currency: "INR",
       receipt: newOrder._id.toString(),
       notes: {
         subtotal: subtotal,
-        gst: gstAmount,
         shipping: deliveryCharge
       }
     };
