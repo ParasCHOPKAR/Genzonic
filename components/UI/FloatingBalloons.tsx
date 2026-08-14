@@ -19,7 +19,7 @@ export default function FloatingBalloons() {
 
   useEffect(() => {
     // Generate an initial set of balloons
-    const initialBalloons = Array.from({ length: 30 }).map((_, i) => ({
+    const initialBalloons = Array.from({ length: 24 }).map((_, i) => ({
       id: i,
       color: COLORS[i % 3], // Distribute colors evenly
       left: Math.random() * 100, // Random horizontal position
