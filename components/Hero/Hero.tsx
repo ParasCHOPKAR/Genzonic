@@ -100,6 +100,10 @@ export default function Hero() {
 
         {/* LEFT */}
         <div className="hz-left">
+          <div className="hz-badge" style={{ border: `1px solid ${borderC}`, color: accent, background: darkMode ? 'rgba(255, 153, 51, 0.1)' : 'rgba(19, 136, 8, 0.1)' }}>
+            <span className="hz-dot" style={{ background: "#FF9933" }} />
+            Happy Independence Day 🇮🇳
+          </div>
 
           <h1 className="hz-h1">
             <div>Dress Bold.</div>
@@ -229,6 +233,10 @@ export default function Hero() {
           MOBILE STACK
       ══════════════════════════════════════════ */}
       <div className="hz-mob">
+        <div className="hz-badge hz-badge-sm" style={{ border: `1px solid ${borderC}`, color: accent, background: darkMode ? 'rgba(255, 153, 51, 0.1)' : 'rgba(19, 136, 8, 0.1)' }}>
+          <span className="hz-dot" style={{ background: "#FF9933" }} />
+          Happy Independence Day 🇮🇳
+        </div>
 
         <div className="hz-h1 hz-h1-sm">
           <div>Dress Bold.</div>

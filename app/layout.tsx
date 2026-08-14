@@ -3,6 +3,7 @@ import Loader from "@/components/Loader/Loader";
 import ClientLayout from "@/components/ClientLayout/ClientLayout";
 import Script from "next/script";
 import { Providers } from "./providers";
+import FloatingBalloons from "@/components/UI/FloatingBalloons";
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.genzonic.com';
@@ -59,6 +60,7 @@ export default function RootLayout({
         />
 
         <Providers>
+          <FloatingBalloons />
           <Loader />
           <ClientLayout>
             {children}
