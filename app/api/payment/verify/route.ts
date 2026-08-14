@@ -7,7 +7,7 @@ import nodemailer from "nodemailer";
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = await req.json();
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderData } = await req.json();
 
     // 🔥 Pulling your fresh secret (Note: best practice is process.env.RAZORPAY_SECRET)
     const RAZORPAY_SECRET = process.env.RAZORPAY_SECRET || "YF0u2TI6qwBp5PlRL7YeSTJf";
@@ -23,19 +23,20 @@ export async function POST(req: Request) {
     const isAuthentic = expectedSignature === razorpay_signature;
 
     if (isAuthentic) {
-      // 1. Update the order and save it to a variable
-      const updatedOrder = await Order.findOneAndUpdate(
-        { "paymentResult.razorpay_order_id": razorpay_order_id },
-        {
-          isPaid: true,
-          paidAt: new Date(),
-          status: "Processing",
-          paymentStatus: "Paid", // 🔥 Ensures admin dashboard marks it as paid
-          "paymentResult.razorpay_payment_id": razorpay_payment_id,
-          "paymentResult.razorpay_signature": razorpay_signature,
-        },
-        { new: true } // Returns the updated document so we can read the email!
-      );
+      // 1. Create the order from scratch now that payment is successful
+      const updatedOrder = await Order.create({
+        ...orderData,
+        isPaid: true,
+        paidAt: new Date(),
+        status: "Processing",
+        paymentStatus: "Paid", 
+        paymentMethod: "Razorpay",
+        paymentResult: {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+        }
+      });
 
       // 2. Send the beautiful branded email receipt!
       if (updatedOrder && updatedOrder.userEmail) {

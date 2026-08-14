@@ -58,17 +58,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "Missing required data" }, { status: 400 });
     }
 
-    const newOrder = await Order.create({
-      userEmail,
-      shippingInfo,
-      orderItems,
-      subtotal,
-      deliveryCharge,
-      totalAmount,
-      paymentMethod: "Razorpay",
-      paymentStatus: "Pending",
-      status: "Processing",
-    });
+    // The order is NOT created in the database here anymore.
+    // It will be created only upon successful payment verification.
 
     // 🔥 AUTOMATICALLY SAVE ADDRESS TO PROFILE
     try {
@@ -107,7 +98,7 @@ export async function POST(req: Request) {
     const options = {
       amount: Math.round(totalAmount * 100), 
       currency: "INR",
-      receipt: newOrder._id.toString(),
+      receipt: `rcpt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
       notes: {
         subtotal: subtotal,
         shipping: deliveryCharge
@@ -116,8 +107,6 @@ export async function POST(req: Request) {
 
     const razorpayOrder = await razorpay.orders.create(options);
 
-    newOrder.paymentResult = { razorpay_order_id: razorpayOrder.id };
-    await newOrder.save();
 
     return NextResponse.json({ 
       success: true, 
