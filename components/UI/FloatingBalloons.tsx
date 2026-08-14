@@ -11,6 +11,7 @@ interface Balloon {
   animationDuration: number;
   delay: number;
   scale: number;
+  popped?: boolean;
 }
 
 export default function FloatingBalloons() {
@@ -30,6 +31,17 @@ export default function FloatingBalloons() {
     setBalloons(initialBalloons);
   }, []);
 
+  const popBalloon = (id: number) => {
+    setBalloons((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, popped: true } : b))
+    );
+
+    // Remove the balloon from the DOM after the animation completes
+    setTimeout(() => {
+      setBalloons((prev) => prev.filter((b) => b.id !== id));
+    }, 150);
+  };
+
   if (balloons.length === 0) return null;
 
   return (
@@ -37,23 +49,28 @@ export default function FloatingBalloons() {
       {balloons.map((b) => (
         <div
           key={b.id}
-          className="balloon"
+          className="balloon-wrapper"
           style={{
             left: `${b.left}%`,
-            backgroundColor: b.color,
             animationDuration: `${b.animationDuration}s`,
             animationDelay: `${b.delay}s`,
-            transform: `scale(${b.scale})`,
-            // Slight opacity for depth
-            opacity: b.color === "#FFFFFF" ? 0.9 : 0.8,
-            boxShadow:
-              b.color === "#FFFFFF"
-                ? "inset -5px -5px 15px rgba(0,0,0,0.1)"
-                : "inset -5px -5px 15px rgba(0,0,0,0.3)",
           }}
         >
-          {/* Balloon string */}
-          <div className="string"></div>
+          <div
+            className={`balloon ${b.popped ? "popped" : ""}`}
+            onClick={() => !b.popped && popBalloon(b.id)}
+            style={{
+              backgroundColor: b.color,
+              transform: b.popped ? `scale(${b.scale * 2.5})` : `scale(${b.scale})`,
+              opacity: b.popped ? 0 : b.color === "#FFFFFF" ? 0.9 : 0.8,
+              boxShadow:
+                b.color === "#FFFFFF"
+                  ? "inset -5px -5px 15px rgba(0,0,0,0.1)"
+                  : "inset -5px -5px 15px rgba(0,0,0,0.3)",
+            }}
+          >
+            <div className="string"></div>
+          </div>
         </div>
       ))}
 
@@ -69,13 +86,29 @@ export default function FloatingBalloons() {
           z-index: 50; /* Above most content, below modals */
         }
 
-        .balloon {
+        .balloon-wrapper {
           position: absolute;
           bottom: -150px;
+          animation: floatUp linear infinite;
+        }
+
+        .balloon {
           width: 60px;
           height: 75px;
           border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-          animation: floatUp linear infinite;
+          position: relative;
+          pointer-events: auto;
+          cursor: crosshair;
+          transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+        }
+
+        .balloon.popped {
+          pointer-events: none;
+        }
+
+        .balloon.popped .string,
+        .balloon.popped::before {
+          display: none;
         }
 
         .balloon::before {
@@ -104,11 +137,11 @@ export default function FloatingBalloons() {
         @keyframes floatUp {
           0% {
             bottom: -150px;
-            transform: translateY(0) scale(var(--scale, 1)) rotate(0deg);
+            transform: translateY(0) rotate(0deg);
           }
           100% {
             bottom: 110vh;
-            transform: translateY(-110vh) scale(var(--scale, 1)) rotate(15deg);
+            transform: translateY(-110vh) rotate(15deg);
           }
         }
 
