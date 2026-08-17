@@ -133,14 +133,15 @@ export default function CustomizerPage() {
     addToCart({ 
       id: `custom-${Date.now()}`, 
       name: `Custom T-Shirt (${color.name}, ${size})`, 
-      price: 449, 
+      price: 999, 
       image: COLOR_IMAGE[color.name]?.front || "/white-front.png", 
       size, 
       stock: 100,
       customDesign: {
         front: designsFront,
         back: designsBack,
-        color: color.name
+        color: color.name,
+        textColor: textOnShirt
       }
     });
     setTimeout(() => setIsAdding(false), 1800);

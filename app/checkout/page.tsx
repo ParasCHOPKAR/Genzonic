@@ -358,7 +358,40 @@ export default function CheckoutPage() {
               <div className="manifest-items">
                 {cart.map((item) => (
                   <div key={item.id + item.size} className="mini-card">
-                    <div className="img-box"><Image src={item.image} alt="" fill style={{objectFit:"cover"}} /></div>
+                    <div className="img-box">
+                      {item.customDesign ? (
+                        <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                          <Image src={item.image} alt="" fill style={{objectFit:"cover", zIndex: 1}} />
+                          <div style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "85%", zIndex: 2, overflow: "hidden" }}>
+                            {item.customDesign.front?.map((d: any) => {
+                              const scale = 0.25;
+                              return (
+                                <div key={d.id} style={{
+                                  position: "absolute",
+                                  left: d.x * scale,
+                                  top: d.y * scale,
+                                  transform: `scaleX(${d.scaleX ?? d.scale ?? 1}) scaleY(${d.scaleY ?? d.scale ?? 1}) rotate(${d.rotation || 0}deg)`,
+                                  transformOrigin: "top left"
+                                }}>
+                                  {d.type === "text" ? (
+                                    <div style={{ color: item.customDesign.textColor || "#000", fontWeight: 900, fontSize: 18 * scale, whiteSpace: "nowrap" }}>
+                                      {d.content}
+                                    </div>
+                                  ) : (
+                                    <div style={{ position: "relative", width: 80 * scale, height: 80 * scale }}>
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img src={d.content} alt="" style={{ width: "100%", height: "100%", objectFit: "fill" }} />
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <Image src={item.image} alt="" fill style={{objectFit:"cover"}} />
+                      )}
+                    </div>
                     <div className="info"><p className="n">{item.name}</p><p className="s">SIZE: {item.size} / QTY: {item.quantity}</p></div>
                     <p className="p">₹{item.price * item.quantity}</p>
                   </div>
