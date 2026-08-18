@@ -133,7 +133,7 @@ export default function CustomizerPage() {
     addToCart({ 
       id: `custom-${Date.now()}`, 
       name: `Custom T-Shirt (${color.name}, ${size})`, 
-      price: 999, 
+      price: 1, 
       image: COLOR_IMAGE[color.name]?.front || "/white-front.png", 
       size, 
       stock: 100,
@@ -530,7 +530,7 @@ export default function CustomizerPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Custom Print · incl. taxes</div>
-            <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: "-0.5px" }}>₹999</div>
+            <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: "-0.5px" }}>₹1</div>
           </div>
           <div style={{ textAlign: "right", fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, lineHeight: 1.8 }}>
             🚚 Free delivery<br />📦 7–10 business days
