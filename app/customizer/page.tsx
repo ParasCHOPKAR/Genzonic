@@ -175,23 +175,26 @@ export default function CustomizerPage() {
         </button>
       )}
 
-      {/* Interactive Canvas Overlay */}
+      {/* Canvas Overlay (Always render so designs show in step 1 & 3, but only interactive in step 2) */}
       <div style={{ position: "absolute", inset: 0, zIndex: 20 }}>
-        {interactive && (
-          <div ref={canvasRef} style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "85%", border: `2px dashed rgba(255,255,255,0.4)`, borderRadius: 4 }}>
+        <div ref={canvasRef} style={{ position: "absolute", top: "10%", left: "10%", width: "80%", height: "85%", border: interactive ? `2px dashed rgba(255,255,255,0.4)` : "none", borderRadius: 4 }}>
           {designs.map(d => {
-            const isActive = activeElId === d.id;
+            const isActive = interactive && activeElId === d.id;
             return (
               <motion.div 
-                key={d.id} drag dragElastic={0} dragMomentum={false} 
+                key={d.id} drag={interactive} dragElastic={0} dragMomentum={false} 
                 animate={{ x: d.x, y: d.y }} 
                 transition={{ type: "tween", duration: 0 }}
                 onDragEnd={(e, info) => {
-                   setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, x: x.x + info.offset.x, y: x.y + info.offset.y } : x));
+                   if (interactive) setDesigns(ds => ds.map(x => x.id === d.id ? { ...x, x: x.x + info.offset.x, y: x.y + info.offset.y } : x));
                 }}
-                onPointerDown={(e) => { e.stopPropagation(); setActiveElId(d.id); }}
-                style={{ position: "absolute", cursor: "grab", zIndex: isActive ? 35 : 30 }} 
-                whileDrag={{ cursor: "grabbing" }}
+                onPointerDown={(e) => { 
+                  if (interactive) {
+                    e.stopPropagation(); setActiveElId(d.id); 
+                  }
+                }}
+                style={{ position: "absolute", cursor: interactive ? "grab" : "default", zIndex: isActive ? 35 : 30 }} 
+                whileDrag={interactive ? { cursor: "grabbing" } : undefined}
               >
                 <div style={{ 
                   position: "relative",
@@ -248,7 +251,6 @@ export default function CustomizerPage() {
             );
           })}
         </div>
-      )}
       </div>
     </div>
   );

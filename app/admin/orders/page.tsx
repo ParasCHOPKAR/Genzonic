@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Package, Search, Download } from "lucide-react";
+import { Loader2, Package, Search, Download, Eye, X } from "lucide-react";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -10,6 +10,7 @@ export default function AdminOrdersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [orderTimeFilter, setOrderTimeFilter] = useState("All Time");
   const [customDate, setCustomDate] = useState("");
+  const [viewingDesign, setViewingDesign] = useState<any>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -260,8 +261,16 @@ export default function AdminOrdersPage() {
                   <td>
                     <div className="items-cell">
                       {order.orderItems.map((item: any, i: number) => (
-                        <div key={i} className="item-line">
-                          {item.quantity}x {item.name} ({item.size})
+                        <div key={i} className="item-line" style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "8px", width: "100%" }}>
+                          <span>{item.quantity}x {item.name} ({item.size})</span>
+                          {item.customDesign && (
+                            <button 
+                              onClick={() => setViewingDesign(item.customDesign)}
+                              style={{ display: "flex", alignItems: "center", gap: "4px", background: "#111", color: "#fff", border: "none", padding: "4px 8px", borderRadius: "4px", fontSize: "10px", fontWeight: "bold", cursor: "pointer" }}
+                            >
+                              <Eye size={12} /> View Design
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -294,6 +303,66 @@ export default function AdminOrdersPage() {
           </tbody>
         </table>
       </div>
+
+      {viewingDesign && (
+        <div className="design-modal-overlay" onClick={() => setViewingDesign(null)}>
+          <div className="design-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="design-modal-header">
+              <h2>CUSTOM DESIGN DETAILS</h2>
+              <button onClick={() => setViewingDesign(null)}><X size={20} /></button>
+            </div>
+            
+            <div className="design-modal-body">
+              <div className="design-section">
+                <h3>SHIRT COLOR: {viewingDesign.color || 'White'}</h3>
+                {viewingDesign.textColor && <p style={{ fontSize: "12px", opacity: 0.8, marginTop: "4px" }}>Text Color on Shirt: {viewingDesign.textColor}</p>}
+              </div>
+
+              {viewingDesign.front && viewingDesign.front.length > 0 && (
+                <div className="design-section">
+                  <h3>FRONT DESIGNS ({viewingDesign.front.length})</h3>
+                  <div className="design-elements">
+                    {viewingDesign.front.map((el: any, idx: number) => (
+                      <div key={idx} className="design-element">
+                        <span className="el-badge">{el.type.toUpperCase()}</span>
+                        {el.type === 'text' ? (
+                          <div className="el-text">"{el.content}"</div>
+                        ) : (
+                          <div className="el-image"><img src={el.content} alt="Design" style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "contain" }} /></div>
+                        )}
+                        <div className="el-meta">
+                          Pos: ({Math.round(el.x)}, {Math.round(el.y)}) | Scale: {(el.scaleX ?? el.scale ?? 1).toFixed(2)}x | Rotate: {el.rotation || 0}°
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {viewingDesign.back && viewingDesign.back.length > 0 && (
+                <div className="design-section">
+                  <h3>BACK DESIGNS ({viewingDesign.back.length})</h3>
+                  <div className="design-elements">
+                    {viewingDesign.back.map((el: any, idx: number) => (
+                      <div key={idx} className="design-element">
+                        <span className="el-badge">{el.type.toUpperCase()}</span>
+                        {el.type === 'text' ? (
+                          <div className="el-text">"{el.content}"</div>
+                        ) : (
+                          <div className="el-image"><img src={el.content} alt="Design" style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "contain" }} /></div>
+                        )}
+                        <div className="el-meta">
+                          Pos: ({Math.round(el.x)}, {Math.round(el.y)}) | Scale: {(el.scaleX ?? el.scale ?? 1).toFixed(2)}x | Rotate: {el.rotation || 0}°
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .admin-orders-page {
@@ -556,6 +625,32 @@ export default function AdminOrdersPage() {
           background: var(--bg);
           color: var(--text);
         }
+
+        .design-modal-overlay {
+          position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+          background: rgba(0,0,0,0.7); z-index: 9999;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .design-modal-content {
+          background: var(--bg); color: var(--text);
+          width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;
+          border-radius: 8px; border: 1px solid rgba(128,128,128,0.2);
+          display: flex; flex-direction: column;
+        }
+        .design-modal-header {
+          display: flex; justify-content: space-between; align-items: center;
+          padding: 20px; border-bottom: 1px solid rgba(128,128,128,0.2);
+        }
+        .design-modal-header h2 { margin: 0; font-size: 16px; font-weight: 900; letter-spacing: 1px; }
+        .design-modal-header button { background: none; border: none; color: var(--text); cursor: pointer; display: flex; }
+        .design-modal-body { padding: 20px; }
+        .design-section { margin-bottom: 30px; }
+        .design-section h3 { font-size: 12px; font-weight: 800; color: #6366f1; letter-spacing: 1px; margin: 0 0 10px 0; border-bottom: 1px dashed rgba(128,128,128,0.2); padding-bottom: 5px; }
+        .design-elements { display: flex; flex-direction: column; gap: 15px; }
+        .design-element { background: rgba(128,128,128,0.05); padding: 15px; border-radius: 6px; border: 1px solid rgba(128,128,128,0.1); }
+        .el-badge { background: #111; color: #fff; font-size: 9px; font-weight: 900; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 10px; letter-spacing: 1px; }
+        .el-text { font-size: 18px; font-weight: 900; background: rgba(128,128,128,0.1); padding: 10px; border-radius: 4px; }
+        .el-meta { font-family: monospace; font-size: 11px; opacity: 0.6; margin-top: 10px; }
       `}</style>
     </div>
   );
