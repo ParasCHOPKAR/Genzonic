@@ -14,40 +14,20 @@ import {
 interface Color { name: string; hex: string; previewBg: string; light: boolean }
 interface DesignEl { id: string; type: "text" | "image"; content: string; x: number; y: number; scale: number; scaleX?: number; scaleY?: number; rotation: number; }
 
-// ─── Config ─────────────────────────────────────────────────────────────────
-const COLORS: Color[] = [
-  { name: "White",    hex: "#FFFFFF", previewBg: "#d4d4d4", light: true  },
-  { name: "Black",    hex: "#111111", previewBg: "#1a1a1a", light: false },
-  { name: "Gray",     hex: "#808080", previewBg: "#737373", light: false },
-  { name: "Olive",    hex: "#558B2F", previewBg: "#4a7a29", light: false },
-  { name: "Red",      hex: "#C62828", previewBg: "#b71c1c", light: false },
+// ─── Config (Fallbacks if no product loaded) ─────────────────────────────────────────────────────────────────
+const DEFAULT_COLORS: Color[] = [
+  { name: "White",    hex: "#FFFFFF", previewBg: "#d4d4d4", light: true  }
 ];
 
-const SIZES = ["S", "M", "L", "XL", "2XL"];
+const DEFAULT_SIZES = ["S", "M", "L", "XL", "2XL"];
 const GUIDE: Record<string, { chest: string; length: string; sleeve: string }> = {
   S:    { chest: "38", length: "27.5", sleeve: "9"   },
   M:    { chest: "40", length: "28.5", sleeve: "9.5" },
   L:    { chest: "42", length: "29.5", sleeve: "10"  },
   XL:   { chest: "44", length: "30.5", sleeve: "10.5"},
   "2XL":{ chest: "46", length: "31.5", sleeve: "11"  },
+  "3XL":{ chest: "48", length: "32.5", sleeve: "11.5" },
 };
-
-const COLOR_IMAGE: Record<string, { front: string; back: string }> = {
-  White: { front: "/white-front.png", back: "/white-back.png" },
-  Black: { front: "/black-front.png", back: "/black-back.png" },
-  Gray:  { front: "/gray-front.png",  back: "/gray-back.png"  },
-  Olive: { front: "/olive-front.png", back: "/olive-back.png" },
-  Red:   { front: "/red-front.png",   back: "/red-back.png"   },
-};
-
-const TRENDY_IMAGES = [
-  { id: 't1', category: 'Birthday', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="50" font-family="sans-serif" font-weight="900" font-size="28" fill="%23111111" text-anchor="middle" dominant-baseline="middle">HBD</text><text x="50" y="70" font-family="sans-serif" font-weight="700" font-size="12" fill="%23ef4444" text-anchor="middle" dominant-baseline="middle">VIBES</text></svg>' },
-  { id: 't2', category: 'Pride', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="40" font-family="sans-serif" font-weight="900" font-size="24" fill="%238b5cf6" text-anchor="middle" dominant-baseline="middle">LOVE IS</text><text x="50" y="65" font-family="sans-serif" font-weight="900" font-size="24" fill="%23ec4899" text-anchor="middle" dominant-baseline="middle">LOVE</text></svg>' },
-  { id: 't3', category: 'WorldCup', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%233b82f6"/><text x="50" y="50" font-family="sans-serif" font-weight="900" font-size="20" fill="white" text-anchor="middle" dominant-baseline="middle">INDIA</text></svg>' },
-  { id: 't4', category: 'Reactions', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="50" font-family="sans-serif" font-weight="900" font-size="32" fill="%2310b981" text-anchor="middle" dominant-baseline="middle">MOOD</text></svg>' },
-  { id: 't5', category: 'WorldCup', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="30" font-family="sans-serif" font-weight="900" font-size="18" fill="%23f97316" text-anchor="middle" dominant-baseline="middle">WORLD</text><text x="50" y="50" font-family="sans-serif" font-weight="900" font-size="18" fill="%23f97316" text-anchor="middle" dominant-baseline="middle">CHAMPIONS</text><text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="14" fill="%233b82f6" text-anchor="middle" dominant-baseline="middle">2024</text></svg>' },
-  { id: 't6', category: 'Favourites', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 15 L60 40 L85 40 L65 55 L75 80 L50 65 L25 80 L35 55 L15 40 L40 40 Z" fill="%23eab308"/></svg>' },
-];
 
 const STEPS = [
   { label: "Color & Size", short: "Color" },
@@ -84,8 +64,11 @@ function Stepper({ current }: { current: number }) {
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 export default function CustomizerPage() {
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   const [step,      setStep]     = useState(1);
-  const [color,     setColor]    = useState(COLORS[0]);
+  const [color,     setColor]    = useState(DEFAULT_COLORS[0]);
   const [size,      setSize]     = useState("M");
   const [designsFront, setDesignsFront] = useState<DesignEl[]>([]);
   const [designsBack,  setDesignsBack]  = useState<DesignEl[]>([]);
@@ -101,13 +84,44 @@ export default function CustomizerPage() {
   const designs = viewSide === "front" ? designsFront : designsBack;
   const setDesigns = viewSide === "front" ? setDesignsFront : setDesignsBack;
 
+  // Dynamic configuration based on loaded product
+  const availableColors = product?.colors && product.colors.length > 0 
+    ? product.colors.map((c: any) => ({ name: c.name, hex: c.hex, previewBg: "#f0f0f0", light: c.hex === "#FFFFFF" || c.hex === "#ffffff", frontImage: c.frontImage, backImage: c.backImage })) 
+    : DEFAULT_COLORS;
+  
+  const availableSizes = product?.sizes && product.sizes.length > 0 ? product.sizes : DEFAULT_SIZES;
+  const trendyImages = product?.designs && product.designs.length > 0 ? product.designs.map((d: any, i: number) => ({ id: `img${i}`, category: d.category, src: d.imageUrl })) : [];
+  const basePrice = product?.price || 1;
+
   useEffect(() => {
     if (step === 1) setViewSide("front");
   }, [step]);
 
   useEffect(() => {
-    const p = new URLSearchParams(window.location.search).get("color");
-    if (p) { const f = COLORS.find(c => c.name.toLowerCase() === p.toLowerCase()); if (f) setColor(f); }
+    const fetchProduct = async () => {
+      const id = new URLSearchParams(window.location.search).get("id");
+      if (!id) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetch(`/api/admin/custom-products/${id}`);
+        const data = await res.json();
+        if (data.success && data.product) {
+          setProduct(data.product);
+          if (data.product.sizes && data.product.sizes.length > 0) setSize(data.product.sizes[0]);
+          if (data.product.colors && data.product.colors.length > 0) {
+            const firstColor = data.product.colors[0];
+            setColor({ name: firstColor.name, hex: firstColor.hex, previewBg: "#f0f0f0", light: firstColor.hex === "#FFFFFF" || firstColor.hex === "#ffffff", frontImage: firstColor.frontImage, backImage: firstColor.backImage });
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
   }, []);
 
   const addText = () => {
@@ -131,12 +145,12 @@ export default function CustomizerPage() {
   const handleAddToCart = () => {
     setIsAdding(true);
     addToCart({ 
-      id: `custom-${Date.now()}`, 
-      name: `Custom T-Shirt (${color.name}, ${size})`, 
-      price: 1, 
-      image: COLOR_IMAGE[color.name]?.front || "/white-front.png", 
+      id: `custom-${product?._id || Date.now()}`, 
+      name: `Custom ${product?.name || 'T-Shirt'} (${color.name}, ${size})`, 
+      price: basePrice, 
+      image: (color as any).frontImage || "/white-front.png", 
       size, 
-      stock: 100,
+      stock: product?.stock || 100,
       customDesign: {
         front: designsFront,
         back: designsBack,
@@ -147,7 +161,7 @@ export default function CustomizerPage() {
     setTimeout(() => setIsAdding(false), 1800);
   };
 
-  const tshirtImage = COLOR_IMAGE[color.name] ? COLOR_IMAGE[color.name][viewSide] : "/white-front.png";
+  const tshirtImage = (color as any)[viewSide === "front" ? "frontImage" : "backImage"] || "/white-front.png";
   const textOnShirt = color.light ? "#1a1a1a" : "#ffffff";
 
   // ── Shirt Canvas ───────────────────────────────────────────────────────────
@@ -265,7 +279,7 @@ export default function CustomizerPage() {
           <span style={{ fontSize: 12, fontWeight: 700, color: "#111", background: "#f4f5f7", padding: "4px 12px", borderRadius: 100, border: "1px solid #e5e7eb" }}>{color.name}</span>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-          {COLORS.map(c => {
+          {availableColors.map((c: any) => {
             const sel = c.name === color.name;
             return (
               <button key={c.name} onClick={() => setColor(c)} title={c.name}
@@ -287,7 +301,7 @@ export default function CustomizerPage() {
           </button>
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {SIZES.map(s => {
+          {availableSizes.map((s: string) => {
             const sel = s === size;
             return (
               <button key={s} onClick={() => setSize(s)}
@@ -305,12 +319,12 @@ export default function CustomizerPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                   <thead><tr style={{ color: "#6b7280", fontWeight: 700 }}><td style={{ padding: "4px 6px" }}>Size</td><td>Chest</td><td>Length</td><td>Sleeve</td></tr></thead>
                   <tbody>
-                    {SIZES.map(s => (
+                    {availableSizes.map((s: string) => (
                       <tr key={s} style={{ background: s === size ? "#f0f0ff" : "transparent" }}>
                         <td style={{ padding: "5px 6px", borderRadius: "6px 0 0 6px", color: s === size ? "#6366f1" : "#374151", fontWeight: 800 }}>{s}</td>
-                        <td style={{ padding: "5px 0", color: "#374151" }}>{GUIDE[s].chest}&quot;</td>
-                        <td style={{ color: "#374151" }}>{GUIDE[s].length}&quot;</td>
-                        <td style={{ padding: "5px 6px", color: "#374151" }}>{GUIDE[s].sleeve}&quot;</td>
+                        <td style={{ padding: "5px 0", color: "#374151" }}>{GUIDE[s]?.chest || "--"}&quot;</td>
+                        <td style={{ color: "#374151" }}>{GUIDE[s]?.length || "--"}&quot;</td>
+                        <td style={{ padding: "5px 6px", color: "#374151" }}>{GUIDE[s]?.sleeve || "--"}&quot;</td>
                       </tr>
                     ))}
                   </tbody>
@@ -322,9 +336,9 @@ export default function CustomizerPage() {
 
         {!showGuide && (
           <div style={{ marginTop: 10, display: "flex", gap: 16, fontSize: 12, color: "#6b7280", fontWeight: 600, padding: "10px 14px", background: "#f9fafb", borderRadius: 10, border: "1px solid #f0f2f5", flexWrap: "wrap" }}>
-            <span>Chest: <strong style={{ color: "#111" }}>{GUIDE[size].chest}&quot;</strong></span>
-            <span>Length: <strong style={{ color: "#111" }}>{GUIDE[size].length}&quot;</strong></span>
-            <span>Sleeve: <strong style={{ color: "#111" }}>{GUIDE[size].sleeve}&quot;</strong></span>
+            <span>Chest: <strong style={{ color: "#111" }}>{GUIDE[size]?.chest || "--"}&quot;</strong></span>
+            <span>Length: <strong style={{ color: "#111" }}>{GUIDE[size]?.length || "--"}&quot;</strong></span>
+            <span>Sleeve: <strong style={{ color: "#111" }}>{GUIDE[size]?.sleeve || "--"}&quot;</strong></span>
           </div>
         )}
       </div>
@@ -416,7 +430,7 @@ export default function CustomizerPage() {
 
               {/* Categories */}
               <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 12, marginBottom: 12, scrollbarWidth: "none" }}>
-                {["WorldCup", "Birthday", "Pride", "Reactions", "Favourites"].map(cat => (
+                {Array.from(new Set(trendyImages.map((img: any) => img.category))).map((cat: any) => (
                   <button key={cat} onClick={() => setCategory(cat)}
                     style={{
                       padding: "6px 14px", borderRadius: 100, border: category === cat ? "1px solid #111" : "1px solid #d1d5db",
@@ -429,7 +443,7 @@ export default function CustomizerPage() {
 
               {/* Grid */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, borderTop: "1px dashed #e5e7eb", borderLeft: "1px dashed #e5e7eb" }}>
-                {TRENDY_IMAGES.filter(img => img.category === category).map((img, i) => (
+                {trendyImages.filter((img: any) => img.category === category).map((img: any, i: number) => (
                   <button key={i} 
                     onClick={() => setDesigns(d => [...d, { id: `img${Date.now()}`, type: "image", content: img.src, x: 20, y: 20, scale: 1, rotation: 0 }])}
                     style={{ background: "#fff", borderBottom: "1px dashed #e5e7eb", borderRight: "1px dashed #e5e7eb", borderTop: "none", borderLeft: "none", height: 80, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "background 0.2s", padding: 8 }}
@@ -439,7 +453,7 @@ export default function CustomizerPage() {
                   </button>
                 ))}
                 {/* Fill empty cells to maintain grid layout */}
-                {Array.from({ length: Math.max(0, 6 - TRENDY_IMAGES.filter(img => img.category === category).length) }).map((_, i) => (
+                {Array.from({ length: Math.max(0, 6 - trendyImages.filter((img: any) => img.category === category).length) }).map((_, i) => (
                   <div key={`empty-${i}`} style={{ background: "#f9fafb", borderBottom: "1px dashed #e5e7eb", borderRight: "1px dashed #e5e7eb", height: 80 }} />
                 ))}
               </div>
@@ -512,7 +526,7 @@ export default function CustomizerPage() {
       {[
         { label: "Product",  value: "Custom T-Shirt" },
         { label: "Color",    value: color.name, swatch: color.hex },
-        { label: "Size",     value: size, sub: `Chest ${GUIDE[size].chest}″ · Length ${GUIDE[size].length}″` },
+        { label: "Size",     value: size, sub: `Chest ${GUIDE[size]?.chest || "--"}″ · Length ${GUIDE[size]?.length || "--"}″` },
         { label: "Print",    value: `${totalDesigns} element${totalDesigns !== 1 ? "s" : ""}`, sub: "Premium DTF" },
       ].map(({ label, value, sub, swatch }: { label: string; value: string; sub?: string; swatch?: string }, i) => (
         <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "13px 0", borderBottom: i < 3 ? "1px solid #f3f4f6" : "none" }}>
@@ -530,7 +544,7 @@ export default function CustomizerPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Custom Print · incl. taxes</div>
-            <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: "-0.5px" }}>₹1</div>
+            <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: "-0.5px" }}>₹{basePrice}</div>
           </div>
           <div style={{ textAlign: "right", fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, lineHeight: 1.8 }}>
             🚚 Free delivery<br />📦 7–10 business days

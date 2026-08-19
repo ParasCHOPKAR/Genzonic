@@ -55,6 +55,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/products" className={`${styles.navLink} ${pathname.includes("/admin/products") ? styles.active : ""}`}>
             <Package size={18} /> Products
           </Link>
+          <Link href="/admin/custom-products" className={`${styles.navLink} ${pathname.includes("/admin/custom-products") ? styles.active : ""}`}>
+            <Package size={18} /> Custom T-Shirts
+          </Link>
           <Link href="/admin/orders" className={`${styles.navLink} ${pathname.includes("/admin/orders") ? styles.active : ""}`}>
             <ShoppingCart size={18} /> Orders
           </Link>

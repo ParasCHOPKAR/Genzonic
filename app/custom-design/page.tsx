@@ -1,62 +1,39 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { SlidersHorizontal, ArrowRight, Sparkles, Palette, Shirt } from "lucide-react";
+import { SlidersHorizontal, ArrowRight, Sparkles, Palette, Shirt, Loader2 } from "lucide-react";
 
 // --- Types ---
-interface Product {
-  id: number;
-  color: string;
-  hex: string;
-  bgClass: string;
+interface CustomProduct {
+  _id: string;
   name: string;
-  image: string;
+  slug: string;
+  featuredImage: string;
   tag?: string;
 }
 
-// --- Data ---
-const PRODUCTS: Product[] = [
-  {
-    id: 1,
-    color: "Black",
-    hex: "#1a1a1a",
-    bgClass: "#2d2d2d",
-    name: "Light Quality Regular Fit",
-    image: "/regular-black-01.jpeg",
-    tag: "EVERYDAY",
-  },
-  {
-    id: 2,
-    color: "White",
-    hex: "#FFFFFF",
-    bgClass: "#e8e8e8",
-    name: "Light Quality Oversized Fit",
-    image: "/oversized-white-01.jpeg",
-    tag: "TRENDING",
-  },
-  {
-    id: 3,
-    color: "White",
-    hex: "#FFFFFF",
-    bgClass: "#e8e8e8",
-    name: "Heavy Quality Regular Fit",
-    image: "/regular-white-01.jpeg",
-    tag: "PREMIUM",
-  },
-  {
-    id: 4,
-    color: "Black",
-    hex: "#1a1a1a",
-    bgClass: "#2d2d2d",
-    name: "Heavy Quality Oversized Fit",
-    image: "/oversized-black-01.jpeg",
-    tag: "BEST SELLER",
-  },
-];
-
 export default function CustomDesignPage() {
+  const [products, setProducts] = useState<CustomProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("/api/admin/custom-products");
+        const data = await res.json();
+        if (data.success) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        console.error("Failed to fetch custom products:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f7f8fa]" style={{ paddingTop: "80px" }}>
@@ -86,7 +63,7 @@ export default function CustomDesignPage() {
                 Customized T-Shirts
               </h1>
               <p style={{ color: "#9b9fa8", fontSize: "14px", fontWeight: 500, marginTop: "4px" }}>
-                {PRODUCTS.length} designs available to personalise
+                {isLoading ? "Loading designs..." : `${products.length} designs available to personalise`}
               </p>
             </div>
 
@@ -173,10 +150,20 @@ export default function CustomDesignPage() {
 
           {/* ===== PRODUCT GRID ===== */}
           <div id="designs" className="cd-product-grid">
-            {PRODUCTS.map((product) => (
+            {isLoading ? (
+              <div style={{ padding: "40px", textAlign: "center", width: "100%", gridColumn: "1 / -1" }}>
+                <Loader2 size={32} className="animate-spin text-indigo-500 mx-auto" />
+                <p style={{ marginTop: 16, color: "#6b7280", fontWeight: 500 }}>Loading custom products...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <div style={{ padding: "40px", textAlign: "center", width: "100%", gridColumn: "1 / -1", color: "#6b7280", fontWeight: 500 }}>
+                No custom products available yet. Check back soon!
+              </div>
+            ) : (
+            products.map((product) => (
               <Link
-                href={`/customizer?color=${product.color}`}
-                key={product.id}
+                href={`/customizer?id=${product._id}`}
+                key={product._id}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <div
@@ -201,7 +188,7 @@ export default function CustomDesignPage() {
                   {/* Image Area */}
                   <div style={{
                     position: "relative",
-                    background: product.bgClass,
+                    background: "#f0f2f5",
                     aspectRatio: "4/5",
                     overflow: "hidden",
                     display: "flex",
@@ -223,7 +210,7 @@ export default function CustomDesignPage() {
 
                     {/* T-Shirt Image */}
                     <Image
-                      src={product.image}
+                      src={product.featuredImage || "/placeholder.png"}
                       alt={product.name}
                       fill
                       style={{ objectFit: "cover" }}
@@ -307,7 +294,8 @@ export default function CustomDesignPage() {
                   </div>
                 </div>
               </Link>
-            ))}
+            ))
+            )}
           </div>
         </main>
       </div>
