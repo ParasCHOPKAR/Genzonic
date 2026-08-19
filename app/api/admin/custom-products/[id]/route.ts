@@ -4,10 +4,11 @@ import CustomProduct from "@/models/CustomProduct";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB();
-    const product = await CustomProduct.findById(params.id);
+    const resolvedParams = await params;
+    const product = await CustomProduct.findById(resolvedParams.id);
     if (!product) {
       return NextResponse.json({ success: false, message: "Product not found" }, { status: 404 });
     }
@@ -17,10 +18,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB();
     const body = await req.json();
+    const resolvedParams = await params;
 
     const slug = body.name
       .toLowerCase()
@@ -28,7 +30,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       .replace(/(^-|-$)+/g, '');
 
     const updatedProduct = await CustomProduct.findByIdAndUpdate(
-      params.id,
+      resolvedParams.id,
       {
         name: body.name,
         slug: slug,
@@ -57,10 +59,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB();
-    const deletedProduct = await CustomProduct.findByIdAndDelete(params.id);
+    const resolvedParams = await params;
+    const deletedProduct = await CustomProduct.findByIdAndDelete(resolvedParams.id);
     if (!deletedProduct) {
       return NextResponse.json({ success: false, message: "Product not found" }, { status: 404 });
     }

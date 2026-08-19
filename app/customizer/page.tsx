@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
-interface Color { name: string; hex: string; previewBg: string; light: boolean }
+interface Color { name: string; hex: string; previewBg: string; light: boolean; frontImage?: string; backImage?: string; }
 interface DesignEl { id: string; type: "text" | "image"; content: string; x: number; y: number; scale: number; scaleX?: number; scaleY?: number; rotation: number; }
 
 // ─── Config (Fallbacks if no product loaded) ─────────────────────────────────────────────────────────────────

@@ -4,14 +4,15 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb"; 
 import Order from "@/models/Order"; // Adjust this path if your Order model is located elsewhere!
 
-export async function PUT(req: Request, { params }: any) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB();
 
     const body = await req.json();
+    const resolvedParams = await params;
 
     const order = await Order.findByIdAndUpdate(
-      params.id,
+      resolvedParams.id,
       { status: body.status },
       { new: true }
     );
