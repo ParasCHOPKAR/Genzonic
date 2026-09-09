@@ -50,8 +50,7 @@ export default function Hero() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.15 })
-      tl.from(".hz-badge",   { y: -14, opacity: 0, duration: 0.5, ease: "power3.out" })
-        .from(".hz-h1 > div",{ y: 40,  opacity: 0, duration: 0.7, stagger: 0.1, ease: "expo.out" }, "-=0.3")
+      tl.from(".hz-h1 > div",{ y: 40,  opacity: 0, duration: 0.7, stagger: 0.1, ease: "expo.out" })
         .from(".hz-desc",    { y: 14,  opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
         .from(".hz-actions", { y: 14,  opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
         .from(".hz-stats",   { y: 14,  opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
@@ -100,10 +99,6 @@ export default function Hero() {
 
         {/* LEFT */}
         <div className="hz-left">
-          <div className="hz-badge" style={{ border: `1px solid ${borderC}`, color: accent, background: darkMode ? 'rgba(255, 153, 51, 0.1)' : 'rgba(19, 136, 8, 0.1)' }}>
-            <span className="hz-dot" style={{ background: "#FF9933" }} />
-            Happy Independence Day 🇮🇳
-          </div>
 
           <h1 className="hz-h1">
             <div>Dress Bold.</div>
@@ -233,10 +228,6 @@ export default function Hero() {
           MOBILE STACK
       ══════════════════════════════════════════ */}
       <div className="hz-mob">
-        <div className="hz-badge hz-badge-sm" style={{ border: `1px solid ${borderC}`, color: accent, background: darkMode ? 'rgba(255, 153, 51, 0.1)' : 'rgba(19, 136, 8, 0.1)' }}>
-          <span className="hz-dot" style={{ background: "#FF9933" }} />
-          Happy Independence Day 🇮🇳
-        </div>
 
         <div className="hz-h1 hz-h1-sm">
           <div>Dress Bold.</div>
