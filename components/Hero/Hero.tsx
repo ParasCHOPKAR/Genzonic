@@ -7,21 +7,21 @@ import gsap from "gsap"
 import { useTheme } from "@/app/context/ThemeContext"
 
 const COLORWAYS = [
-  { label: "Mustard",    color: "#c8902a", img: "/hero/mustard-tshirt-gorila-removebg-preview.png" },
-  { label: "Black",      color: "#1a1a1a", img: "/hero/black-tshirt-gorilaa-removebg-preview.png" },
-  { label: "White",      color: "#f0ede8", img: "/hero/white-tshirt-gorila-removebg-preview.png" },
-  { label: "Beige",      color: "#d4c5a9", img: "/hero/beige-tshirt-gorila-removebg-preview.png" },
-  { label: "Coffee",     color: "#6b3f2a", img: "/hero/cofeeee-tshirt-gorila-removebg-preview.png" },
-  { label: "Navy",       color: "#2d3d5c", img: "/hero/Navy-Millange-tshirt-gorila-removebg-preview.png" },
-  { label: "Olive",      color: "#5a6040", img: "/hero/Olive-tshirt-gorila-removebg-preview.png" },
-  { label: "Purple",     color: "#5b3d7a", img: "/hero/purple-tshirt-gorila-removebg-preview.png" },
-  { label: "Airforce",   color: "#4a7299", img: "/hero/airforce-tshirt-gorila-removebg-preview.png" },
-  { label: "Wine",       color: "#7a1f35", img: "/hero/winee-tshirt-gorila-removebg-preview.png" },
+  { label: "Mustard", color: "#c8902a", img: "/hero/mustard-tshirt-gorila-removebg-preview.png" },
+  { label: "Black", color: "#1a1a1a", img: "/hero/black-tshirt-gorilaa-removebg-preview.png" },
+  { label: "White", color: "#f0ede8", img: "/hero/white-tshirt-gorila-removebg-preview.png" },
+  { label: "Beige", color: "#d4c5a9", img: "/hero/beige-tshirt-gorila-removebg-preview.png" },
+  { label: "Coffee", color: "#6b3f2a", img: "/hero/cofeeee-tshirt-gorila-removebg-preview.png" },
+  { label: "Navy", color: "#2d3d5c", img: "/hero/Navy-Millange-tshirt-gorila-removebg-preview.png" },
+  { label: "Olive", color: "#5a6040", img: "/hero/Olive-tshirt-gorila-removebg-preview.png" },
+  { label: "Purple", color: "#5b3d7a", img: "/hero/purple-tshirt-gorila-removebg-preview.png" },
+  { label: "Airforce", color: "#4a7299", img: "/hero/airforce-tshirt-gorila-removebg-preview.png" },
+  { label: "Wine", color: "#7a1f35", img: "/hero/winee-tshirt-gorila-removebg-preview.png" },
 ]
 
 export default function Hero() {
-  const heroRef  = useRef<HTMLDivElement>(null)
-  const charRef  = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const charRef = useRef<HTMLDivElement>(null)
   const { theme } = useTheme()
   const darkMode = theme === "dark"
 
@@ -50,12 +50,12 @@ export default function Hero() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.15 })
-      tl.from(".hz-h1 > div",{ y: 40,  opacity: 0, duration: 0.7, stagger: 0.1, ease: "expo.out" })
-        .from(".hz-desc",    { y: 14,  opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
-        .from(".hz-actions", { y: 14,  opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
-        .from(".hz-stats",   { y: 14,  opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
+      tl.from(".hz-h1 > div", { y: 40, opacity: 0, duration: 0.7, stagger: 0.1, ease: "expo.out" })
+        .from(".hz-desc", { y: 14, opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
+        .from(".hz-actions", { y: 14, opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
+        .from(".hz-stats", { y: 14, opacity: 0, duration: 0.6, ease: "power3.out" }, "-=0.4")
         .from(charRef.current, { y: 30, opacity: 0, filter: "blur(20px)", duration: 1.0, ease: "expo.out" }, "-=0.9")
-        .from(".hz-swatches",{ y: 12,  opacity: 0, duration: 0.5, ease: "power3.out" }, "-=0.3")
+        .from(".hz-swatches", { y: 12, opacity: 0, duration: 0.5, ease: "power3.out" }, "-=0.3")
         .from(".hz-specs li", { x: 20, opacity: 0, duration: 0.5, stagger: 0.06, ease: "power3.out" }, "-=0.5")
       gsap.to(charRef.current, { y: "-=12", duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" })
     }, heroRef)
@@ -63,33 +63,58 @@ export default function Hero() {
   }, [darkMode])
 
   /* tokens */
-  const bg       = darkMode ? "#0a0a0a"  : "#f5f5f2"
-  const fg       = darkMode ? "#ffffff"  : "#0a0a0a"
-  const accent   = "#ff4500"
-  const muted    = darkMode ? "rgba(255,255,255,0.42)" : "rgba(0,0,0,0.42)"
-  const cardBg   = darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)"
-  const borderC  = darkMode ? "rgba(255,255,255,0.09)" : "rgba(0,0,0,0.09)"
+  const bg = darkMode ? "#0a0a0a" : "#f5f5f2"
+  const fg = darkMode ? "#ffffff" : "#0a0a0a"
+  const accent = "#ff4500"
+  const muted = darkMode ? "rgba(255,255,255,0.42)" : "rgba(0,0,0,0.42)"
+  const cardBg = darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)"
+  const borderC = darkMode ? "rgba(255,255,255,0.09)" : "rgba(0,0,0,0.09)"
 
   return (
     <section ref={heroRef} style={{ background: bg, color: fg, height: "100vh", width: "100%", overflow: "hidden", position: "relative" }}>
 
+      {/* Ganesh Background Desktop */}
+      <div className="hz-ganesh-bg hz-desktop-bg" style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+        <Image
+          src="/hero/ganeshji_01_desktopview.png"
+          alt="Lord Ganesh Background"
+          fill
+          priority
+          style={{ objectFit: "cover", objectPosition: "center" }}
+        />
+      </div>
+
+      {/* Ganesh Background Mobile */}
+      <div className="hz-ganesh-bg hz-mob-bg" style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+        <Image
+          src="/hero/ganeshji_01_mobileview.png"
+          alt="Lord Ganesh Background"
+          fill
+          priority
+          style={{ objectFit: "cover", objectPosition: "center" }}
+        />
+      </div>
+
       {/* noise */}
-      <div style={{ position:"absolute", inset:0, zIndex:0, pointerEvents:"none",
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
         opacity: darkMode ? 0.03 : 0.05,
-        backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
       }} />
 
       {/* center glow */}
-      <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)",
-        width:"55vw", height:"55vw", borderRadius:"50%", pointerEvents:"none", zIndex:1,
-        background:`radial-gradient(circle, ${darkMode?"rgba(255,69,0,0.13)":"rgba(255,69,0,0.07)"} 0%, transparent 65%)`
+      <div style={{
+        position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+        width: "55vw", height: "55vw", borderRadius: "50%", pointerEvents: "none", zIndex: 1,
+        background: `radial-gradient(circle, ${darkMode ? "rgba(255,69,0,0.13)" : "rgba(255,69,0,0.07)"} 0%, transparent 65%)`
       }} />
 
       {/* watermark */}
-      <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)",
-        fontSize:"clamp(80px,20vw,360px)", fontWeight:900, letterSpacing:"-0.05em",
-        color: darkMode?"rgba(255,255,255,0.023)":"rgba(0,0,0,0.028)",
-        zIndex:1, pointerEvents:"none", userSelect:"none", whiteSpace:"nowrap"
+      <div style={{
+        position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+        fontSize: "clamp(80px,20vw,360px)", fontWeight: 900, letterSpacing: "-0.05em",
+        color: darkMode ? "rgba(255,255,255,0.023)" : "rgba(0,0,0,0.028)",
+        zIndex: 1, pointerEvents: "none", userSelect: "none", whiteSpace: "nowrap"
       }}>GENZONIC</div>
 
       {/* ══════════════════════════════════════════
@@ -102,10 +127,10 @@ export default function Hero() {
 
           <h1 className="hz-h1">
             <div>Dress Bold.</div>
-            <div style={{ color:accent }}>Stay Raw.</div>
+            <div style={{ color: accent }}>Stay Raw.</div>
           </h1>
 
-          <p className="hz-desc" style={{ color:muted }}>
+          <p className="hz-desc" style={{ color: muted }}>
             Premium streetwear for people who don't follow trends — they set them.
           </p>
 
@@ -113,16 +138,16 @@ export default function Hero() {
             <Link href="/shop/men" className="hz-btn-fill">
               Shop Now
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="hz-btn-arrow">
-                <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
           </div>
 
           <div className="hz-stats">
-            {[["240GSM","Cotton"],["15+","Colors"],["100%","Bio-washed"]].map(([v,l])=>(
+            {[["240GSM", "Cotton"], ["15+", "Colors"], ["100%", "Bio-washed"]].map(([v, l]) => (
               <div key={l}>
-                <div style={{ fontSize:"clamp(18px,2vw,26px)", fontWeight:900 }}>{v}</div>
-                <div style={{ fontSize:10, fontWeight:600, letterSpacing:"1.8px", textTransform:"uppercase", color:muted }}>{l}</div>
+                <div style={{ fontSize: "clamp(18px,2vw,26px)", fontWeight: 900 }}>{v}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "1.8px", textTransform: "uppercase", color: muted }}>{l}</div>
               </div>
             ))}
           </div>
@@ -131,10 +156,10 @@ export default function Hero() {
         {/* CENTER — gorilla + swatches */}
         <div className="hz-center">
           {/* clickable label — always visible */}
-          <div className="hz-click-label" style={{ color:muted }}>
+          <div className="hz-click-label" style={{ color: muted }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-              <path d="M20 12a8 8 0 1 1-8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M20 4v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M20 12a8 8 0 1 1-8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M20 4v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Click to change color
           </div>
@@ -146,11 +171,11 @@ export default function Hero() {
             onClick={() => introPlaying ? setIntroPlaying(false) : switchTo((activeIdx + 1) % COLORWAYS.length)}
             title="Click to change colorway"
           >
-            <video 
-              src="/herovideo-01111.webm" 
+            <video
+              src="/herovideo-01111.webm"
               autoPlay muted playsInline loop
-              style={{ 
-                width: "100%", height: "100%", objectFit: "contain", 
+              style={{
+                width: "100%", height: "100%", objectFit: "contain",
                 objectPosition: "bottom center",
                 transformOrigin: "bottom center",
                 transform: "scale(2.0)",
@@ -161,10 +186,10 @@ export default function Hero() {
                 transition: "opacity 1.5s ease-in-out"
               }}
             />
-            
+
             <div style={{ opacity: introPlaying ? 0 : 1, transition: "opacity 1.5s ease-in-out", height: "100%", width: "100%", position: "relative" }}>
               {/* pulsing ring to signal clickability */}
-              <div className="hz-ring" style={{ borderColor: darkMode?"rgba(255,255,255,0.12)":"rgba(0,0,0,0.1)" }} />
+              <div className="hz-ring" style={{ borderColor: darkMode ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)" }} />
 
               <Image
                 src={COLORWAYS[activeIdx].img}
@@ -173,9 +198,9 @@ export default function Hero() {
                 priority
                 sizes="(max-width:1023px) 90vw, 38vw"
                 style={{
-                  objectFit:"contain",
-                  objectPosition:"bottom center",
-                  filter:`drop-shadow(0 18px 42px ${darkMode?"rgba(0,0,0,0.6)":"rgba(0,0,0,0.15)"})`,
+                  objectFit: "contain",
+                  objectPosition: "bottom center",
+                  filter: `drop-shadow(0 18px 42px ${darkMode ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.15)"})`,
                 }}
               />
             </div>
@@ -183,7 +208,7 @@ export default function Hero() {
 
           {/* Color swatches — always visible, clearly labeled */}
           <div className="hz-swatches">
-            <span className="hz-sw-label" style={{ color:muted }}>
+            <span className="hz-sw-label" style={{ color: muted }}>
               {COLORWAYS[activeIdx].label}
             </span>
             <div className="hz-sw-row">
@@ -209,16 +234,16 @@ export default function Hero() {
 
         {/* RIGHT */}
         <div className="hz-right">
-          <div className="hz-specs-head" style={{ color:accent }}>WHAT'S INSIDE</div>
+          <div className="hz-specs-head" style={{ color: accent }}>WHAT'S INSIDE</div>
           <ul className="hz-specs">
-            {["240GSM Heavyweight Cotton","Drop-Shoulder Fit","High-Density Puff Print","Pre-shrunk & Bio-washed","Reinforced Ribbed Collar","Unisex Oversized Cut"].map((s,i,arr)=>(
-              <li key={s} style={{ borderBottom: i < arr.length-1 ? `1px solid ${borderC}` : "none", color:muted }}>
-                <span className="hz-spec-dot" style={{ background:accent }} />
+            {["240GSM Heavyweight Cotton", "Drop-Shoulder Fit", "High-Density Puff Print", "Pre-shrunk & Bio-washed", "Reinforced Ribbed Collar", "Unisex Oversized Cut"].map((s, i, arr) => (
+              <li key={s} style={{ borderBottom: i < arr.length - 1 ? `1px solid ${borderC}` : "none", color: muted }}>
+                <span className="hz-spec-dot" style={{ background: accent }} />
                 {s}
               </li>
             ))}
           </ul>
-          <div className="hz-tag" style={{ background: darkMode?"rgba(255,69,0,0.12)":"rgba(255,69,0,0.09)", color:accent }}>
+          <div className="hz-tag" style={{ background: darkMode ? "rgba(255,69,0,0.12)" : "rgba(255,69,0,0.09)", color: accent }}>
             BUILT FOR THE BOLD.
           </div>
         </div>
@@ -231,16 +256,16 @@ export default function Hero() {
 
         <div className="hz-h1 hz-h1-sm">
           <div>Dress Bold.</div>
-          <div style={{ color:accent }}>Stay Raw.</div>
+          <div style={{ color: accent }}>Stay Raw.</div>
         </div>
 
         {/* gorilla — no text overlay */}
         <div className="hz-mob-img" onClick={() => introPlaying ? setIntroPlaying(false) : switchTo((activeIdx + 1) % COLORWAYS.length)}>
-          <video 
-            src="/herovideo-01111.webm" 
+          <video
+            src="/herovideo-01111.webm"
             autoPlay muted playsInline loop
-            style={{ 
-              width: "100%", height: "100%", objectFit: "contain", 
+            style={{
+              width: "100%", height: "100%", objectFit: "contain",
               objectPosition: "bottom center",
               transformOrigin: "bottom center",
               transform: "scale(2.0)",
@@ -258,8 +283,10 @@ export default function Hero() {
               fill
               priority
               sizes="90vw"
-              style={{ objectFit:"contain", objectPosition:"bottom center",
-                filter:`drop-shadow(0 14px 32px ${darkMode?"rgba(0,0,0,0.5)":"rgba(0,0,0,0.12)"})` }}
+              style={{
+                objectFit: "contain", objectPosition: "bottom center",
+                filter: `drop-shadow(0 14px 32px ${darkMode ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.12)"})`
+              }}
             />
           </div>
         </div>
@@ -268,17 +295,19 @@ export default function Hero() {
         <div className="hz-swatches hz-sw-sm">
           <div className="hz-sw-tap-hint" style={{ color: muted }}>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-              <path d="M20 12a8 8 0 1 1-8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M20 4v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M20 12a8 8 0 1 1-8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M20 4v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Tap image · {COLORWAYS[activeIdx].label}
           </div>
           <div className="hz-sw-row">
-            {COLORWAYS.map((c,i)=>(
-              <button key={c.label} onClick={()=>switchTo(i)} onMouseEnter={()=>switchTo(i)} title={c.label} className="hz-swatch"
-                style={{ background:c.color,
-                  outline: i===activeIdx?`2px solid ${accent}`:"2px solid transparent",
-                  outlineOffset:2, transform:i===activeIdx?"scale(1.25)":"scale(1)" }}
+            {COLORWAYS.map((c, i) => (
+              <button key={c.label} onClick={() => switchTo(i)} onMouseEnter={() => switchTo(i)} title={c.label} className="hz-swatch"
+                style={{
+                  background: c.color,
+                  outline: i === activeIdx ? `2px solid ${accent}` : "2px solid transparent",
+                  outlineOffset: 2, transform: i === activeIdx ? "scale(1.25)" : "scale(1)"
+                }}
                 aria-label={`Select ${c.label}`}
               />
             ))}
@@ -289,7 +318,7 @@ export default function Hero() {
         <Link href="/shop/men" className="hz-btn-fill hz-btn-full">
           Shop Now
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="hz-btn-arrow">
-            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </Link>
 
@@ -302,6 +331,9 @@ export default function Hero() {
           80%  { transform:translate(-50%,-50%) scale(1.18); opacity:0; }
           100% { opacity:0; }
         }
+
+        .hz-desktop-bg { display: block; }
+        .hz-mob-bg { display: none; }
 
         /* ─ GRID ─ */
         .hz-grid {
@@ -463,6 +495,8 @@ export default function Hero() {
 
         /* ─ MOBILE ─ */
         @media (max-width:1023px) {
+          .hz-desktop-bg { display: none; }
+          .hz-mob-bg { display: block; }
           .hz-grid { display:none; }
           .hz-mob {
             display:flex; flex-direction:column; align-items:center; text-align:center;
