@@ -31,7 +31,7 @@ export default function Hero() {
   useEffect(() => {
     let t: NodeJS.Timeout
     if (introPlaying) {
-      t = setTimeout(() => setIntroPlaying(false), 4000)
+      t = setTimeout(() => setIntroPlaying(false), 3000)
     }
     return () => clearTimeout(t)
   }, [introPlaying])

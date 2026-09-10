@@ -106,7 +106,17 @@ const ProductCard = ({ product, index }: { product: any, index: number }) => {
   );
 };
 
-export default function ProductGrid() {
+interface ProductGridProps {
+  title?: string;
+  category?: string;
+  viewAllLink?: string;
+}
+
+export default function ProductGrid({ 
+  title = "NEW ARRIVALS", 
+  category, 
+  viewAllLink = "/shop/men" 
+}: ProductGridProps) {
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -115,7 +125,8 @@ export default function ProductGrid() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("/api/products");
+        const url = category ? `/api/products?category=${category}` : "/api/products";
+        const res = await fetch(url);
         const data = await res.json();
         if (data.success) {
           // Show all products instead of slicing
@@ -168,8 +179,8 @@ export default function ProductGrid() {
       <div className="container">
         
         <div className="section-header">
-          <h2 className="title">NEW ARRIVALS</h2>
-          <Link href="/shop/men" className="view-all">
+          <h2 className="title">{title}</h2>
+          <Link href={viewAllLink} className="view-all">
             VIEW ALL
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="view-all-icon">
               <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
