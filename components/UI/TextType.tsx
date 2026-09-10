@@ -153,15 +153,15 @@ const TextType = ({
     hideCursorWhileTyping &&
     (currentCharIndex < textArray[currentTextIndex].length || isDeleting)
 
-  return createElement(
-    Component,
-    {
-      ref: containerRef,
-      className: `text-type ${className}`,
-      style: { display: "inline-block" },
-      ...props
-    },
-    <>
+  const Tag = Component;
+
+  return (
+    <Tag
+      ref={containerRef}
+      className={`text-type ${className}`}
+      style={{ display: "inline-block" }}
+      {...props}
+    >
       <span style={{ color: getCurrentTextColor() }}>
         {displayedText}
       </span>
@@ -178,7 +178,7 @@ const TextType = ({
           {cursorCharacter}
         </span>
       )}
-    </>
+    </Tag>
   )
 }
 
