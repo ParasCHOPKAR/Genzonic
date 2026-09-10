@@ -20,10 +20,16 @@ interface CartState {
   increaseQty: (id: string | number, size: string) => void;
   decreaseQty: (id: string | number, size: string) => void;
   clearCart: () => void; 
+  appliedCoupon: string | null;
+  discountAmount: number;
+  applyCoupon: (code: string, discount: number) => void;
+  removeCoupon: () => void;
 }
 
 export const useCartStore = create<CartState>()((set) => ({
   cart: [],
+  appliedCoupon: null,
+  discountAmount: 0,
 
   setCart: (newCart) => set({ cart: newCart }),
 
@@ -81,5 +87,7 @@ export const useCartStore = create<CartState>()((set) => ({
     };
   }),
 
-  clearCart: () => set({ cart: [] }),
+  clearCart: () => set({ cart: [], appliedCoupon: null, discountAmount: 0 }),
+  applyCoupon: (code, discount) => set({ appliedCoupon: code, discountAmount: discount }),
+  removeCoupon: () => set({ appliedCoupon: null, discountAmount: 0 }),
 }));

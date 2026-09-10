@@ -16,7 +16,7 @@ declare global {
 }
 
 export default function CheckoutPage() {
-  const { cart, clearCart } = useCartStore();
+  const { cart, clearCart, appliedCoupon, discountAmount, applyCoupon, removeCoupon } = useCartStore();
   const router = useRouter();
   const { data: session } = useSession();
   
@@ -25,7 +25,13 @@ export default function CheckoutPage() {
   
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   const deliveryCharge = 25;
-  const total = subtotal > 0 ? subtotal + deliveryCharge : 0;
+  const total = subtotal > 0 ? subtotal - discountAmount + deliveryCharge : 0;
+
+  // Coupon states
+  const [couponInput, setCouponInput] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponMessage, setCouponMessage] = useState("");
+  const [couponError, setCouponError] = useState(false);
 
   const [addressType, setAddressType] = useState("Home");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -152,6 +158,8 @@ export default function CheckoutPage() {
       shippingInfo,
       orderItems: cart,
       subtotal: subtotal,
+      discountAmount: discountAmount,
+      couponCode: appliedCoupon || "",
       deliveryCharge: deliveryCharge,
       totalAmount: total,
     };
@@ -240,6 +248,42 @@ export default function CheckoutPage() {
       console.error(error);
       setIsProcessing(false); // Stops the spinner
     }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+    setCouponMessage("");
+    setCouponError(false);
+
+    try {
+      const res = await fetch("/api/coupon/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponInput.trim(), subtotal }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        applyCoupon(data.code, data.discountAmount);
+        setCouponMessage(data.message);
+        setCouponError(false);
+      } else {
+        setCouponMessage(data.message);
+        setCouponError(true);
+      }
+    } catch (err) {
+      setCouponMessage("Failed to apply coupon.");
+      setCouponError(true);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    setCouponInput("");
+    setCouponMessage("");
   };
 
   if (!isProfileLoaded) {
@@ -397,9 +441,41 @@ export default function CheckoutPage() {
                   </div>
                 ))}
               </div>
+              
+              {/* 🔥 COUPON SECTION 🔥 */}
+              <div className="coupon-section">
+                {!appliedCoupon ? (
+                  <div className="coupon-input-group">
+                    <input 
+                      type="text" 
+                      placeholder="ENTER COUPON CODE" 
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      className="coupon-input"
+                    />
+                    <button type="button" onClick={handleApplyCoupon} disabled={couponLoading} className="coupon-btn">
+                      {couponLoading ? <Loader2 size={16} className="animate-spin" /> : "APPLY"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="coupon-success">
+                    <div className="coupon-tag">
+                      <ShieldCheck size={14} color="#22c55e" /> {appliedCoupon}
+                    </div>
+                    <button type="button" onClick={handleRemoveCoupon} className="remove-coupon">REMOVE</button>
+                  </div>
+                )}
+                {couponMessage && (
+                  <p className={`coupon-msg ${couponError ? "err" : "succ"}`}>{couponMessage}</p>
+                )}
+              </div>
+
               <div className="manifest-footer">
                 <div className="line"><span>SUBTOTAL</span><span>₹{subtotal}</span></div>
                 <div className="line"><span>SHIPPING</span><span style={{ color: "#ff3e00" }}>₹{deliveryCharge}</span></div>
+                {discountAmount > 0 && (
+                  <div className="line"><span>DISCOUNT</span><span className="green">-₹{discountAmount}</span></div>
+                )}
                 <div className="line grand"><span>TOTAL DUE</span><span>₹{total}</span></div>
               </div>
             </div>
@@ -465,6 +541,20 @@ export default function CheckoutPage() {
           .line { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; margin-bottom: 12px; }
           .green { color: #22c55e; }
           .grand { font-size: 22px; font-weight: 900; margin-top: 20px; border-top: 1px solid rgba(128,128,128,0.1); padding-top: 20px; }
+
+          .coupon-section { margin-bottom: 20px; padding: 15px 0; border-top: 1px dashed rgba(128,128,128,0.3); border-bottom: 1px dashed rgba(128,128,128,0.3); }
+          .coupon-input-group { display: flex; gap: 10px; }
+          .coupon-input { flex: 1; padding: 12px; font-size: 12px; border: 1px solid rgba(128,128,128,0.3); background: transparent; color: var(--text); outline: none; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+          .coupon-input:focus { border-color: var(--text); }
+          .coupon-btn { padding: 0 20px; background: var(--text); color: var(--bg); font-weight: 900; font-size: 12px; cursor: pointer; border: none; border-radius: 4px; transition: 0.2s; }
+          .coupon-btn:hover { opacity: 0.8; }
+          .coupon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+          .coupon-success { display: flex; justify-content: space-between; align-items: center; background: rgba(34, 197, 94, 0.1); padding: 12px; border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.2); }
+          .coupon-tag { display: flex; align-items: center; gap: 8px; color: #22c55e; font-weight: 900; font-size: 13px; }
+          .remove-coupon { background: transparent; border: none; color: #ef4444; font-size: 10px; font-weight: 900; cursor: pointer; letter-spacing: 1px; }
+          .coupon-msg { font-size: 11px; font-weight: 700; margin-top: 10px; letter-spacing: 0.5px; }
+          .coupon-msg.err { color: #ef4444; }
+          .coupon-msg.succ { color: #22c55e; }
 
           @keyframes spin { 100% { transform: rotate(360deg); } }
 

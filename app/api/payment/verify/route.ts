@@ -38,6 +38,15 @@ export async function POST(req: Request) {
         }
       });
 
+      // Increment coupon usage count if a coupon was used
+      if (orderData.couponCode) {
+        const Coupon = (await import("@/models/Coupon")).default;
+        await Coupon.findOneAndUpdate(
+          { code: orderData.couponCode.toUpperCase() },
+          { $inc: { usedCount: 1 } }
+        );
+      }
+
       // 2. Send the beautiful branded email receipt!
       if (updatedOrder && updatedOrder.userEmail) {
         const transporter = nodemailer.createTransport({

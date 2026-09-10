@@ -1,5 +1,7 @@
 import Razorpay from "razorpay";
 import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import Coupon from "@/models/Coupon";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -12,16 +14,33 @@ export async function POST(req: Request) {
 
     // 🔥 1. Extract the base number sent from your frontend checkout
     const subtotal = body.subtotal || 0;
+    const couponCode = body.couponCode || "";
+
+    let discountAmount = 0;
+    
+    // 🔥 Verify coupon on the server to prevent frontend tampering
+    if (couponCode) {
+      await connectDB();
+      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+      if (coupon && coupon.isActive && (!coupon.expirationDate || new Date(coupon.expirationDate) >= new Date()) && (coupon.usageLimit === null || coupon.usedCount < coupon.usageLimit) && subtotal >= coupon.minOrderValue) {
+        if (coupon.discountType === "percentage") {
+          discountAmount = (subtotal * coupon.discountValue) / 100;
+        } else {
+          discountAmount = coupon.discountValue;
+        }
+        if (discountAmount > subtotal) discountAmount = subtotal;
+      }
+    }
 
     // 🔥 2. Perform the exact same mathematical calculations on the SERVER
     // This strictly prevents anyone from tampering with the final price in the browser.
     const deliveryCharge = 25;
     
     // Calculate the final total in standard Rupees
-    const finalTotalInRupees = subtotal + deliveryCharge;
+    const finalTotalInRupees = subtotal - discountAmount + deliveryCharge;
 
     // 🔥 3. Razorpay requires the amount in PAISE (multiply by 100)
-    const amountInPaise = finalTotalInRupees * 100;
+    const amountInPaise = Math.round(finalTotalInRupees * 100);
 
     const options = {
       amount: amountInPaise, 
