@@ -22,8 +22,7 @@ export default function Home() {
       {/* HERO SECTION */}
       <Hero />
 
-      <ProductGrid title="PREMIUM COLLECTION" category="premium" viewAllLink="/shop/premium" />
-      <ProductGrid title="MEN'S COLLECTION" category="men" viewAllLink="/shop/men" />
+      <ProductGrid title="ALL PRODUCTS" viewAllLink="/shop" />
 
       {/* BRAND STORY */}
       <BrandStory />
