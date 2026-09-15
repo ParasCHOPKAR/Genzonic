@@ -1,23 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 
-const ModakSVG = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    {/* Base shape of modak */}
-    <path 
-      d="M 50 15 C 20 50, 15 90, 50 90 C 85 90, 80 50, 50 15 Z" 
-      fill="#FFD700" 
-      stroke="#E67E22" 
-      strokeWidth="3" 
-    />
-    {/* Inner fold lines */}
-    <path d="M 50 15 C 35 50, 35 90, 50 90" fill="transparent" stroke="#E67E22" strokeWidth="2" />
-    <path d="M 50 15 C 65 50, 65 90, 50 90" fill="transparent" stroke="#E67E22" strokeWidth="2" />
-    <path d="M 50 15 C 50 50, 50 90, 50 90" fill="transparent" stroke="#E67E22" strokeWidth="2" />
-  </svg>
-);
-
-const ELEMENTS = ['🌺', '🌸', '🌼', 'modak', 'modak'];
+const ELEMENTS = ['🌺', '🌸', '🌼'];
 
 export default function FallingFestive() {
   const [items, setItems] = useState<any[]>([]);
@@ -25,7 +9,7 @@ export default function FallingFestive() {
   useEffect(() => {
     // Generate initial items after component mounts (client-side only to prevent hydration mismatch)
     const generateItems = () => {
-      const newItems = Array.from({ length: 15 }).map((_, i) => {
+      const newItems = Array.from({ length: 7 }).map((_, i) => {
         const type = ELEMENTS[Math.floor(Math.random() * ELEMENTS.length)];
         return {
           id: i,
@@ -100,7 +84,7 @@ export default function FallingFestive() {
             filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))'
           }}
         >
-          {item.type === 'modak' ? <ModakSVG size={item.size} /> : item.type}
+          {item.type}
         </div>
       ))}
     </div>
